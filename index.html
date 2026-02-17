@@ -3,120 +3,152 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HRK Robux Store</title>
+<title>HRK Robux Elite Store</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 body{
-    background:linear-gradient(135deg,#0f0f1a,#181830);
-    color:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
+background:radial-gradient(circle at top,#1b1b35,#0f0f1a);
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
 }
 .container{
-    width:95%;
-    max-width:520px;
-    background:rgba(255,255,255,0.05);
-    backdrop-filter:blur(20px);
-    border-radius:25px;
-    padding:30px;
-    box-shadow:0 0 50px rgba(0,0,0,0.6);
+width:95%;
+max-width:520px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(20px);
+border-radius:25px;
+padding:30px;
+box-shadow:0 0 60px rgba(0,0,0,0.6);
 }
-h1{text-align:center;font-size:26px;font-weight:800;}
-.subtitle{text-align:center;font-size:13px;opacity:0.7;margin-bottom:15px;}
+h1{text-align:center;font-weight:800;font-size:26px;}
+.subtitle{text-align:center;font-size:13px;opacity:.7;margin-bottom:15px;}
 .stock{
-    text-align:center;
-    margin-bottom:20px;
-    background:#1a1a2e;
-    padding:10px;
-    border-radius:12px;
-    font-size:14px;
+text-align:center;
+background:#1a1a2e;
+padding:8px;
+border-radius:12px;
+margin-bottom:20px;
+font-size:14px;
+}
+.progress{
+height:6px;
+background:#1f1f35;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:20px;
+}
+.progress-bar{
+height:100%;
+width:33%;
+background:linear-gradient(90deg,#6a5cff,#9c89ff);
+transition:.4s;
+}
+.step{display:none;}
+.step.active{display:block;}
+input,select{
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+background:#1f1f35;
+color:white;
+margin-top:12px;
+font-size:14px;
 }
 button{
-    width:100%;
-    padding:14px;
-    margin-top:15px;
-    border:none;
-    border-radius:14px;
-    background:linear-gradient(135deg,#6a5cff,#8f7bff);
-    color:white;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:0.3s;
+width:100%;
+padding:14px;
+margin-top:18px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,#6a5cff,#9c89ff);
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
 }
 button:hover{transform:scale(1.04);}
-.hidden{display:none;}
-input{
-    width:100%;
-    padding:14px;
-    border-radius:14px;
-    border:none;
-    margin-top:15px;
-    background:#1f1f35;
-    color:white;
-    font-size:16px;
-}
 .result{
-    margin-top:20px;
-    background:#1a1a2e;
-    padding:15px;
-    border-radius:14px;
-    font-size:14px;
+background:#1a1a2e;
+padding:15px;
+border-radius:14px;
+margin-top:15px;
+font-size:14px;
 }
 .badges{
-    margin-top:20px;
-    text-align:center;
-    font-size:12px;
-    opacity:0.6;
+text-align:center;
+font-size:12px;
+opacity:.6;
+margin-top:15px;
 }
 .footer{
-    margin-top:15px;
-    text-align:center;
-    font-size:12px;
-    opacity:0.4;
+text-align:center;
+font-size:12px;
+opacity:.4;
+margin-top:10px;
 }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>HRK Robux Store</h1>
-    <div class="subtitle">Safe • Custom Amount • Official System</div>
+<h1>HRK Robux Store</h1>
+<div class="subtitle">Elite • Secure • Custom Amount</div>
 
-    <div class="stock">
-        🟢 Stok Robux Tersedia: <b id="stockDisplay">327.987</b>
-    </div>
+<div class="stock">
+🟢 Stok Tersedia: <b id="stockDisplay">327.987</b>
+</div>
 
-    <!-- STEP 1 -->
-    <button onclick="showStep2()">BELI ROBUX</button>
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
 
-    <!-- STEP 2 -->
-    <div id="step2" class="hidden">
-        <input type="number" id="robuxInput" placeholder="Masukkan jumlah Robux (min 50)">
-        <button onclick="calculate()">LANJUTKAN</button>
-    </div>
+<!-- STEP 1 -->
+<div class="step active" id="step1">
+<input type="number" id="robuxInput" placeholder="Jumlah Robux (min 50)">
+<input type="text" id="username" placeholder="Username Roblox">
+<select id="payment">
+<option value="">Pilih Metode Pembayaran</option>
+<option>DANA</option>
+<option>OVO</option>
+<option>GoPay</option>
+<option>QRIS</option>
+</select>
+<button onclick="goStep2()">Lanjut</button>
+</div>
 
-    <!-- STEP 3 -->
-    <div id="step3" class="hidden">
-        <div class="result">
-            Total Harga <span id="price">Rp0</span><br><br>
-            Robux Gamepass <span id="gamepass">0 Robux</span>
-        </div>
-        <button onclick="buy()">KONFIRMASI & CHAT ADMIN</button>
-    </div>
+<!-- STEP 2 -->
+<div class="step" id="step2">
+<div class="result">
+Total Harga: <b id="price">Rp0</b><br><br>
+Robux Gamepass: <b id="gamepass">0 Robux</b><br>
+Order ID: <b id="orderId">-</b>
+</div>
+<button onclick="confirmOrder()">Konfirmasi & Chat Admin</button>
+</div>
 
-    <div class="badges">
-        🔒 No Login Required<br>
-        🛡️ Via Sistem Resmi Roblox<br>
-        ⏳ Estimasi 1–5 Hari
-    </div>
+<!-- STEP 3 -->
+<div class="step" id="step3">
+<div class="result">
+✅ Order berhasil dibuat!<br><br>
+Silakan lanjut ke WhatsApp untuk menyelesaikan pembayaran.
+</div>
+</div>
 
-    <div class="footer">
-        Minimal 50 Robux • 1 Robux = Rp132
-    </div>
+<div class="badges">
+🔒 No Login Required<br>
+🛡️ Via Sistem Resmi Roblox<br>
+⏳ Estimasi 1–5 Hari
+</div>
+
+<div class="footer">
+Minimal 50 Robux • 1 Robux = Rp132
+</div>
+
 </div>
 
 <script>
@@ -125,46 +157,64 @@ const minPurchase = 50;
 let stock = 327987;
 
 function formatRupiah(num){
-    return "Rp" + num.toLocaleString("id-ID");
+return "Rp" + num.toLocaleString("id-ID");
 }
 
-function showStep2(){
-    document.getElementById("step2").classList.remove("hidden");
+function generateOrderID(){
+return "HRK-" + Math.floor(Math.random()*1000000);
 }
 
-function calculate(){
-    let robux = parseInt(document.getElementById("robuxInput").value);
+function goStep2(){
+let robux = parseInt(document.getElementById("robuxInput").value);
+let username = document.getElementById("username").value;
+let payment = document.getElementById("payment").value;
 
-    if(isNaN(robux) || robux < minPurchase){
-        alert("Minimal pembelian 50 Robux.");
-        return;
-    }
-
-    if(robux > stock){
-        alert("Stok tidak mencukupi.");
-        return;
-    }
-
-    let totalPrice = robux * pricePerRobux;
-    let gamepassRobux = Math.ceil(robux / 0.7);
-
-    document.getElementById("price").innerText = formatRupiah(totalPrice);
-    document.getElementById("gamepass").innerText = gamepassRobux + " Robux";
-
-    document.getElementById("step3").classList.remove("hidden");
+if(!robux || robux < minPurchase){
+alert("Minimal 50 Robux.");
+return;
+}
+if(robux > stock){
+alert("Stok tidak cukup.");
+return;
+}
+if(username.length < 3){
+alert("Masukkan username valid.");
+return;
+}
+if(payment === ""){
+alert("Pilih metode pembayaran.");
+return;
 }
 
-function buy(){
-    let robux = parseInt(document.getElementById("robuxInput").value);
-    let totalPrice = robux * pricePerRobux;
-    let gamepassRobux = Math.ceil(robux / 0.7);
+let totalPrice = robux * pricePerRobux;
+let gamepassRobux = Math.ceil(robux / 0.7);
+let orderId = generateOrderID();
 
-    let message = `Halo Admin, saya ingin membeli ${robux} Robux.\nTotal Harga: ${formatRupiah(totalPrice)}\nRobux Gamepass: ${gamepassRobux} Robux\nUsername Roblox:`;
+document.getElementById("price").innerText = formatRupiah(totalPrice);
+document.getElementById("gamepass").innerText = gamepassRobux + " Robux";
+document.getElementById("orderId").innerText = orderId;
 
-    let phone = "6285716075774"; // GANTI NOMOR
-    let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+document.getElementById("step1").classList.remove("active");
+document.getElementById("step2").classList.add("active");
+document.getElementById("progressBar").style.width="66%";
+}
 
-    window.open(url, "_blank");
+function confirmOrder(){
+let robux = parseInt(document.getElementById("robuxInput").value);
+let username = document.getElementById("username").value;
+let payment = document.getElementById("payment").value;
+let totalPrice = robux * pricePerRobux;
+let gamepassRobux = Math.ceil(robux / 0.7);
+let orderId = document.getElementById("orderId").innerText;
+
+let message = `Halo Admin,%0AOrder ID: ${orderId}%0AUsername: ${username}%0AJumlah Robux: ${robux}%0ATotal Harga: ${formatRupiah(totalPrice)}%0AGamepass: ${gamepassRobux} Robux%0AMetode: ${payment}`;
+
+let phone="6285716075774"; // GANTI NOMOR
+window.open(`https://wa.me/${phone}?text=${message}`,"_blank");
+
+document.getElementById("step2").classList.remove("active");
+document.getElementById("step3").classList.add("active");
+document.getElementById("progressBar").style.width="100%";
 }
 </script>
 
