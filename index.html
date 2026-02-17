@@ -3,370 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ultra Game Store | Premium Digital Credit</title>
+    <title>RbxGold - Premium Robux Provider</title>
     <style>
         :root {
-            --bg: #050a18;
-            --accent-blue: #00d2ff;
-            --accent-purple: #9d50bb;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-            --text: #ffffff;
-            --text-dim: #a0a0a0;
-            --neon-blue: 0 0 15px rgba(0, 210, 255, 0.5);
+            --primary-green: #00e676;
+            --dark-bg: #0a0b10;
+            --card-glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-dim: #8e8e93;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
 
-        body { background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; }
-
-        /* Background Gradient Effect */
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.15), transparent 40%),
-                        radial-gradient(circle at 80% 70%, rgba(157, 80, 187, 0.15), transparent 40%);
-            z-index: -1;
+        body { 
+            background-color: var(--dark-bg); 
+            color: var(--text-main); 
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at top right, rgba(0, 230, 118, 0.05), transparent),
+                              radial-gradient(circle at bottom left, rgba(0, 230, 118, 0.03), transparent);
         }
 
-        /* --- Welcome Screen --- */
-        #welcome-screen {
-            position: fixed; inset: 0; background: var(--bg); z-index: 1000;
+        /* Welcome Screen */
+        #splash {
+            position: fixed; inset: 0; background: var(--dark-bg); z-index: 1000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            transition: 0.8s ease-out;
         }
 
-        .hero-title { font-size: 3rem; font-weight: 800; letter-spacing: -1px; opacity: 0; transform: translateY(20px); animation: fadeInUp 1s forwards 0.2s; text-align: center; }
-        .hero-sub { color: var(--accent-blue); font-size: 1.1rem; margin-top: 10px; opacity: 0; animation: fadeInUp 1s forwards 0.4s; letter-spacing: 4px; font-weight: 500; }
-        .btn-enter { 
-            margin-top: 40px; padding: 15px 40px; border: 1px solid var(--border); background: var(--card-bg);
-            color: white; border-radius: 50px; cursor: pointer; backdrop-filter: blur(10px);
-            font-weight: 600; transition: 0.3s; opacity: 0; animation: fadeInUp 1s forwards 0.6s;
+        .hero-title { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; text-align: center; }
+        .hero-title span { color: var(--primary-green); }
+        .hero-sub { color: var(--text-dim); margin-top: 8px; font-size: 0.9rem; letter-spacing: 2px; }
+        
+        .btn-start {
+            margin-top: 40px; padding: 16px 45px; border-radius: 50px; border: 1px solid var(--primary-green);
+            background: transparent; color: var(--primary-green); font-weight: 700; cursor: pointer;
+            transition: 0.3s;
         }
-        .btn-enter:hover { border-color: var(--accent-blue); box-shadow: var(--neon-blue); transform: scale(1.05); }
+        .btn-start:hover { background: var(--primary-green); color: var(--dark-bg); box-shadow: 0 0 20px rgba(0, 230, 118, 0.4); }
 
-        /* --- Main App --- */
-        #main-app { display: none; opacity: 0; transition: opacity 1s; }
+        /* Main App */
+        #app { display: none; opacity: 0; transition: 1s; padding-top: 80px; }
 
-        header { 
-            position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; 
+        header {
+            position: fixed; top: 0; width: 100%; padding: 20px 6%; display: flex;
             justify-content: space-between; align-items: center; z-index: 100;
-            background: rgba(5, 10, 24, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
+            background: rgba(10, 11, 16, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass);
         }
-        .logo { font-weight: 800; font-size: 1.4rem; color: white; }
-        .logo span { color: var(--accent-blue); }
-        .nav-links { display: flex; gap: 20px; font-size: 0.9rem; color: var(--text-dim); }
 
-        .container { max-width: 1000px; margin: 100px auto; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
 
-        /* --- Categories --- */
-        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
-        .cat-card {
-            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px;
-            text-align: center; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px);
+        /* Product Card */
+        .glass-card {
+            background: var(--card-glass); border: 1px solid var(--border-glass);
+            border-radius: 30px; padding: 30px; backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-        .cat-card:hover { transform: translateY(-10px); border-color: var(--accent-blue); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
-        .cat-icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
-        .cat-card h3 { font-size: 1.1rem; margin-bottom: 5px; }
-        .cat-card p { font-size: 0.8rem; color: var(--text-dim); }
 
-        /* --- Product Section --- */
-        #product-page { display: none; max-width: 500px; margin: 40px auto; animation: slideUp 0.6s ease; }
-        .glass-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 30px; backdrop-filter: blur(20px); }
-        .back-btn { background: none; border: none; color: var(--accent-blue); font-weight: 600; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 5px; }
-
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 0.85rem; margin-bottom: 8px; color: var(--text-dim); }
-        input { 
-            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); 
-            padding: 15px; border-radius: 12px; color: white; outline: none; transition: 0.3s;
+        .stok-badge {
+            background: rgba(0, 230, 118, 0.1); color: var(--primary-green);
+            padding: 6px 15px; border-radius: 50px; font-size: 0.75rem; font-weight: 700;
+            display: inline-block; margin-bottom: 20px;
         }
-        input:focus { border-color: var(--accent-blue); box-shadow: 0 0 10px rgba(0, 210, 255, 0.1); }
 
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9rem; }
-        .stok-text { color: #00ff88; font-weight: 600; }
-
-        .total-display { 
-            border-top: 1px solid var(--border); padding-top: 15px; margin-top: 15px;
-            display: flex; justify-content: space-between; align-items: center;
+        .input-box { margin-bottom: 25px; }
+        .input-box label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim); margin-bottom: 10px; }
+        
+        input {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass);
+            padding: 18px; border-radius: 16px; color: white; font-size: 1rem; outline: none; transition: 0.3s;
         }
-        .total-price { font-size: 1.8rem; font-weight: 800; color: var(--accent-blue); }
+        input:focus { border-color: var(--primary-green); background: rgba(255,255,255,0.08); }
 
-        .btn-action {
-            width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: 700;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
-            color: white; cursor: pointer; margin-top: 20px; transition: 0.3s;
+        /* Checkout Steps */
+        .step { display: none; animation: slideUp 0.5s ease forwards; }
+        .active-step { display: block; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .summary-box {
+            background: rgba(0,0,0,0.2); border-radius: 20px; padding: 20px; margin: 20px 0;
+            border: 1px dashed var(--border-glass);
         }
-        .btn-action:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .summary-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; }
+        .summary-item .val { font-weight: 700; color: var(--primary-green); }
 
-        /* --- Multi Step Checkout --- */
-        .step-container { display: none; animation: fadeIn 0.5s; }
-        .order-summary { background: rgba(255,255,255,0.02); border-radius: 15px; padding: 20px; margin: 15px 0; }
-        .summary-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
-
-        .progress-bar-container { height: 6px; width: 100%; background: var(--border); border-radius: 10px; margin: 20px 0; overflow: hidden; }
-        .progress-fill { height: 100%; width: 0%; background: var(--accent-blue); transition: width 1.5s ease; }
-
-        /* --- Notifications --- */
-        .fake-notif {
-            position: fixed; bottom: 20px; left: 20px; background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px); padding: 12px 20px; border-radius: 12px;
-            border: 1px solid var(--border); font-size: 0.8rem; display: flex; align-items: center;
-            gap: 10px; transform: translateX(-150%); transition: 0.5s; z-index: 500;
+        .btn-primary {
+            width: 100%; padding: 20px; border-radius: 18px; border: none;
+            background: var(--primary-green); color: var(--dark-bg);
+            font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.3s;
         }
-        .fake-notif.show { transform: translateX(0); }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 230, 118, 0.2); }
 
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* Mini Components */
+        .progress-container { height: 4px; background: var(--border-glass); border-radius: 10px; margin: 25px 0; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: var(--primary-green); transition: 1.5s ease-in-out; }
 
-        /* Colors for Categories */
-        .cat-mystery { background: linear-gradient(145deg, rgba(157, 80, 187, 0.1), transparent); }
-        .cat-survival { background: linear-gradient(145deg, rgba(255, 65, 108, 0.1), transparent); }
-        .cat-pet { background: linear-gradient(145deg, rgba(0, 210, 255, 0.1), transparent); }
-        .cat-credit { background: linear-gradient(145deg, rgba(0, 255, 136, 0.1), transparent); }
-
-        /* Popup */
-        .popup { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: none; align-items: center; justify-content: center; }
-        .popup-box { background: #121a2d; padding: 30px; border-radius: 20px; text-align: center; border: 1px solid var(--border); width: 85%; max-width: 350px; }
-        .popup-box h2 { color: var(--accent-blue); margin-bottom: 10px; }
-        .popup-box button { background: var(--accent-blue); color: white; border: none; padding: 10px 30px; border-radius: 10px; margin-top: 15px; cursor: pointer; font-weight: bold; }
+        .notif {
+            position: fixed; top: 100px; left: 50%; transform: translateX(-50%) translateY(-200px);
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); padding: 12px 25px;
+            border-radius: 50px; border: 1px solid var(--border-glass); font-size: 0.8rem;
+            transition: 0.5s; z-index: 1000;
+        }
+        .notif.show { transform: translateX(-50%) translateY(0); }
 
     </style>
 </head>
 <body>
 
-    <div id="welcome-screen">
-        <h1 class="hero-title">ULTRA GAME STORE</h1>
-        <p class="hero-sub">FAST • SECURE • MODERN</p>
-        <button class="btn-enter" onclick="enterStore()">ENTER STORE</button>
+    <div id="splash">
+        <h1 class="hero-title">RBX<span>GOLD</span></h1>
+        <p class="hero-sub">PREMIUM • INSTANT • SECURE</p>
+        <button class="btn-start" onclick="initApp()">ENTER STORE</button>
     </div>
 
-    <div id="main-app">
+    <div id="app">
         <header>
-            <div class="logo">ULTRA<span>STORE</span></div>
-            <div class="nav-links">
-                <span>HOME</span>
-                <span>STORE</span>
-                <span>CONTACT</span>
-            </div>
+            <div style="font-weight: 900; font-size: 1.2rem;">RBX<span style="color:var(--primary-green)">GOLD</span></div>
+            <div style="font-size: 0.8rem; opacity: 0.5;">Support 24/7</div>
         </header>
 
-        <div class="container" id="dashboard">
-            <h2 style="margin-bottom: 10px; font-weight: 700;">Marketplace</h2>
-            <p style="color: var(--text-dim); margin-bottom: 40px; font-size: 0.9rem;">Pilih kategori game untuk mulai top-up kredit digital premium.</p>
-            
-            <div class="category-grid">
-                <div class="cat-card cat-mystery" onclick="openProduct('Mystery Arena')">
-                    <span class="cat-icon">🔪</span>
-                    <h3>Mystery Arena</h3>
-                    <p>Elite Digital Bundles</p>
-                </div>
-                <div class="cat-card cat-survival" onclick="openProduct('Survival Escape')">
-                    <span class="cat-icon">💀</span>
-                    <h3>Survival Escape</h3>
-                    <p>Special Game Credits</p>
-                </div>
-                <div class="cat-card cat-pet" onclick="openProduct('Pet Kingdom')">
-                    <span class="cat-icon">🥚</span>
-                    <h3>Pet Kingdom</h3>
-                    <p>Premium Boost Packs</p>
-                </div>
-                <div class="cat-card cat-credit" onclick="openProduct('Digital Credit')">
-                    <span class="cat-icon">💎</span>
-                    <h3>Digital Credit</h3>
-                    <p>Universal Game Balance</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="container" id="product-page">
-            <button class="back-btn" onclick="backToDashboard()">← KEMBALI</button>
-            <div class="glass-box">
-                <h2 id="p-title" style="margin-bottom: 20px; font-weight: 800;">Product Name</h2>
+        <div class="container">
+            <div class="glass-card">
+                <div class="stok-badge">🟢 <span id="stok-ui">507.756</span> Stok Tersedia</div>
                 
-                <div id="step-1" class="step-container" style="display: block;">
-                    <div class="input-group">
-                        <label>Username Player</label>
-                        <input type="text" id="username" placeholder="Masukkan username anda...">
+                <div id="step-1" class="step active-step">
+                    <h2 style="margin-bottom: 25px;">Top Up Robux</h2>
+                    
+                    <div class="input-box">
+                        <label>Roblox Username</label>
+                        <input type="text" id="username" placeholder="Username kamu...">
                     </div>
 
-                    <div class="info-row">
-                        <span>Stok Tersedia</span>
-                        <span class="stok-text" id="stok-num">327.987</span>
-                    </div>
-                    <div class="info-row">
-                        <span>Harga per Unit</span>
-                        <span>Rp 132</span>
+                    <div class="input-box">
+                        <label>Jumlah Robux (Min. 50)</label>
+                        <input type="number" id="qty" placeholder="Contoh: 1000" oninput="recalc()">
                     </div>
 
-                    <div class="input-group">
-                        <label>Jumlah Pembelian (Min. 50)</label>
-                        <input type="number" id="qty" placeholder="Contoh: 100" oninput="calculate()">
+                    <div class="input-box">
+                        <label>Kode Voucher (Opsional)</label>
+                        <input type="text" id="voucher" placeholder="DISKON10" oninput="recalc()">
                     </div>
 
-                    <div class="input-group">
-                        <label>Voucher Code</label>
-                        <input type="text" id="voucher" placeholder="Punya kode? Masukkan di sini" oninput="calculate()">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                        <span style="font-size:0.8rem; color:var(--text-dim);">Total Harga</span>
+                        <span id="total-ui" style="font-size:1.5rem; font-weight:900; color:var(--primary-green)">Rp 0</span>
                     </div>
 
-                    <div class="total-display">
-                        <div style="font-size: 0.8rem; color: var(--text-dim);">Total Pembayaran:</div>
-                        <div class="total-price" id="total-val">Rp 0</div>
-                    </div>
-
-                    <button class="btn-action" onclick="toStep2()">LANJUT KE REVIEW</button>
+                    <button class="btn-primary" style="margin-top:30px;" onclick="goToReview()">BELI SEKARANG</button>
                 </div>
 
-                <div id="step-2" class="step-container">
-                    <h4 style="margin-bottom: 10px; color: var(--accent-blue);">Review Pesanan</h4>
-                    <div class="order-summary">
-                        <div class="summary-item"><span>Order ID</span> <span id="r-id" style="color:white; font-weight:700;">-</span></div>
-                        <div class="summary-item"><span>Username</span> <span id="r-user">-</span></div>
-                        <div class="summary-item"><span>Produk</span> <span id="r-prod">-</span></div>
-                        <div class="summary-item"><span>Jumlah</span> <span id="r-qty">-</span></div>
-                        <div class="summary-item" style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; margin-top:10px;">
-                            <span>Total</span> <span id="r-total" style="color:var(--accent-blue); font-weight:bold;">-</span>
-                        </div>
+                <div id="step-2" class="step">
+                    <h3 style="text-align:center;">Review Order</h3>
+                    <div class="summary-box">
+                        <div class="summary-item"><span>ID Pesanan</span> <span class="val" id="res-id">-</span></div>
+                        <div class="summary-item"><span>Username</span> <span class="val" id="res-user">-</span></div>
+                        <div class="summary-item"><span>Jumlah</span> <span class="val" id="res-qty">-</span></div>
+                        <div class="summary-item"><span>Total Bayar</span> <span class="val" id="res-total">-</span></div>
                     </div>
-                    <div class="progress-bar-container"><div class="progress-fill" id="p-fill"></div></div>
-                    <button class="btn-action" id="confirm-btn" onclick="toStep3()">KONFIRMASI PEMBAYARAN</button>
-                    <button class="back-btn" onclick="toStep1()" style="width:100%; justify-content:center; margin-top:15px;">Edit Data</button>
+                    <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
+                    <button class="btn-primary" id="btn-confirm" onclick="finalize()">KONFIRMASI</button>
+                    <button onclick="backToStep1()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:15px; cursor:pointer;">Kembali</button>
                 </div>
 
-                <div id="step-3" class="step-container" style="text-align: center;">
-                    <span style="font-size: 4rem;">✅</span>
-                    <h2 style="margin: 15px 0;">Pesanan Dibuat!</h2>
-                    <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 20px;">Silahkan selesaikan transaksi melalui WhatsApp untuk aktivasi instan.</p>
-                    <button class="btn-action" onclick="sendWhatsApp()">HUBUNGI WHATSAPP</button>
+                <div id="step-3" class="step" style="text-align:center;">
+                    <div style="font-size:4rem; margin-bottom:20px;">💎</div>
+                    <h2>Order Diproses!</h2>
+                    <p style="color:var(--text-dim); font-size:0.9rem; margin:15px 0 25px;">Silahkan hubungi admin melalui WhatsApp untuk mengirimkan bukti transfer.</p>
+                    <button class="btn-primary" onclick="contactAdmin()">HUBUNGI ADMIN (WA)</button>
                 </div>
+
             </div>
+
+            <p style="text-align:center; margin-top:30px; font-size:0.7rem; color:var(--text-dim); line-height:1.6;">
+                RbxGold tidak berafiliasi dengan Roblox Corporation.<br>
+                Seluruh transaksi bersifat final dan aman.
+            </p>
         </div>
     </div>
 
-    <div class="popup" id="welcome-popup">
-        <div class="popup-box">
-            <h2>Welcome Back!</h2>
-            <p style="font-size: 0.85rem; color: #a0a0a0;">Dapatkan promo terbatas khusus hari ini. Nikmati layanan top-up tercepat.</p>
-            <button onclick="closePopup()">Siap!</button>
-        </div>
-    </div>
-
-    <div class="fake-notif" id="f-notif">
-        <div style="background: var(--accent-blue); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👤</div>
-        <div>
-            <div id="notif-user" style="font-weight: bold;">User123</div>
-            <div style="color: #00ff88; font-size: 0.7rem;">Baru saja membeli Digital Credit</div>
-        </div>
-    </div>
+    <div id="toast" class="notif">Seseorang baru saja membeli 500 Robux!</div>
 
     <script>
-        let orderData = { id: "", user: "", prod: "", qty: 0, total: 0 };
-        const RATE = 132;
-        let currentStok = 327987;
+        let state = { user: "", qty: 0, total: 0, orderId: "" };
+        const PRICE_PER_RBX = 132;
+        let stok = 507756;
 
-        function enterStore() {
-            document.getElementById('welcome-screen').style.opacity = '0';
+        function initApp() {
+            document.getElementById('splash').style.opacity = '0';
             setTimeout(() => {
-                document.getElementById('welcome-screen').style.display = 'none';
-                document.getElementById('main-app').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('main-app').style.opacity = '1';
-                    document.getElementById('welcome-popup').style.display = 'flex';
-                }, 50);
+                document.getElementById('splash').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                setTimeout(() => { document.getElementById('app').style.opacity = '1'; }, 50);
+                startNotifs();
             }, 800);
         }
 
-        function closePopup() {
-            document.getElementById('welcome-popup').style.display = 'none';
-            startNotifLoop();
-        }
-
-        function openProduct(name) {
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('product-page').style.display = 'block';
-            document.getElementById('p-title').innerText = name;
-            orderData.prod = name;
-            toStep1();
-        }
-
-        function backToDashboard() {
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('product-page').style.display = 'none';
-        }
-
-        function calculate() {
-            const qty = document.getElementById('qty').value;
-            const voucher = document.getElementById('voucher').value.toUpperCase();
-            let total = qty * RATE;
+        function recalc() {
+            const q = document.getElementById('qty').value;
+            const v = document.getElementById('voucher').value.toUpperCase();
+            let total = q * PRICE_PER_RBX;
             
-            if (voucher === "DISKON10") {
-                total = total * 0.9;
-            }
-
-            document.getElementById('total-val').innerText = "Rp " + Math.floor(total).toLocaleString('id-ID');
-            orderData.qty = qty;
-            orderData.total = Math.floor(total);
-        }
-
-        function toStep1() {
-            document.querySelectorAll('.step-container').forEach(s => s.style.display = 'none');
-            document.getElementById('step-1').style.display = 'block';
-        }
-
-        function toStep2() {
-            const user = document.getElementById('username').value;
-            if(!user || orderData.qty < 50) {
-                alert("Lengkapi data dan minimal beli 50 unit!");
-                return;
-            }
-            orderData.user = user;
-            orderData.id = "ORD" + Math.floor(100000 + Math.random() * 900000);
-
-            document.getElementById('r-id').innerText = orderData.id;
-            document.getElementById('r-user').innerText = orderData.user;
-            document.getElementById('r-prod').innerText = orderData.prod;
-            document.getElementById('r-qty').innerText = orderData.qty;
-            document.getElementById('r-total').innerText = "Rp " + orderData.total.toLocaleString('id-ID');
-
-            document.querySelectorAll('.step-container').forEach(s => s.style.display = 'none');
-            document.getElementById('step-2').style.display = 'block';
+            if(v === "DISKON10") total *= 0.9;
             
-            // Progress Bar Reset
-            document.getElementById('p-fill').style.width = '0%';
+            state.total = Math.floor(total);
+            state.qty = q;
+            document.getElementById('total-ui').innerText = "Rp " + state.total.toLocaleString('id-ID');
         }
 
-        function toStep3() {
-            const btn = document.getElementById('confirm-btn');
+        function goToReview() {
+            state.user = document.getElementById('username').value;
+            if(!state.user || state.qty < 50) return alert("Username harus diisi & Minimal 50 Robux!");
+            
+            state.orderId = "RBX-" + Math.floor(100000 + Math.random() * 900000);
+            
+            document.getElementById('res-id').innerText = state.orderId;
+            document.getElementById('res-user').innerText = state.user;
+            document.getElementById('res-qty').innerText = state.qty + " Robux";
+            document.getElementById('res-total').innerText = "Rp " + state.total.toLocaleString('id-ID');
+
+            showStep(2);
+        }
+
+        function finalize() {
+            const btn = document.getElementById('btn-confirm');
             btn.innerText = "Processing...";
             btn.disabled = true;
-            document.getElementById('p-fill').style.width = '100%';
+            document.getElementById('p-bar').style.width = "100%";
 
             setTimeout(() => {
-                // Update Stok secara visual
-                currentStok -= orderData.qty;
-                document.getElementById('stok-num').innerText = currentStok.toLocaleString('id-ID');
-                
-                document.querySelectorAll('.step-container').forEach(s => s.style.display = 'none');
-                document.getElementById('step-3').style.display = 'block';
-            }, 1600);
+                stok -= state.qty;
+                document.getElementById('stok-ui').innerText = stok.toLocaleString('id-ID');
+                showStep(3);
+            }, 1800);
         }
 
-        function sendWhatsApp() {
+        function showStep(n) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active-step'));
+            document.getElementById('step-' + n).classList.add('active-step');
+        }
+
+        function backToStep1() { showStep(1); }
+
+        function contactAdmin() {
             const phone = "6285716075774";
-            const msg = `Halo Ultra Store!\n\nKonfirmasi Pesanan Baru:\nID: ${orderData.id}\nUsername: ${orderData.user}\nProduk: ${orderData.prod}\nJumlah: ${orderData.qty}\nTotal: Rp${orderData.total.toLocaleString('id-ID')}\n\nMohon instruksi pembayarannya.`;
+            const msg = `Halo Admin RbxGold!\n\nSaya ingin konfirmasi order Robux:\nID: ${state.orderId}\nUsername: ${state.user}\nJumlah: ${state.qty} Robux\nTotal: Rp${state.total.toLocaleString('id-ID')}\n\nMohon instruksi selanjutnya.`;
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
         }
 
-        // Fake Notif System
-        const users = ["Roxie99", "Player_X", "GamerPro", "Zenzz", "Alex_Game", "RobuxHunter"];
-        function startNotifLoop() {
+        function startNotifs() {
+            const fakeUsers = ["Andi_Rbx", "SkyWalker", "Roxie", "PlayerOne", "Budi88"];
             setInterval(() => {
-                const randomUser = users[Math.floor(Math.random() * users.length)];
-                document.getElementById('notif-user').innerText = randomUser;
-                const notif = document.getElementById('f-notif');
-                notif.classList.add('show');
-                setTimeout(() => notif.classList.remove('show'), 4000);
-            }, 12000);
+                const u = fakeUsers[Math.floor(Math.random()*fakeUsers.length)];
+                const r = [100, 500, 1000, 2000][Math.floor(Math.random()*4)];
+                const t = document.getElementById('toast');
+                t.innerText = `${u} baru saja membeli ${r} Robux!`;
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 4000);
+            }, 15000);
         }
     </script>
 </body>
