@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITANBUX | Enterprise Robux Store</title>
+    <title>TITANBUX | Professional Store</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,274 +12,221 @@
             --glass: rgba(255, 255, 255, 0.03);
             --border: rgba(255, 255, 255, 0.07);
             --text-dim: #94a3b8;
-            --error: #ff4757;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg-dark); color: white; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-dark); color: white; overflow-x: hidden; }
 
-        /* Background Effects */
-        .orb { position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.1; }
-        .orb-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; right: -100px; }
-        .orb-2 { width: 300px; height: 300px; background: #7000ff; bottom: -50px; left: -50px; }
+        /* --- LOADING SPINNER --- */
+        #loading-overlay {
+            position: fixed; inset: 0; background: var(--bg-dark);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Header */
-        header { position: sticky; top: 0; z-index: 100; padding: 15px 20px; backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 800; font-size: 1.2rem; }
-        .logo span { color: var(--primary); }
-        .stock-badge { background: rgba(0,255,163,0.1); color: var(--primary); padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; border: 1px solid rgba(0,255,163,0.2); }
+        /* --- LAYOUT --- */
+        header { 
+            padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border); backdrop-filter: blur(20px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .stock-badge { background: rgba(0,255,163,0.1); color: var(--primary); padding: 6px 15px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; border: 1px solid rgba(0,255,163,0.2); }
 
-        .container { max-width: 500px; margin: 20px auto 140px auto; padding: 0 20px; }
+        .container { max-width: 500px; margin: 20px auto 140px auto; padding: 0 20px; display: none; opacity: 0; transition: 0.5s; }
 
-        /* Stepper */
-        .stepper { display: flex; gap: 8px; margin-bottom: 25px; }
-        .step-pill { flex: 1; height: 4px; background: var(--border); border-radius: 10px; transition: 0.5s; }
-        .step-pill.active { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        /* --- UI CARDS --- */
+        .card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 22px; backdrop-filter: blur(10px); margin-bottom: 15px; }
+        .card-label { font-size: 0.8rem; font-weight: 700; color: var(--text-dim); margin-bottom: 12px; display: block; }
 
-        /* UI Cards */
-        .card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 20px; backdrop-filter: blur(10px); margin-bottom: 15px; }
-        .card-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-
-        /* Roblox Avatar Preview */
-        .avatar-preview { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 16px; border: 1px solid var(--border); }
-        .avatar-circle { width: 50px; height: 50px; background: #1a1c23; border-radius: 50%; overflow: hidden; border: 2px solid var(--border); }
-        .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Inputs */
-        .input-wrapper { position: relative; margin-bottom: 15px; }
-        input { width: 100%; background: rgba(255,255,255,0.05); border: 1.5px solid var(--border); padding: 14px 14px 14px 40px; border-radius: 14px; color: white; font-size: 0.95rem; outline: none; transition: 0.3s; }
+        input { 
+            width: 100%; background: rgba(255,255,255,0.05); border: 1.5px solid var(--border); 
+            padding: 16px; border-radius: 16px; color: white; font-size: 1rem; outline: none; transition: 0.3s;
+        }
         input:focus { border-color: var(--primary); background: rgba(255,255,255,0.08); }
-        .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; opacity: 0.5; }
 
-        /* Payment Selector */
-        .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .pay-item { background: var(--glass); border: 1.5px solid var(--border); padding: 12px; border-radius: 16px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .pay-item.active { border-color: var(--primary); background: rgba(0,255,163,0.05); }
-        .pay-item img { height: 20px; filter: brightness(0) invert(1); opacity: 0.8; }
-        .pay-item span { display: block; font-size: 0.65rem; font-weight: 700; margin-top: 5px; color: var(--text-dim); }
+        /* --- PRESET BUTTONS --- */
+        .preset-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .btn-preset { 
+            background: var(--glass); border: 1px solid var(--border); padding: 15px; 
+            border-radius: 15px; color: white; cursor: pointer; transition: 0.2s; font-weight: 700;
+        }
+        .btn-preset:active { transform: scale(0.95); }
+        .btn-preset.active { border-color: var(--primary); background: rgba(0,255,163,0.05); color: var(--primary); }
 
-        /* Bottom Bar */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,7,10,0.85); backdrop-filter: blur(25px); border-top: 1px solid var(--border); padding: 20px 20px 35px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
-        .price-label { font-size: 0.75rem; color: var(--text-dim); }
-        .price-value { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
-        .btn-next { background: var(--primary); color: #000; border: none; padding: 14px 28px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,255,163,0.2); }
+        /* --- PAYMENT SELECTOR --- */
+        .pay-row { display: flex; gap: 10px; margin-top: 10px; }
+        .pay-item { 
+            flex: 1; background: var(--glass); border: 1.5px solid var(--border); 
+            padding: 12px; border-radius: 14px; text-align: center; cursor: pointer; opacity: 0.6;
+        }
+        .pay-item.active { border-color: var(--primary); opacity: 1; background: rgba(0,255,163,0.05); }
+        .pay-item img { height: 18px; filter: brightness(0) invert(1); }
 
-        /* Voucher Success */
-        .v-success { font-size: 0.7rem; color: var(--primary); font-weight: 700; margin-top: 5px; display: none; }
+        /* --- BOTTOM NAV --- */
+        #bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(5,7,10,0.9); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border); padding: 20px 25px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            transform: translateY(100%); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #bottom-nav.show { transform: translateY(0); }
 
-        /* Pages */
-        .page { display: none; animation: fadeIn 0.4s ease forwards; }
-        .active-page { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-main { 
+            background: var(--primary); color: black; border: none; padding: 16px 30px; 
+            border-radius: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(0,255,163,0.2);
+        }
 
-        /* Summary Item */
-        .s-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.85rem; }
-        .s-val { font-weight: 700; color: white; }
+        /* --- SUCCESS PAGE --- */
+        #success-page { display: none; text-align: center; padding: 40px 20px; }
+        .icon-check { width: 80px; height: 80px; background: var(--primary); color: black; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 20px; }
 
-        /* Success Confetti Placeholder */
-        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2000; }
     </style>
 </head>
 <body>
 
-    <canvas id="confetti"></canvas>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; font-weight: 600; color: var(--text-dim); letter-spacing: 2px;">SECURE CONNECTION</p>
+    </div>
 
     <header>
-        <div class="logo">TITAN<span>BUX</span></div>
+        <div style="font-weight: 800; font-size: 1.2rem;">TITAN<span>BUX</span></div>
         <div class="stock-badge">Stok: <span id="stok-num">142.350</span></div>
     </header>
 
-    <div class="container">
-        <div class="stepper">
-            <div class="step-pill active" id="pill-1"></div>
-            <div class="step-pill" id="pill-2"></div>
-            <div class="step-pill" id="pill-3"></div>
+    <div class="container" id="main-content">
+        
+        <div class="card">
+            <span class="card-label">STEP 1: IDENTITAS</span>
+            <input type="text" id="username" placeholder="Masukkan Username Roblox..." oninput="checkInput()">
         </div>
 
-        <div id="page-1" class="page active-page">
-            <div class="card">
-                <div class="card-title">👤 Informasi Akun</div>
-                <div class="avatar-preview">
-                    <div class="avatar-circle">
-                        <img id="avatar-img" src="https://tr.rbxcdn.com/38c4ed3f090792376241a84f37803f27/150/150/AvatarHeadshot/Png" alt="Avatar">
-                    </div>
-                    <div>
-                        <div id="preview-name" style="font-weight: 700; font-size: 0.9rem;">Player</div>
-                        <div style="font-size: 0.7rem; color: var(--text-dim);">Avatar Preview</div>
-                    </div>
-                </div>
-                <div class="input-wrapper">
-                    <span class="input-icon">👤</span>
-                    <input type="text" id="user-in" placeholder="Username Roblox..." oninput="updateAvatar()">
-                </div>
+        <div class="card">
+            <span class="card-label">STEP 2: PILIH JUMLAH</span>
+            <input type="number" id="custom-qty" placeholder="Jumlah kustom (min. 50)" oninput="recalc('custom')">
+            
+            <div class="preset-grid">
+                <button class="btn-preset" onclick="setPreset(400, this)">400 RBX</button>
+                <button class="btn-preset" onclick="setPreset(800, this)">800 RBX</button>
+                <button class="btn-preset" onclick="setPreset(1000, this)">1000 RBX</button>
+                <button class="btn-preset" onclick="setPreset(2000, this)">2000 RBX</button>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="card-title">💎 Jumlah Robux</div>
-                <div class="input-wrapper">
-                    <span class="input-icon">💰</span>
-                    <input type="number" id="rbx-in" placeholder="Min. 50" oninput="calculate()">
+        <div class="card">
+            <span class="card-label">STEP 3: PEMBAYARAN</span>
+            <div class="pay-row">
+                <div class="pay-item active" onclick="setPay('DANA', this)">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dan_dana_id.svg" alt="DANA">
                 </div>
-                <div class="input-wrapper" style="margin-bottom: 0;">
-                    <span class="input-icon">🎫</span>
-                    <input type="text" id="voucher-in" placeholder="Kode Voucher (Contoh: TITAN10)" oninput="calculate()">
-                    <div id="v-msg" class="v-success">✓ Diskon 10% Berhasil Diterapkan!</div>
+                <div class="pay-item" onclick="setPay('QRIS', this)">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" alt="QRIS">
                 </div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">💳 Metode Pembayaran</div>
-                <div class="pay-grid">
-                    <div class="pay-item active" onclick="setPay('DANA', this)">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dan_dana_id.svg" alt="DANA">
-                        <span>DANA</span>
-                    </div>
-                    <div class="pay-item" onclick="setPay('QRIS', this)">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" alt="QRIS">
-                        <span>QRIS</span>
-                    </div>
-                    <div class="pay-item" onclick="setPay('GOPAY', this)">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg" alt="GOPAY">
-                        <span>GOPAY</span>
-                    </div>
+                <div class="pay-item" onclick="setPay('GOPAY', this)">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg" alt="GOPAY">
                 </div>
             </div>
         </div>
 
-        <div id="page-2" class="page">
-            <div class="card">
-                <div class="card-title">📝 Detail Pesanan</div>
-                <div class="s-row"><span>ID Pesanan</span><span class="s-val" id="s-id">#88219</span></div>
-                <div class="s-row"><span>Username</span><span class="s-val" id="s-user">Player</span></div>
-                <div class="s-row"><span>Jumlah</span><span class="s-val" id="s-qty">0 Robux</span></div>
-                <div class="s-row"><span>Metode</span><span class="s-val" id="s-pay">DANA</span></div>
-                <div style="border-top: 1px solid var(--border); padding-top: 15px; margin-top: 15px; display: flex; justify-content: space-between;">
-                    <span style="font-weight: 700;">Total Pembayaran</span>
-                    <span id="s-total" style="font-weight: 800; color: var(--primary); font-size: 1.1rem;">Rp 0</span>
-                </div>
-            </div>
-            <button onclick="changePage(1)" style="width: 100%; background: none; border: 1.5px solid var(--border); color: var(--text-dim); padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;">Ganti Data</button>
-        </div>
-
-        <div id="page-3" class="page" style="text-align: center; padding-top: 30px;">
-            <div style="font-size: 4rem; margin-bottom: 20px;">⚡</div>
-            <h2 style="margin-bottom: 10px;">Siap Checkout!</h2>
-            <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 30px;">Silahkan hubungi admin untuk mendapatkan nomor tujuan pembayaran sesuai metode yang dipilih.</p>
-            <button class="btn-next" style="width: 100%;" onclick="sendWA()">KIRIM KE WHATSAPP</button>
-        </div>
     </div>
 
-    <div class="bottom-nav" id="bottom-bar">
+    <div id="success-page">
+        <div class="icon-check">✓</div>
+        <h2>Order Generated!</h2>
+        <p style="color: var(--text-dim); margin: 15px 0 30px;">ID: <span id="order-id" style="color: white; font-weight: 700;">-</span></p>
+        <button class="btn-main" style="width: 100%;" onclick="sendWA()">KIRIM KE WHATSAPP</button>
+    </div>
+
+    <div id="bottom-nav">
         <div>
-            <div class="price-label">Estimasi Harga</div>
-            <div class="price-value" id="price-ui">Rp 0</div>
+            <div style="font-size: 0.7rem; color: var(--text-dim);">Total Harga</div>
+            <div id="total-price" style="font-size: 1.3rem; font-weight: 800; color: var(--primary);">Rp 0</div>
         </div>
-        <button class="btn-next" onclick="nextAction()" id="action-btn">Lanjutkan</button>
+        <button class="btn-main" onclick="processOrder()">Beli Sekarang</button>
     </div>
 
     <script>
         const RATE = 132;
-        let data = { user: "Player", qty: 0, total: 0, pay: "DANA", id: "" };
-        let currentStep = 1;
+        let db = { user: "", qty: 0, total: 0, pay: "DANA", id: "" };
         let stok = 142350;
 
-        // Live Stock Simulation
+        // 1. Loading Function (1 Detik)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading-overlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').style.display = 'none';
+                    const main = document.getElementById('main-content');
+                    main.style.display = 'block';
+                    setTimeout(() => main.style.opacity = '1', 50);
+                }, 500);
+            }, 1000); // 1 Detik muter
+        });
+
+        // 2. Logic Stok
         setInterval(() => {
-            stok -= Math.floor(Math.random() * 5);
+            stok -= Math.floor(Math.random() * 3);
             document.getElementById('stok-num').innerText = stok.toLocaleString('id-ID');
-        }, 8000);
+        }, 5000);
 
-        function updateAvatar() {
-            const user = document.getElementById('user-in').value || "Player";
-            document.getElementById('preview-name').innerText = user;
-            data.user = user;
-        }
-
-        function calculate() {
-            const qty = document.getElementById('rbx-in').value;
-            const voucher = document.getElementById('voucher-in').value.toUpperCase();
-            let total = qty * RATE;
-
-            if(voucher === "TITAN10") {
-                total *= 0.9;
-                document.getElementById('v-msg').style.display = 'block';
+        // 3. Input Checker (Show/Hide Bottom Bar)
+        function checkInput() {
+            const user = document.getElementById('username').value;
+            const nav = document.getElementById('bottom-nav');
+            if (user.length >= 3 && db.qty >= 50) {
+                nav.classList.add('show');
             } else {
-                document.getElementById('v-msg').style.display = 'none';
+                nav.classList.remove('show');
             }
-
-            data.qty = qty;
-            data.total = Math.floor(total);
-            document.getElementById('price-ui').innerText = "Rp " + data.total.toLocaleString('id-ID');
+            db.user = user;
         }
 
-        function setPay(type, el) {
+        function setPreset(val, el) {
+            document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('custom-qty').value = val;
+            recalc('preset', val);
+        }
+
+        function recalc(type, val = 0) {
+            if(type === 'custom') {
+                val = document.getElementById('custom-qty').value;
+                document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+            }
+            db.qty = val;
+            db.total = val * RATE;
+            document.getElementById('total-price').innerText = "Rp " + db.total.toLocaleString('id-ID');
+            checkInput();
+        }
+
+        function setPay(method, el) {
             document.querySelectorAll('.pay-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-            data.pay = type;
+            db.pay = method;
         }
 
-        function nextAction() {
-            if(currentStep === 1) {
-                if(!data.user || data.qty < 50) return alert("Lengkapi data dengan benar!");
-                data.id = "TITAN-" + Math.floor(100000 + Math.random() * 900000);
-                
-                document.getElementById('s-id').innerText = data.id;
-                document.getElementById('s-user').innerText = data.user;
-                document.getElementById('s-qty').innerText = data.qty + " Robux";
-                document.getElementById('s-pay').innerText = data.pay;
-                document.getElementById('s-total').innerText = "Rp " + data.total.toLocaleString('id-ID');
-                
-                changePage(2);
-            } else if(currentStep === 2) {
-                changePage(3);
-                document.getElementById('bottom-bar').style.display = 'none';
-                startConfetti();
-            }
-        }
-
-        function changePage(n) {
-            currentStep = n;
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.getElementById('page-' + n).classList.add('active-page');
-            document.querySelectorAll('.step-pill').forEach((p, i) => {
-                p.classList.toggle('active', i < n);
-            });
+        function processOrder() {
+            db.id = "RBX-" + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('order-id').innerText = db.id;
+            
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('bottom-nav').classList.remove('show');
+            document.getElementById('success-page').style.display = 'block';
         }
 
         function sendWA() {
             const phone = "6285716075774";
-            const text = `🚀 *TITANBUX ORDER*\n\nOrder ID: ${data.id}\nUsername: ${data.user}\nProduk: ${data.qty} Robux\nMetode: ${data.pay}\nTotal: Rp${data.total.toLocaleString('id-ID')}\n\nMohon instruksi pembayaran kak!`;
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`);
-        }
-
-        // Simple Confetti
-        function startConfetti() {
-            const canvas = document.getElementById('confetti');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            let particles = [];
-            for(let i=0; i<100; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    size: Math.random() * 5 + 2,
-                    speed: Math.random() * 3 + 2,
-                    color: `hsl(${Math.random() * 360}, 70%, 50%)`
-                });
-            }
-            function draw() {
-                ctx.clearRect(0,0,canvas.width, canvas.height);
-                particles.forEach(p => {
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
-                    p.y += p.speed;
-                });
-                requestAnimationFrame(draw);
-            }
-            draw();
+            const msg = `🔥 *ORDER TITANBUX*\nID: ${db.id}\nUser: ${db.user}\nQty: ${db.qty} Robux\nMetode: ${db.pay}\nTotal: Rp${db.total.toLocaleString('id-ID')}`;
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
         }
     </script>
 </body>
