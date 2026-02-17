@@ -3,264 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RbxGold - Premium Robux Provider</title>
+    <title>TITANBUX | Ultra-Modern Robux Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-green: #00e676;
-            --dark-bg: #0a0b10;
-            --card-glass: rgba(255, 255, 255, 0.03);
-            --border-glass: rgba(255, 255, 255, 0.08);
-            --text-main: #ffffff;
-            --text-dim: #8e8e93;
+            --primary: #00ffa3;
+            --bg-dark: #05070a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.07);
+            --text-dim: #94a3b8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg-dark); color: white; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
 
-        body { 
-            background-color: var(--dark-bg); 
-            color: var(--text-main); 
-            overflow-x: hidden;
-            background-image: radial-gradient(circle at top right, rgba(0, 230, 118, 0.05), transparent),
-                              radial-gradient(circle at bottom left, rgba(0, 230, 118, 0.03), transparent);
-        }
+        /* Background Effects */
+        .orb { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.15; }
+        .orb-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; right: -100px; }
+        .orb-2 { width: 300px; height: 300px; background: #7000ff; bottom: -50px; left: -50px; }
 
-        /* Welcome Screen */
-        #splash {
-            position: fixed; inset: 0; background: var(--dark-bg); z-index: 1000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: 0.8s ease-out;
-        }
+        /* Splash Screen */
+        #splash { position: fixed; inset: 0; background: var(--bg-dark); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.8s ease-in-out; }
+        .loader { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-top: 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .hero-title { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; text-align: center; }
-        .hero-title span { color: var(--primary-green); }
-        .hero-sub { color: var(--text-dim); margin-top: 8px; font-size: 0.9rem; letter-spacing: 2px; }
-        
-        .btn-start {
-            margin-top: 40px; padding: 16px 45px; border-radius: 50px; border: 1px solid var(--primary-green);
-            background: transparent; color: var(--primary-green); font-weight: 700; cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-start:hover { background: var(--primary-green); color: var(--dark-bg); box-shadow: 0 0 20px rgba(0, 230, 118, 0.4); }
+        /* Layout */
+        header { position: sticky; top: 0; z-index: 100; padding: 20px; backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: -1px; }
+        .logo span { color: var(--primary); text-shadow: 0 0 15px rgba(0,255,163,0.5); }
 
-        /* Main App */
-        #app { display: none; opacity: 0; transition: 1s; padding-top: 80px; }
+        .container { max-width: 500px; margin: 20px auto 120px auto; padding: 0 20px; }
 
-        header {
-            position: fixed; top: 0; width: 100%; padding: 20px 6%; display: flex;
-            justify-content: space-between; align-items: center; z-index: 100;
-            background: rgba(10, 11, 16, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass);
-        }
+        /* Cards & UI Elements */
+        .card { background: var(--glass); border: 1px solid var(--border); border-radius: 28px; padding: 24px; backdrop-filter: blur(10px); margin-bottom: 20px; }
+        .label-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,255,163,0.1); color: var(--primary); padding: 6px 14px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; margin-bottom: 15px; }
 
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 10px; font-weight: 600; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
+        input { width: 100%; background: rgba(255,255,255,0.05); border: 1.5px solid var(--border); padding: 16px 16px 16px 45px; border-radius: 16px; color: white; font-size: 1rem; transition: 0.3s; }
+        input:focus { border-color: var(--primary); background: rgba(255,255,255,0.08); outline: none; box-shadow: 0 0 20px rgba(0,255,163,0.1); }
 
-        /* Product Card */
-        .glass-card {
-            background: var(--card-glass); border: 1px solid var(--border-glass);
-            border-radius: 30px; padding: 30px; backdrop-filter: blur(10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
+        /* Grid Selection */
+        .grid-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .opt-btn { background: var(--glass); border: 1px solid var(--border); padding: 18px; border-radius: 18px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .opt-btn.active { border-color: var(--primary); background: rgba(0,255,163,0.05); }
+        .opt-btn .rbx-val { display: block; font-weight: 800; font-size: 1.1rem; }
+        .opt-btn .price-val { display: block; font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
 
-        .stok-badge {
-            background: rgba(0, 230, 118, 0.1); color: var(--primary-green);
-            padding: 6px 15px; border-radius: 50px; font-size: 0.75rem; font-weight: 700;
-            display: inline-block; margin-bottom: 20px;
-        }
+        /* Progress Bar */
+        .stepper { display: flex; gap: 8px; margin-bottom: 30px; }
+        .step-pill { flex: 1; height: 6px; background: var(--border); border-radius: 10px; transition: 0.5s; }
+        .step-pill.active { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
 
-        .input-box { margin-bottom: 25px; }
-        .input-box label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim); margin-bottom: 10px; }
-        
-        input {
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass);
-            padding: 18px; border-radius: 16px; color: white; font-size: 1rem; outline: none; transition: 0.3s;
-        }
-        input:focus { border-color: var(--primary-green); background: rgba(255,255,255,0.08); }
+        /* Bottom Bar */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,7,10,0.8); backdrop-filter: blur(20px); border-top: 1px solid var(--border); padding: 20px 25px 35px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
+        .total-info { display: flex; flex-direction: column; }
+        .total-info span { font-size: 0.8rem; color: var(--text-dim); }
+        .total-info h3 { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
 
-        /* Checkout Steps */
-        .step { display: none; animation: slideUp 0.5s ease forwards; }
-        .active-step { display: block; }
+        .btn-main { background: var(--primary); color: #000; border: none; padding: 16px 32px; border-radius: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-main:active { transform: scale(0.95); }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* Notification Popup */
+        #purchase-toast { position: fixed; bottom: 120px; left: 20px; right: 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); backdrop-filter: blur(15px); padding: 15px; border-radius: 20px; display: flex; align-items: center; gap: 12px; transform: translateY(200px); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 999; }
+        #purchase-toast.show { transform: translateY(0); }
+        .toast-avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--primary); display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; }
 
-        .summary-box {
-            background: rgba(0,0,0,0.2); border-radius: 20px; padding: 20px; margin: 20px 0;
-            border: 1px dashed var(--border-glass);
-        }
-        .summary-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; }
-        .summary-item .val { font-weight: 700; color: var(--primary-green); }
-
-        .btn-primary {
-            width: 100%; padding: 20px; border-radius: 18px; border: none;
-            background: var(--primary-green); color: var(--dark-bg);
-            font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.3s;
-        }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 230, 118, 0.2); }
-
-        /* Mini Components */
-        .progress-container { height: 4px; background: var(--border-glass); border-radius: 10px; margin: 25px 0; overflow: hidden; }
-        .progress-bar { height: 100%; width: 0%; background: var(--primary-green); transition: 1.5s ease-in-out; }
-
-        .notif {
-            position: fixed; top: 100px; left: 50%; transform: translateX(-50%) translateY(-200px);
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); padding: 12px 25px;
-            border-radius: 50px; border: 1px solid var(--border-glass); font-size: 0.8rem;
-            transition: 0.5s; z-index: 1000;
-        }
-        .notif.show { transform: translateX(-50%) translateY(0); }
+        /* Pages */
+        .page { display: none; animation: fadeIn 0.4s ease forwards; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     </style>
 </head>
 <body>
 
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
     <div id="splash">
-        <h1 class="hero-title">RBX<span>GOLD</span></h1>
-        <p class="hero-sub">PREMIUM • INSTANT • SECURE</p>
-        <button class="btn-start" onclick="initApp()">ENTER STORE</button>
+        <h1 class="logo">TITAN<span>BUX</span></h1>
+        <div class="loader"></div>
     </div>
 
-    <div id="app">
-        <header>
-            <div style="font-weight: 900; font-size: 1.2rem;">RBX<span style="color:var(--primary-green)">GOLD</span></div>
-            <div style="font-size: 0.8rem; opacity: 0.5;">Support 24/7</div>
-        </header>
+    <header>
+        <div class="logo">TITAN<span>BUX</span></div>
+        <div style="font-size: 0.75rem; color: var(--text-dim);">ID: <span id="user-id-display">6285...774</span></div>
+    </header>
 
-        <div class="container">
-            <div class="glass-card">
-                <div class="stok-badge">🟢 <span id="stok-ui">507.756</span> Stok Tersedia</div>
-                
-                <div id="step-1" class="step active-step">
-                    <h2 style="margin-bottom: 25px;">Top Up Robux</h2>
-                    
-                    <div class="input-box">
-                        <label>Roblox Username</label>
-                        <input type="text" id="username" placeholder="Username kamu...">
+    <div class="container">
+        <div class="stepper">
+            <div class="step-pill active" id="pill-1"></div>
+            <div class="step-pill" id="pill-2"></div>
+            <div class="step-pill" id="pill-3"></div>
+        </div>
+
+        <div id="page-1" class="page active-page">
+            <div class="label-tag">⚡ Fast Delivery</div>
+            <h2 style="margin-bottom: 25px; font-size: 1.8rem;">Isi Data & Jumlah</h2>
+            
+            <div class="card">
+                <div class="input-group">
+                    <label>Username Roblox</label>
+                    <div class="input-wrapper">
+                        <i>👤</i>
+                        <input type="text" id="roblox-user" placeholder="Ketik username...">
                     </div>
-
-                    <div class="input-box">
-                        <label>Jumlah Robux (Min. 50)</label>
-                        <input type="number" id="qty" placeholder="Contoh: 1000" oninput="recalc()">
-                    </div>
-
-                    <div class="input-box">
-                        <label>Kode Voucher (Opsional)</label>
-                        <input type="text" id="voucher" placeholder="DISKON10" oninput="recalc()">
-                    </div>
-
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                        <span style="font-size:0.8rem; color:var(--text-dim);">Total Harga</span>
-                        <span id="total-ui" style="font-size:1.5rem; font-weight:900; color:var(--primary-green)">Rp 0</span>
-                    </div>
-
-                    <button class="btn-primary" style="margin-top:30px;" onclick="goToReview()">BELI SEKARANG</button>
                 </div>
-
-                <div id="step-2" class="step">
-                    <h3 style="text-align:center;">Review Order</h3>
-                    <div class="summary-box">
-                        <div class="summary-item"><span>ID Pesanan</span> <span class="val" id="res-id">-</span></div>
-                        <div class="summary-item"><span>Username</span> <span class="val" id="res-user">-</span></div>
-                        <div class="summary-item"><span>Jumlah</span> <span class="val" id="res-qty">-</span></div>
-                        <div class="summary-item"><span>Total Bayar</span> <span class="val" id="res-total">-</span></div>
-                    </div>
-                    <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
-                    <button class="btn-primary" id="btn-confirm" onclick="finalize()">KONFIRMASI</button>
-                    <button onclick="backToStep1()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:15px; cursor:pointer;">Kembali</button>
-                </div>
-
-                <div id="step-3" class="step" style="text-align:center;">
-                    <div style="font-size:4rem; margin-bottom:20px;">💎</div>
-                    <h2>Order Diproses!</h2>
-                    <p style="color:var(--text-dim); font-size:0.9rem; margin:15px 0 25px;">Silahkan hubungi admin melalui WhatsApp untuk mengirimkan bukti transfer.</p>
-                    <button class="btn-primary" onclick="contactAdmin()">HUBUNGI ADMIN (WA)</button>
-                </div>
-
             </div>
 
-            <p style="text-align:center; margin-top:30px; font-size:0.7rem; color:var(--text-dim); line-height:1.6;">
-                RbxGold tidak berafiliasi dengan Roblox Corporation.<br>
-                Seluruh transaksi bersifat final dan aman.
-            </p>
+            <h4 style="margin: 30px 0 15px 5px; font-size: 0.9rem; color: var(--text-dim);">Pilih Paket Cepat</h4>
+            <div class="grid-options">
+                <div class="opt-btn" onclick="setRbx(400, 52800, this)">
+                    <span class="rbx-val">400 RBX</span>
+                    <span class="price-val">Rp 52.800</span>
+                </div>
+                <div class="opt-btn" onclick="setRbx(800, 105600, this)">
+                    <span class="rbx-val">800 RBX</span>
+                    <span class="price-val">Rp 105.600</span>
+                </div>
+                <div class="opt-btn" onclick="setRbx(1000, 132000, this)">
+                    <span class="rbx-val">1,000 RBX</span>
+                    <span class="price-val">Rp 132.000</span>
+                </div>
+                <div class="opt-btn" onclick="setRbx(2000, 264000, this)">
+                    <span class="rbx-val">2,000 RBX</span>
+                    <span class="price-val">Rp 264.000</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="input-group">
+                    <label>Jumlah Kustom (Min. 50)</label>
+                    <div class="input-wrapper">
+                        <i>💎</i>
+                        <input type="number" id="custom-rbx" placeholder="Masukkan angka..." oninput="sync('rbx')">
+                    </div>
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Total Rupiah (Auto)</label>
+                    <div class="input-wrapper">
+                        <i>💰</i>
+                        <input type="number" id="custom-idr" placeholder="Auto calculate..." oninput="sync('idr')">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-2" class="page">
+            <div class="label-tag">📋 Review Order</div>
+            <h2 style="margin-bottom: 25px; font-size: 1.8rem;">Konfirmasi Pesanan</h2>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span style="color: var(--text-dim);">Order ID</span>
+                    <span id="order-id" style="font-weight: 700;">-</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span style="color: var(--text-dim);">Username</span>
+                    <span id="rev-user" style="font-weight: 700;">-</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span style="color: var(--text-dim);">Item</span>
+                    <span id="rev-item" style="font-weight: 700;">-</span>
+                </div>
+                <div style="border-top: 1px solid var(--border); padding-top: 15px; margin-top: 15px; display: flex; justify-content: space-between;">
+                    <span style="font-weight: 700;">Total Bayar</span>
+                    <span id="rev-total" style="font-weight: 900; color: var(--primary); font-size: 1.2rem;">-</span>
+                </div>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-dim); text-align: center; padding: 0 20px;">Dengan mengklik lanjut, pesanan akan segera diproses ke sistem antrian kami.</p>
+        </div>
+
+        <div id="page-3" class="page" style="text-align: center; padding-top: 40px;">
+            <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px auto; font-size: 2.5rem; color: black; box-shadow: 0 0 30px rgba(0,255,163,0.3);">✓</div>
+            <h2>Pesanan Dibuat!</h2>
+            <p style="color: var(--text-dim); margin: 15px 0 35px 0;">Silahkan klik tombol di bawah untuk instruksi pembayaran DANA/QRIS.</p>
+            <button class="btn-main" style="width: 100%;" onclick="sendWA()">Lanjut ke WhatsApp</button>
         </div>
     </div>
 
-    <div id="toast" class="notif">Seseorang baru saja membeli 500 Robux!</div>
+    <div class="bottom-nav" id="action-bar">
+        <div class="total-info">
+            <span>Total Tagihan</span>
+            <h3 id="display-price">Rp 0</h3>
+        </div>
+        <button class="btn-main" onclick="nextStep()" id="btn-next">Lanjutkan</button>
+    </div>
+
+    <div id="purchase-toast">
+        <div class="toast-avatar" id="toast-initial">A</div>
+        <div>
+            <div id="toast-user" style="font-weight: 700; font-size: 0.85rem;">Alex_Rbx</div>
+            <div style="font-size: 0.75rem; color: var(--primary);">Baru saja membeli 1,000 Robux</div>
+        </div>
+    </div>
 
     <script>
-        let state = { user: "", qty: 0, total: 0, orderId: "" };
-        const PRICE_PER_RBX = 132;
-        let stok = 507756;
+        const RATE = 132;
+        let currentStep = 1;
+        let order = { user: "", rbx: 0, price: 0, id: "" };
 
-        function initApp() {
-            document.getElementById('splash').style.opacity = '0';
+        // Loader
+        window.onload = () => {
             setTimeout(() => {
-                document.getElementById('splash').style.display = 'none';
-                document.getElementById('app').style.display = 'block';
-                setTimeout(() => { document.getElementById('app').style.opacity = '1'; }, 50);
-                startNotifs();
-            }, 800);
+                document.getElementById('splash').style.opacity = '0';
+                setTimeout(() => document.getElementById('splash').style.display = 'none', 800);
+                startFakeNotifs();
+            }, 1500);
         }
 
-        function recalc() {
-            const q = document.getElementById('qty').value;
-            const v = document.getElementById('voucher').value.toUpperCase();
-            let total = q * PRICE_PER_RBX;
+        // Dual-Sync Logic
+        function sync(type) {
+            const rbxIn = document.getElementById('custom-rbx');
+            const idrIn = document.getElementById('custom-idr');
             
-            if(v === "DISKON10") total *= 0.9;
-            
-            state.total = Math.floor(total);
-            state.qty = q;
-            document.getElementById('total-ui').innerText = "Rp " + state.total.toLocaleString('id-ID');
+            if(type === 'rbx') {
+                order.rbx = rbxIn.value;
+                order.price = order.rbx * RATE;
+                idrIn.value = order.price;
+            } else {
+                order.price = idrIn.value;
+                order.rbx = Math.floor(order.price / RATE);
+                rbxIn.value = order.rbx;
+            }
+            updateUI();
         }
 
-        function goToReview() {
-            state.user = document.getElementById('username').value;
-            if(!state.user || state.qty < 50) return alert("Username harus diisi & Minimal 50 Robux!");
-            
-            state.orderId = "RBX-" + Math.floor(100000 + Math.random() * 900000);
-            
-            document.getElementById('res-id').innerText = state.orderId;
-            document.getElementById('res-user').innerText = state.user;
-            document.getElementById('res-qty').innerText = state.qty + " Robux";
-            document.getElementById('res-total').innerText = "Rp " + state.total.toLocaleString('id-ID');
-
-            showStep(2);
+        function setRbx(r, p, el) {
+            document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            order.rbx = r;
+            order.price = p;
+            document.getElementById('custom-rbx').value = r;
+            document.getElementById('custom-idr').value = p;
+            updateUI();
         }
 
-        function finalize() {
-            const btn = document.getElementById('btn-confirm');
-            btn.innerText = "Processing...";
-            btn.disabled = true;
-            document.getElementById('p-bar').style.width = "100%";
-
-            setTimeout(() => {
-                stok -= state.qty;
-                document.getElementById('stok-ui').innerText = stok.toLocaleString('id-ID');
-                showStep(3);
-            }, 1800);
+        function updateUI() {
+            document.getElementById('display-price').innerText = "Rp " + parseInt(order.price).toLocaleString('id-ID');
         }
 
-        function showStep(n) {
-            document.querySelectorAll('.step').forEach(s => s.classList.remove('active-step'));
-            document.getElementById('step-' + n).classList.add('active-step');
+        function nextStep() {
+            order.user = document.getElementById('roblox-user').value;
+            if(!order.user || order.rbx < 50) return alert("Username kosong atau Robux kurang dari 50!");
+
+            if(currentStep === 1) {
+                currentStep = 2;
+                order.id = "TITAN-" + Math.floor(100000 + Math.random() * 900000);
+                document.getElementById('order-id').innerText = order.id;
+                document.getElementById('rev-user').innerText = order.user;
+                document.getElementById('rev-item').innerText = order.rbx + " Robux";
+                document.getElementById('rev-total').innerText = "Rp " + parseInt(order.price).toLocaleString('id-ID');
+                
+                showPage(2);
+            } else if(currentStep === 2) {
+                currentStep = 3;
+                showPage(3);
+                document.getElementById('action-bar').style.display = 'none';
+            }
         }
 
-        function backToStep1() { showStep(1); }
+        function showPage(n) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.getElementById('page-' + n).classList.add('active-page');
+            document.querySelectorAll('.step-pill').forEach((p, i) => {
+                if(i < n) p.classList.add('active');
+            });
+        }
 
-        function contactAdmin() {
+        function sendWA() {
             const phone = "6285716075774";
-            const msg = `Halo Admin RbxGold!\n\nSaya ingin konfirmasi order Robux:\nID: ${state.orderId}\nUsername: ${state.user}\nJumlah: ${state.qty} Robux\nTotal: Rp${state.total.toLocaleString('id-ID')}\n\nMohon instruksi selanjutnya.`;
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+            const text = `🚀 *NEW ORDER TITANBUX*\n\nOrder ID: ${order.id}\nUsername: ${order.user}\nJumlah: ${order.rbx} Robux\nTotal: Rp${parseInt(order.price).toLocaleString('id-ID')}\n\nMohon instruksi bayarnya kak!`;
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`);
         }
 
-        function startNotifs() {
-            const fakeUsers = ["Andi_Rbx", "SkyWalker", "Roxie", "PlayerOne", "Budi88"];
+        function startFakeNotifs() {
+            const users = ["Andi99", "Zenzz", "Robby", "GamerX", "Alex88", "Nia_Rbx"];
             setInterval(() => {
-                const u = fakeUsers[Math.floor(Math.random()*fakeUsers.length)];
-                const r = [100, 500, 1000, 2000][Math.floor(Math.random()*4)];
-                const t = document.getElementById('toast');
-                t.innerText = `${u} baru saja membeli ${r} Robux!`;
-                t.classList.add('show');
-                setTimeout(() => t.classList.remove('show'), 4000);
-            }, 15000);
+                const u = users[Math.floor(Math.random()*users.length)];
+                const r = [100, 400, 800, 1000, 2000][Math.floor(Math.random()*5)];
+                document.getElementById('toast-user').innerText = u;
+                document.getElementById('toast-initial').innerText = u.charAt(0);
+                const toast = document.getElementById('purchase-toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 4000);
+            }, 12000);
         }
     </script>
 </body>
