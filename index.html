@@ -3,178 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Frozen Food D'has</title>
+<title>Toko Robux Ultra Pro</title>
+
 <style>
 body{
 margin:0;
 font-family:Arial, sans-serif;
-background:#0f172a;
+background:linear-gradient(135deg,#0f172a,#1e293b);
 color:white;
-transition:0.5s;
+overflow-x:hidden;
 }
+
 header{
-background:linear-gradient(90deg,#1e3a8a,#2563eb);
 padding:15px;
 text-align:center;
-font-weight:bold;
 font-size:20px;
+font-weight:bold;
+background:linear-gradient(90deg,#2563eb,#7c3aed);
 letter-spacing:1px;
 }
-.container{
-padding:20px;
-display:none;
-}
-.card{
-background:#1e293b;
-padding:15px;
-border-radius:12px;
-margin-bottom:15px;
-box-shadow:0 0 15px rgba(0,0,0,0.4);
-}
-button{
-background:#2563eb;
-border:none;
-padding:10px 15px;
-border-radius:8px;
-color:white;
-cursor:pointer;
-margin-top:10px;
-}
-button:hover{
-background:#1d4ed8;
-}
+
 #welcome{
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-background:linear-gradient(135deg,#1e3a8a,#9333ea);
+background:linear-gradient(135deg,#2563eb,#7c3aed);
+animation:fade 1s ease;
 }
+
+@keyframes fade{
+from{opacity:0}
+to{opacity:1}
+}
+
+button{
+background:#2563eb;
+border:none;
+padding:10px 15px;
+border-radius:10px;
+color:white;
+cursor:pointer;
+margin-top:10px;
+transition:0.3s;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+.container{
+display:none;
+padding:20px;
+}
+
+.card{
+background:#1e293b;
+padding:15px;
+border-radius:15px;
+margin-bottom:15px;
+box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
 input{
 width:100%;
-padding:8px;
-margin-top:5px;
-border-radius:8px;
+padding:10px;
+border-radius:10px;
 border:none;
+margin-top:10px;
 }
-.cart{
-position:fixed;
-bottom:20px;
-right:20px;
-background:#22c55e;
-padding:12px;
-border-radius:50%;
-cursor:pointer;
-}
+
 .back{
-margin-bottom:10px;
 background:#475569;
+margin-bottom:15px;
 }
-.darkmode{
-position:fixed;
-top:15px;
-right:15px;
-cursor:pointer;
+
+.total-box{
+font-size:18px;
+margin-top:10px;
 }
+
 </style>
 </head>
+
 <body>
 
-<header>🧊 FROZEN FOOD D'HAS</header>
-
-<div class="darkmode" onclick="toggleDark()">🌙</div>
+<header>💎 TOKO ROBUX ULTRA PRO</header>
 
 <div id="welcome">
 <h1>Selamat Datang 👋</h1>
-<p>Toko Frozen Food Premium</p>
-<button onclick="enterShop()">Masuk Toko</button>
+<p>Top Up Robux Aman & Cepat</p>
+<button onclick="enterShop()">Masuk</button>
 </div>
 
 <div class="container" id="shop">
 
 <button class="back" onclick="goHome()">⬅ Kembali</button>
 
-<h2>Produk Pilihan</h2>
+<h2>Username Roblox</h2>
+<input type="text" id="username" placeholder="Masukkan Username Roblox">
+
+<h2>Pilih Paket Robux</h2>
 
 <div class="card">
-<h3>Nugget Ayam</h3>
-<p>Rp25.000</p>
-<button onclick="addCart('Nugget Ayam',25000)">Tambah</button>
-</div>
-
-<div class="card">
-<h3>Sosis Sapi</h3>
-<p>Rp30.000</p>
-<button onclick="addCart('Sosis Sapi',30000)">Tambah</button>
+<h3>80 Robux</h3>
+<p>Rp15.000</p>
+<button onclick="add(15000,'80 Robux')">Pilih</button>
 </div>
 
 <div class="card">
-<h3>Kentang Goreng</h3>
-<p>Rp20.000</p>
-<button onclick="addCart('Kentang Goreng',20000)">Tambah</button>
+<h3>400 Robux</h3>
+<p>Rp65.000</p>
+<button onclick="add(65000,'400 Robux')">Pilih</button>
 </div>
 
-<h2>Checkout</h2>
-
-<input type="text" id="nama" placeholder="Nama Anda">
-<input type="text" id="alamat" placeholder="Alamat Lengkap">
-<p>Total: Rp <span id="total">0</span></p>
-
-<button onclick="checkout()">Pesan via WhatsApp</button>
-
+<div class="card">
+<h3>800 Robux</h3>
+<p>Rp120.000</p>
+<button onclick="add(120000,'800 Robux')">Pilih</button>
 </div>
 
-<div class="cart" onclick="alert('Total: Rp '+total)">🛒</div>
+<div class="card">
+<h3>1700 Robux</h3>
+<p>Rp240.000</p>
+<button onclick="add(240000,'1700 Robux')">Pilih</button>
+</div>
+
+<div class="total-box">
+Total: Rp <span id="total">0</span>
+</div>
+
+<button onclick="checkout()">Checkout via WhatsApp</button>
+
+</div>
 
 <script>
+
 let total=0;
-let cart=[];
+let paket=[];
 
 function enterShop(){
-document.getElementById('welcome').style.display='none';
-document.getElementById('shop').style.display='block';
-alert("Selamat berbelanja di Frozen Food D'has 🔥");
+document.getElementById("welcome").style.display="none";
+document.getElementById("shop").style.display="block";
+alert("Selamat datang di Toko Robux Ultra Pro 🔥");
 }
 
 function goHome(){
-document.getElementById('shop').style.display='none';
-document.getElementById('welcome').style.display='flex';
+document.getElementById("shop").style.display="none";
+document.getElementById("welcome").style.display="flex";
 }
 
-function addCart(nama,harga){
-cart.push(nama);
+function add(harga,nama){
+paket.push(nama);
 total+=harga;
-document.getElementById('total').innerText=total;
+document.getElementById("total").innerText=total;
 }
 
 function checkout(){
-let nama=document.getElementById('nama').value;
-let alamat=document.getElementById('alamat').value;
+let user=document.getElementById("username").value;
 
-if(nama==""||alamat==""){
-alert("Isi data dulu ya!");
+if(user==""){
+alert("Masukkan username dulu!");
 return;
 }
 
-let pesan="Halo Frozen Food D'has%0A";
-pesan+="Nama: "+nama+"%0A";
-pesan+="Alamat: "+alamat+"%0A";
-pesan+="Pesanan: "+cart.join(", ")+"%0A";
+if(total==0){
+alert("Pilih paket dulu!");
+return;
+}
+
+let pesan="Halo Admin Toko Robux%0A";
+pesan+="Username: "+user+"%0A";
+pesan+="Pesanan: "+paket.join(", ")+"%0A";
 pesan+="Total: Rp "+total;
 
 window.open("https://wa.me/6285716075774?text="+pesan);
 }
 
-function toggleDark(){
-if(document.body.style.background=="white"){
-document.body.style.background="#0f172a";
-document.body.style.color="white";
-}else{
-document.body.style.background="white";
-document.body.style.color="black";
-}
-}
 </script>
 
 </body>
