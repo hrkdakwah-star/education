@@ -6,14 +6,9 @@
 <title>HRK Robux Store</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Inter',sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 body{
-    background:linear-gradient(135deg,#0f0f1a,#14142b);
+    background:linear-gradient(135deg,#0f0f1a,#181830);
     color:white;
     display:flex;
     justify-content:center;
@@ -22,83 +17,65 @@ body{
 }
 .container{
     width:95%;
-    max-width:500px;
+    max-width:520px;
     background:rgba(255,255,255,0.05);
     backdrop-filter:blur(20px);
     border-radius:25px;
     padding:30px;
-    box-shadow:0 0 40px rgba(0,0,0,0.6);
-    animation:fadeIn 1s ease;
+    box-shadow:0 0 50px rgba(0,0,0,0.6);
 }
-@keyframes fadeIn{
-    from{opacity:0;transform:translateY(20px);}
-    to{opacity:1;transform:translateY(0);}
-}
-h1{
+h1{text-align:center;font-size:26px;font-weight:800;}
+.subtitle{text-align:center;font-size:13px;opacity:0.7;margin-bottom:15px;}
+.stock{
     text-align:center;
-    font-weight:800;
-    font-size:28px;
-    margin-bottom:10px;
-}
-.subtitle{
-    text-align:center;
-    font-size:14px;
-    opacity:0.7;
-    margin-bottom:25px;
-}
-.input-box{
     margin-bottom:20px;
-}
-input{
-    width:100%;
-    padding:15px;
-    border-radius:15px;
-    border:none;
-    background:#1f1f35;
-    color:white;
-    font-size:18px;
-    outline:none;
-}
-.result{
-    margin-top:20px;
     background:#1a1a2e;
-    padding:20px;
-    border-radius:15px;
-    font-size:15px;
-}
-.result span{
-    font-weight:600;
-    float:right;
+    padding:10px;
+    border-radius:12px;
+    font-size:14px;
 }
 button{
     width:100%;
-    padding:15px;
-    margin-top:25px;
+    padding:14px;
+    margin-top:15px;
     border:none;
-    border-radius:15px;
+    border-radius:14px;
     background:linear-gradient(135deg,#6a5cff,#8f7bff);
     color:white;
-    font-size:16px;
+    font-size:15px;
     font-weight:600;
     cursor:pointer;
     transition:0.3s;
 }
-button:hover{
-    transform:scale(1.05);
+button:hover{transform:scale(1.04);}
+.hidden{display:none;}
+input{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:none;
+    margin-top:15px;
+    background:#1f1f35;
+    color:white;
+    font-size:16px;
+}
+.result{
+    margin-top:20px;
+    background:#1a1a2e;
+    padding:15px;
+    border-radius:14px;
+    font-size:14px;
 }
 .badges{
-    margin-top:25px;
-    font-size:13px;
+    margin-top:20px;
     text-align:center;
+    font-size:12px;
     opacity:0.6;
 }
-.badges div{
-    margin-top:5px;
-}
 .footer{
-    margin-top:20px;
-    font-size:12px;
+    margin-top:15px;
     text-align:center;
+    font-size:12px;
     opacity:0.4;
 }
 </style>
@@ -107,44 +84,64 @@ button:hover{
 
 <div class="container">
     <h1>HRK Robux Store</h1>
-    <div class="subtitle">Custom Amount • Safe • Official System</div>
+    <div class="subtitle">Safe • Custom Amount • Official System</div>
 
-    <div class="input-box">
-        <input type="number" id="robuxInput" placeholder="Masukkan jumlah Robux (min 50)" oninput="calculate()">
+    <div class="stock">
+        🟢 Stok Robux Tersedia: <b id="stockDisplay">327.987</b>
     </div>
 
-    <div class="result">
-        Total Harga <span id="price">Rp0</span><br><br>
-        Robux Gamepass <span id="gamepass">0 Robux</span>
+    <!-- STEP 1 -->
+    <button onclick="showStep2()">BELI ROBUX</button>
+
+    <!-- STEP 2 -->
+    <div id="step2" class="hidden">
+        <input type="number" id="robuxInput" placeholder="Masukkan jumlah Robux (min 50)">
+        <button onclick="calculate()">LANJUTKAN</button>
     </div>
 
-    <button onclick="buy()">BELI SEKARANG</button>
+    <!-- STEP 3 -->
+    <div id="step3" class="hidden">
+        <div class="result">
+            Total Harga <span id="price">Rp0</span><br><br>
+            Robux Gamepass <span id="gamepass">0 Robux</span>
+        </div>
+        <button onclick="buy()">KONFIRMASI & CHAT ADMIN</button>
+    </div>
 
     <div class="badges">
-        <div>🔒 No Login Required</div>
-        <div>🛡️ Via Sistem Resmi Roblox</div>
-        <div>⏳ Estimasi 1–5 Hari</div>
+        🔒 No Login Required<br>
+        🛡️ Via Sistem Resmi Roblox<br>
+        ⏳ Estimasi 1–5 Hari
     </div>
 
     <div class="footer">
-        Minimal pembelian 50 Robux • 1 Robux = Rp145
+        Minimal 50 Robux • 1 Robux = Rp132
     </div>
 </div>
 
 <script>
-const pricePerRobux = 145;
+const pricePerRobux = 132;
 const minPurchase = 50;
+let stock = 327987;
 
-function formatRupiah(number){
-    return "Rp" + number.toLocaleString("id-ID");
+function formatRupiah(num){
+    return "Rp" + num.toLocaleString("id-ID");
+}
+
+function showStep2(){
+    document.getElementById("step2").classList.remove("hidden");
 }
 
 function calculate(){
     let robux = parseInt(document.getElementById("robuxInput").value);
 
     if(isNaN(robux) || robux < minPurchase){
-        document.getElementById("price").innerText = "Rp0";
-        document.getElementById("gamepass").innerText = "0 Robux";
+        alert("Minimal pembelian 50 Robux.");
+        return;
+    }
+
+    if(robux > stock){
+        alert("Stok tidak mencukupi.");
         return;
     }
 
@@ -153,22 +150,18 @@ function calculate(){
 
     document.getElementById("price").innerText = formatRupiah(totalPrice);
     document.getElementById("gamepass").innerText = gamepassRobux + " Robux";
+
+    document.getElementById("step3").classList.remove("hidden");
 }
 
 function buy(){
     let robux = parseInt(document.getElementById("robuxInput").value);
-
-    if(isNaN(robux) || robux < minPurchase){
-        alert("Minimal pembelian 50 Robux.");
-        return;
-    }
-
     let totalPrice = robux * pricePerRobux;
     let gamepassRobux = Math.ceil(robux / 0.7);
 
     let message = `Halo Admin, saya ingin membeli ${robux} Robux.\nTotal Harga: ${formatRupiah(totalPrice)}\nRobux Gamepass: ${gamepassRobux} Robux\nUsername Roblox:`;
 
-    let phone = "6285716075774"; // GANTI NOMOR ANDA
+    let phone = "6285716075774"; // GANTI NOMOR
     let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
     window.open(url, "_blank");
@@ -176,4 +169,4 @@ function buy(){
 </script>
 
 </body>
-          </html>
+</html>
