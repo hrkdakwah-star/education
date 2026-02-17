@@ -267,4 +267,15 @@
 
         function sendWhatsApp() {
             const phone = "6285716075774";
-            const finalP = Math.floor(db.price
+            const finalP = Math.floor(db.price * db.disc);
+            const msg = `🚀 *TITANBUX OFFICIAL ORDER*\n\n` +
+                        `👤 *User:* ${db.user}\n` +
+                        `💎 *Item:* ${db.rbx} Robux\n` +
+                        `💰 *Total:* Rp ${finalP.toLocaleString('id-ID')}\n` +
+                        `🆔 *ID:* ${db.id}\n\n` +
+                        `_Mohon instruksi pembayaran kak!_`;
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+        }
+    </script>
+</body>
+</html>
