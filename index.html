@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Toko Robux Ultra Pro</title>
+<title>Ultra Top-Up Store</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
+
 body{
-margin:0;
-font-family:Arial, sans-serif;
 background:linear-gradient(135deg,#0f172a,#1e293b);
 color:white;
 overflow-x:hidden;
@@ -17,170 +17,190 @@ overflow-x:hidden;
 header{
 padding:15px;
 text-align:center;
-font-size:20px;
 font-weight:bold;
+font-size:20px;
 background:linear-gradient(90deg,#2563eb,#7c3aed);
 letter-spacing:1px;
 }
 
-#welcome{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-background:linear-gradient(135deg,#2563eb,#7c3aed);
-animation:fade 1s ease;
+.section{
+display:none;
+padding:25px;
+animation:fade 0.5s ease;
 }
 
 @keyframes fade{
-from{opacity:0}
-to{opacity:1}
+from{opacity:0;transform:translateY(10px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+.center{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
 }
 
 button{
-background:#2563eb;
+padding:12px 18px;
 border:none;
-padding:10px 15px;
-border-radius:10px;
+border-radius:12px;
+background:#2563eb;
 color:white;
 cursor:pointer;
-margin-top:10px;
 transition:0.3s;
+margin-top:12px;
 }
 
-button:hover{
-background:#1d4ed8;
-}
+button:hover{background:#1d4ed8}
 
-.container{
-display:none;
-padding:20px;
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:10px;
+border:none;
 }
 
 .card{
 background:#1e293b;
-padding:15px;
-border-radius:15px;
-margin-bottom:15px;
+padding:18px;
+border-radius:16px;
+margin-top:15px;
 box-shadow:0 0 20px rgba(0,0,0,0.4);
-}
-
-input{
-width:100%;
-padding:10px;
-border-radius:10px;
-border:none;
-margin-top:10px;
 }
 
 .back{
 background:#475569;
-margin-bottom:15px;
 }
 
-.total-box{
+.total{
+margin-top:15px;
 font-size:18px;
-margin-top:10px;
+font-weight:bold;
 }
 
+.stock{
+color:#38bdf8;
+margin-top:5px;
+}
+
+.progress{
+height:8px;
+background:#334155;
+border-radius:10px;
+margin-top:15px;
+overflow:hidden;
+}
+
+.bar{
+height:100%;
+width:0%;
+background:#7c3aed;
+transition:0.4s;
+}
 </style>
 </head>
 
 <body>
 
-<header>💎 TOKO ROBUX ULTRA PRO</header>
+<header>💎 ULTRA DIGITAL CREDIT STORE</header>
 
-<div id="welcome">
+<!-- WELCOME -->
+<div class="center" id="welcome">
 <h1>Selamat Datang 👋</h1>
-<p>Top Up Robux Aman & Cepat</p>
-<button onclick="enterShop()">Masuk</button>
+<p>Top-Up Digital Credit Super Cepat & Modern</p>
+<button onclick="start()">Masuk</button>
 </div>
 
-<div class="container" id="shop">
+<!-- SHOP -->
+<div class="section" id="shop">
 
-<button class="back" onclick="goHome()">⬅ Kembali</button>
+<button class="back" onclick="home()">⬅ Kembali</button>
 
-<h2>Username Roblox</h2>
-<input type="text" id="username" placeholder="Masukkan Username Roblox">
-
-<h2>Pilih Paket Robux</h2>
+<h2>Username</h2>
+<input type="text" id="user" placeholder="Masukkan username">
 
 <div class="card">
-<h3>80 Robux</h3>
-<p>Rp15.000</p>
-<button onclick="add(15000,'80 Robux')">Pilih</button>
+<h3>Digital Credit</h3>
+<p>Harga: 132 per unit</p>
+<p class="stock">Stok tersedia: 327.987</p>
+<input type="number" id="jumlah" placeholder="Minimal 50 unit">
+<input type="text" id="voucher" placeholder="Kode Voucher (opsional)">
+<button onclick="hitung()">Hitung Total</button>
 </div>
 
-<div class="card">
-<h3>400 Robux</h3>
-<p>Rp65.000</p>
-<button onclick="add(65000,'400 Robux')">Pilih</button>
-</div>
-
-<div class="card">
-<h3>800 Robux</h3>
-<p>Rp120.000</p>
-<button onclick="add(120000,'800 Robux')">Pilih</button>
-</div>
-
-<div class="card">
-<h3>1700 Robux</h3>
-<p>Rp240.000</p>
-<button onclick="add(240000,'1700 Robux')">Pilih</button>
-</div>
-
-<div class="total-box">
+<div class="total">
 Total: Rp <span id="total">0</span>
 </div>
 
-<button onclick="checkout()">Checkout via WhatsApp</button>
+<div class="progress">
+<div class="bar" id="bar"></div>
+</div>
+
+<button onclick="checkout()">Checkout</button>
 
 </div>
 
 <script>
+let totalHarga=0;
+let orderID="";
 
-let total=0;
-let paket=[];
-
-function enterShop(){
+function start(){
 document.getElementById("welcome").style.display="none";
 document.getElementById("shop").style.display="block";
-alert("Selamat datang di Toko Robux Ultra Pro 🔥");
+alert("Welcome to Ultra Pro Store 🚀");
 }
 
-function goHome(){
+function home(){
 document.getElementById("shop").style.display="none";
 document.getElementById("welcome").style.display="flex";
 }
 
-function add(harga,nama){
-paket.push(nama);
-total+=harga;
-document.getElementById("total").innerText=total;
+function hitung(){
+let jumlah=parseInt(document.getElementById("jumlah").value);
+let voucher=document.getElementById("voucher").value;
+let harga=132;
+
+if(!jumlah || jumlah<50){
+alert("Minimal pembelian 50 unit!");
+return;
+}
+
+totalHarga=jumlah*harga;
+
+if(voucher=="DISKON10"){
+totalHarga=totalHarga*0.9;
+}
+
+document.getElementById("total").innerText=Math.floor(totalHarga);
+
+document.getElementById("bar").style.width="60%";
 }
 
 function checkout(){
-let user=document.getElementById("username").value;
+let user=document.getElementById("user").value;
+let jumlah=document.getElementById("jumlah").value;
 
-if(user==""){
-alert("Masukkan username dulu!");
+if(user=="" || totalHarga==0){
+alert("Lengkapi data dulu!");
 return;
 }
 
-if(total==0){
-alert("Pilih paket dulu!");
-return;
-}
+orderID="ORD"+Math.floor(Math.random()*999999);
 
-let pesan="Halo Admin Toko Robux%0A";
+document.getElementById("bar").style.width="100%";
+
+let pesan="Halo Admin Ultra Store%0A";
+pesan+="Order ID: "+orderID+"%0A";
 pesan+="Username: "+user+"%0A";
-pesan+="Pesanan: "+paket.join(", ")+"%0A";
-pesan+="Total: Rp "+total;
+pesan+="Jumlah: "+jumlah+" unit%0A";
+pesan+="Total: Rp "+Math.floor(totalHarga);
 
 window.open("https://wa.me/6285716075774?text="+pesan);
 }
-
 </script>
 
 </body>
