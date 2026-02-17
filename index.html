@@ -3,262 +3,223 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HRK Robux Ultimate Store</title>
+<title>Hasby Digital Studio</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;scroll-behavior:smooth;}
 body{
-background:radial-gradient(circle at top,#1b1b35,#0f0f1a);
+background:linear-gradient(135deg,#0f0f1a,#1b1b35);
 color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-overflow:hidden;
+overflow-x:hidden;
 }
-.container{
-width:95%;
-max-width:520px;
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(25px);
-border-radius:25px;
-padding:30px;
-box-shadow:0 0 80px rgba(106,92,255,0.4);
-position:relative;
-}
-h1{text-align:center;font-weight:800;font-size:26px;}
-.subtitle{text-align:center;font-size:13px;opacity:.7;margin-bottom:15px;}
-.stock{
-text-align:center;
-background:#1a1a2e;
-padding:8px;
+section{padding:80px 20px;text-align:center;}
+h1,h2{font-weight:800;}
+.container{max-width:1100px;margin:auto;}
+.btn{
+padding:14px 28px;
+border:none;
 border-radius:12px;
-margin-bottom:20px;
-font-size:14px;
-}
-.progress{
-height:6px;
-background:#1f1f35;
-border-radius:10px;
-overflow:hidden;
-margin-bottom:20px;
-}
-.progress-bar{
-height:100%;
-width:33%;
-background:linear-gradient(90deg,#6a5cff,#9c89ff);
-transition:.4s;
-}
-.step{display:none;animation:fade .4s ease;}
-.step.active{display:block;}
-@keyframes fade{
-from{opacity:0;transform:translateY(10px);}
-to{opacity:1;transform:translateY(0);}
-}
-input,select{
-width:100%;
-padding:14px;
-border:none;
-border-radius:14px;
-background:#1f1f35;
-color:white;
-margin-top:12px;
-font-size:14px;
-}
-button{
-width:100%;
-padding:14px;
-margin-top:18px;
-border:none;
-border-radius:14px;
 background:linear-gradient(135deg,#6a5cff,#9c89ff);
 color:white;
 font-weight:600;
 cursor:pointer;
 transition:.3s;
 }
-button:hover{transform:scale(1.05);}
-.secondary{
-background:#2a2a45;
+.btn:hover{transform:scale(1.05);}
+.card{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(15px);
+padding:25px;
+border-radius:20px;
+margin:15px;
+flex:1;
+min-width:250px;
+box-shadow:0 0 40px rgba(106,92,255,0.3);
+}
+.flex{display:flex;flex-wrap:wrap;justify-content:center;}
+input,select{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:#1f1f35;
+color:white;
+}
+.store-box{
+max-width:500px;
+margin:auto;
 }
 .result{
+margin-top:15px;
 background:#1a1a2e;
 padding:15px;
-border-radius:14px;
-margin-top:15px;
-font-size:14px;
-}
-.badges{
-text-align:center;
-font-size:12px;
-opacity:.6;
-margin-top:15px;
+border-radius:12px;
 }
 .footer{
+padding:40px 20px;
 text-align:center;
-font-size:12px;
-opacity:.4;
-margin-top:10px;
+opacity:.6;
 }
-
-/* WELCOME POPUP */
-.welcome{
-position:absolute;
+.nav{
+position:fixed;
 top:0;
-left:0;
+width:100%;
+background:rgba(0,0,0,.4);
+backdrop-filter:blur(10px);
+display:flex;
+justify-content:center;
+gap:30px;
+padding:15px;
+z-index:100;
+}
+.nav a{
+color:white;
+text-decoration:none;
+font-size:14px;
+}
+.hero{
+padding-top:120px;
+}
+.welcome{
+position:fixed;
 width:100%;
 height:100%;
-background:rgba(0,0,0,.7);
+background:black;
 display:flex;
 justify-content:center;
 align-items:center;
-z-index:10;
+flex-direction:column;
+z-index:999;
 }
-.welcome-box{
-background:#181830;
-padding:25px;
-border-radius:20px;
-text-align:center;
-width:85%;
-box-shadow:0 0 40px rgba(106,92,255,0.6);
+.welcome h1{font-size:40px;margin-bottom:15px;}
+.fade-in{animation:fade 1s ease;}
+@keyframes fade{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
 }
-.welcome-box h2{margin-bottom:10px;}
-.welcome-box p{font-size:13px;opacity:.7;margin-bottom:15px;}
 </style>
 </head>
 <body>
 
-<div class="container">
-
-<!-- WELCOME MESSAGE -->
 <div class="welcome" id="welcome">
-<div class="welcome-box">
-<h2>Selamat Datang 👋</h2>
-<p>Gunakan sistem resmi Roblox untuk top up dengan aman dan cepat.</p>
-<button onclick="closeWelcome()">Mulai Sekarang</button>
-</div>
+<h1>Welcome to</h1>
+<h1 style="color:#9c89ff;">Hasby Digital Studio</h1>
+<button class="btn" onclick="enterSite()">Enter</button>
 </div>
 
-<h1>HRK Robux Store</h1>
-<div class="subtitle">Ultimate Premium • Secure • Custom</div>
-
-<div class="stock">
-🟢 Stok Tersedia: <b>327.987</b>
+<div class="nav">
+<a href="#home">Home</a>
+<a href="#portfolio">Portfolio</a>
+<a href="#store">Store</a>
+<a href="#contact">Contact</a>
 </div>
 
-<div class="progress">
-<div class="progress-bar" id="progressBar"></div>
-</div>
+<section id="home" class="hero container fade-in">
+<h1>Hasby Digital Studio</h1>
+<p style="margin-top:15px;opacity:.7;">
+Web Developer • UI Designer • Roblox Creator
+</p>
+<br>
+<a href="#store"><button class="btn">Explore Store</button></a>
+</section>
 
-<!-- STEP 1 -->
-<div class="step active" id="step1">
-<input type="number" id="robuxInput" placeholder="Jumlah Robux (min 50)">
-<input type="text" id="username" placeholder="Username Roblox">
-<select id="payment">
-<option value="">Pilih Metode Pembayaran</option>
-<option>DANA</option>
-<option>OVO</option>
-<option>GoPay</option>
-<option>QRIS</option>
+<section id="portfolio" class="container">
+<h2>My Projects</h2>
+<div class="flex">
+<div class="card">BOHONG TOWER<br><small>Roblox Trap Obby Game</small></div>
+<div class="card">Freeze Tower<br><small>Roblox Survival Game</small></div>
+<div class="card">Train Heist Simulator<br><small>Action Simulator</small></div>
+<div class="card">Roblox Jersey Design<br><small>Custom Clothing</small></div>
+</div>
+</section>
+
+<section id="store" class="container">
+<h2>Digital Store</h2>
+<div class="store-box card">
+<input type="number" id="amount" placeholder="Custom Amount">
+<select id="product">
+<option value="">Select Product</option>
+<option value="UI Template">UI Template</option>
+<option value="Roblox Script">Roblox Script</option>
+<option value="Web Template">Web Template</option>
+<option value="Custom Design">Custom Design</option>
 </select>
-<button onclick="goStep2()">Lanjut</button>
-</div>
+<input type="text" id="clientName" placeholder="Your Name">
+<button class="btn" onclick="calculate()">Generate Order</button>
 
-<!-- STEP 2 -->
-<div class="step" id="step2">
-<div class="result">
-Total Harga: <b id="price">Rp0</b><br><br>
-Robux Gamepass: <b id="gamepass">0 Robux</b><br>
-Order ID: <b id="orderId">-</b>
+<div class="result" id="resultBox" style="display:none;">
+Total Price: <b id="price"></b><br>
+Order ID: <b id="orderId"></b>
+<br><br>
+<button class="btn" onclick="sendOrder()">Order via WhatsApp</button>
+<button class="btn" style="background:#2a2a45;margin-top:10px;" onclick="resetOrder()">Back</button>
 </div>
-<button onclick="confirmOrder()">Chat Admin</button>
-<button class="secondary" onclick="backToStart()">Kembali</button>
 </div>
+</section>
 
-<!-- STEP 3 -->
-<div class="step" id="step3">
-<div class="result">
-✅ Order berhasil dibuat!<br><br>
-Silakan lanjut ke WhatsApp untuk menyelesaikan pembayaran.
-</div>
-<button class="secondary" onclick="backToStart()">Kembali ke Awal</button>
-</div>
-
-<div class="badges">
-🔒 No Login Required<br>
-🛡️ Via Sistem Resmi Roblox<br>
-⏳ Estimasi 1–5 Hari
-</div>
+<section id="contact" class="container">
+<h2>Contact Me</h2>
+<p style="opacity:.7;">Let’s build something amazing together.</p>
+<br>
+<button class="btn" onclick="contact()">Chat on WhatsApp</button>
+</section>
 
 <div class="footer">
-Minimal 50 Robux • 1 Robux = Rp132
-</div>
-
+© 2026 Hasby Digital Studio • All Rights Reserved
 </div>
 
 <script>
-const pricePerRobux=132;
-const minPurchase=50;
+function enterSite(){
+document.getElementById("welcome").style.display="none";
+}
+
+function generateID(){
+return "HDS-"+Math.floor(Math.random()*1000000);
+}
 
 function formatRupiah(num){
 return "Rp"+num.toLocaleString("id-ID");
 }
 
-function generateOrderID(){
-return "HRK-"+Math.floor(Math.random()*1000000);
+function calculate(){
+let amount=parseInt(document.getElementById("amount").value);
+let product=document.getElementById("product").value;
+let name=document.getElementById("clientName").value;
+
+if(!amount||amount<=0){alert("Masukkan jumlah valid.");return;}
+if(product===""){alert("Pilih produk.");return;}
+if(name.length<2){alert("Masukkan nama valid.");return;}
+
+let price=amount*15000;
+let id=generateID();
+
+document.getElementById("price").innerText=formatRupiah(price);
+document.getElementById("orderId").innerText=id;
+document.getElementById("resultBox").style.display="block";
 }
 
-function closeWelcome(){
-document.getElementById("welcome").style.display="none";
-}
+function sendOrder(){
+let name=document.getElementById("clientName").value;
+let product=document.getElementById("product").value;
+let amount=document.getElementById("amount").value;
+let id=document.getElementById("orderId").innerText;
+let price=document.getElementById("price").innerText;
 
-function goStep2(){
-let robux=parseInt(document.getElementById("robuxInput").value);
-let username=document.getElementById("username").value;
-let payment=document.getElementById("payment").value;
-
-if(!robux||robux<minPurchase){alert("Minimal 50 Robux.");return;}
-if(username.length<3){alert("Masukkan username valid.");return;}
-if(payment===""){alert("Pilih metode pembayaran.");return;}
-
-let totalPrice=robux*pricePerRobux;
-let gamepassRobux=Math.ceil(robux/0.7);
-let orderId=generateOrderID();
-
-document.getElementById("price").innerText=formatRupiah(totalPrice);
-document.getElementById("gamepass").innerText=gamepassRobux+" Robux";
-document.getElementById("orderId").innerText=orderId;
-
-document.getElementById("step1").classList.remove("active");
-document.getElementById("step2").classList.add("active");
-document.getElementById("progressBar").style.width="66%";
-}
-
-function confirmOrder(){
-let robux=parseInt(document.getElementById("robuxInput").value);
-let username=document.getElementById("username").value;
-let payment=document.getElementById("payment").value;
-let totalPrice=robux*pricePerRobux;
-let gamepassRobux=Math.ceil(robux/0.7);
-let orderId=document.getElementById("orderId").innerText;
-
-let message=`Halo Admin,%0AOrder ID: ${orderId}%0AUsername: ${username}%0AJumlah Robux: ${robux}%0ATotal Harga: ${formatRupiah(totalPrice)}%0AGamepass: ${gamepassRobux} Robux%0AMetode: ${payment}`;
-
-let phone="6285716075774"; // GANTI NOMOR ANDA
+let phone="6285716075774"; // GANTI NOMOR
+let message=`Halo,%0AOrder ID: ${id}%0ANama: ${name}%0AProduk: ${product}%0AJumlah: ${amount}%0ATotal: ${price}`;
 window.open(`https://wa.me/${phone}?text=${message}`,"_blank");
-
-document.getElementById("step2").classList.remove("active");
-document.getElementById("step3").classList.add("active");
-document.getElementById("progressBar").style.width="100%";
 }
 
-function backToStart(){
-document.getElementById("step2").classList.remove("active");
-document.getElementById("step3").classList.remove("active");
-document.getElementById("step1").classList.add("active");
-document.getElementById("progressBar").style.width="33%";
+function resetOrder(){
+document.getElementById("resultBox").style.display="none";
+}
+
+function contact(){
+let phone="628XXXXXXXXXX"; // GANTI NOMOR
+window.open(`https://wa.me/${phone}`,"_blank");
 }
 </script>
 
 </body>
-</html>
+  </html>
