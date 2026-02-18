@@ -3,287 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITANBUX | OVERDRIVE EDITION</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <title>TITANBUX | HYPER-ENGINE V10</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon: #00ffa3;
-            --neon-glow: rgba(0, 255, 163, 0.4);
-            --bg-dark: #050a09;
-            --surface: rgba(10, 20, 18, 0.8);
-            --border: rgba(0, 255, 163, 0.2);
-            --text: #e2fef4;
+            --neon-dim: rgba(0, 255, 163, 0.3);
+            --bg: #020504;
+            --panel: rgba(10, 25, 20, 0.9);
+            --border: #00ffa333;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
         body { 
-            background: var(--bg-dark); 
-            color: var(--text); 
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 255, 163, 0.15) 0%, transparent 50%),
-                linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
-                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            background: var(--bg); color: white; overflow-x: hidden;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
-        /* --- CYBER BACKGROUND --- */
-        #cyber-bg { position: fixed; inset: 0; z-index: -1; opacity: 0.5; }
-
-        /* --- LUXURY LOADER --- */
-        #loader { 
-            position: fixed; inset: 0; background: #000; z-index: 9999; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        /* --- GLITCH SCANLINE --- */
+        body::before {
+            content: " "; position: fixed; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
-        .scan-line { width: 200px; height: 2px; background: var(--neon); box-shadow: 0 0 20px var(--neon); animation: scan 2s infinite; }
-        @keyframes scan { 0% { transform: translateY(-50px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(50px); opacity: 0; } }
 
-        /* --- HEADER --- */
+        /* --- HEADER COMMAND --- */
         header { 
-            padding: 25px; border-bottom: 1px solid var(--border); 
-            backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
+            background: var(--panel); border-bottom: 2px solid var(--neon); padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; sticky: top; z-index: 1000;
+            box-shadow: 0 0 20px var(--neon-dim);
         }
-        .logo { font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: 2px; font-size: 1.5rem; text-shadow: 0 0 10px var(--neon-glow); }
-        .logo span { color: var(--neon); }
+        .title { font-family: 'Orbitron'; font-weight: 900; color: var(--neon); font-size: 1.2rem; text-transform: uppercase; }
+        .stats { display: flex; gap: 15px; font-size: 0.7rem; font-family: 'Orbitron'; color: var(--neon); }
 
-        /* --- MAIN CONTAINER --- */
-        .container { max-width: 500px; margin: 30px auto 150px; padding: 0 20px; }
+        .container { max-width: 500px; margin: 20px auto 140px; padding: 0 15px; }
 
-        /* --- GLOWING CARD --- */
+        /* --- HYPER CARDS --- */
         .card { 
-            background: var(--surface); border: 1px solid var(--border); border-radius: 20px; 
-            padding: 30px; margin-bottom: 25px; position: relative; overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0, 255, 163, 0.05);
-            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            background: var(--panel); border-left: 4px solid var(--neon); border-right: 1px solid var(--border);
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            padding: 20px; margin-bottom: 20px; position: relative;
         }
-        .card::before {
-            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--neon)); animation: border-run 3s linear infinite;
-        }
-        @keyframes border-run { to { left: 100%; } }
+        .card-head { font-family: 'Orbitron'; font-size: 0.8rem; font-weight: 700; color: var(--neon); margin-bottom: 15px; display: flex; justify-content: space-between; }
 
-        .label { 
-            font-family: 'Orbitron', sans-serif; font-size: 0.7rem; color: var(--neon); 
-            margin-bottom: 20px; display: block; letter-spacing: 2px; font-weight: 700;
+        /* --- INPUTS --- */
+        input[type="text"] { 
+            width: 100%; background: #000; border: 1px solid var(--neon); padding: 12px; 
+            color: var(--neon); font-family: 'Orbitron'; font-size: 0.9rem; outline: none;
+            box-shadow: inset 0 0 10px var(--neon-dim);
         }
 
-        /* --- CYBER INPUT --- */
-        .input-group { position: relative; }
-        input { 
-            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); 
-            padding: 18px 20px; border-radius: 12px; color: var(--neon); font-size: 1rem;
-            outline: none; transition: 0.3s; font-family: 'Orbitron', sans-serif;
-        }
-        input:focus { border-color: var(--neon); box-shadow: 0 0 20px rgba(0, 255, 163, 0.2); }
+        /* --- CUSTOM SLIDER --- */
+        .custom-box { text-align: center; padding: 10px; background: rgba(0,0,0,0.4); border: 1px dashed var(--neon); margin-top: 15px; }
+        input[type="range"] { width: 100%; accent-color: var(--neon); cursor: pointer; margin: 15px 0; }
+        .rbx-count { font-family: 'Orbitron'; font-size: 2rem; font-weight: 900; color: var(--neon); text-shadow: 0 0 15px var(--neon); }
 
-        /* --- PACKAGE GRID --- */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .pkg { 
-            background: rgba(255,255,255,0.02); border: 1px solid var(--border); 
-            padding: 20px; border-radius: 15px; cursor: pointer; transition: 0.3s;
-            position: relative; overflow: hidden;
+        /* --- BUTTON GRID (BANYAK TOMBOL) --- */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+        .btn-pkg { 
+            background: rgba(0, 255, 163, 0.05); border: 1px solid var(--border); color: white;
+            padding: 12px 5px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; text-align: center;
         }
-        .pkg:hover { background: rgba(0, 255, 163, 0.1); transform: translateY(-5px); }
-        .pkg.active { background: var(--neon); color: #000; box-shadow: 0 0 30px var(--neon-glow); }
-        .pkg b { display: block; font-size: 1.2rem; font-family: 'Orbitron', sans-serif; }
-        .pkg span { font-size: 0.8rem; font-weight: 800; }
+        .btn-pkg:hover, .btn-pkg.active { background: var(--neon); color: black; font-weight: 700; box-shadow: 0 0 15px var(--neon); }
+        .btn-pkg span { display: block; font-size: 0.6rem; opacity: 0.8; }
 
-        /* --- BOT BAR --- */
-        .bot-bar { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: rgba(0,0,0,0.9); padding: 30px 25px 50px;
-            border-top: 2px solid var(--neon); backdrop-filter: blur(20px);
-            display: flex; justify-content: space-between; align-items: center;
-            transform: translateY(100%); transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+        /* --- SECURITY TOGGLES --- */
+        .toggles { display: flex; gap: 5px; margin-top: 15px; }
+        .toggle-btn { flex: 1; font-size: 0.6rem; padding: 5px; border: 1px solid var(--border); text-align: center; opacity: 0.5; }
+        .toggle-btn.on { border-color: var(--neon); color: var(--neon); opacity: 1; box-shadow: 0 0 5px var(--neon); }
+
+        /* --- BOTTOM NAV --- */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; background: #000;
+            border-top: 3px solid var(--neon); padding: 20px; display: flex; justify-content: space-between;
+            align-items: center; z-index: 1001; box-shadow: 0 -10px 30px rgba(0,0,0,0.9);
+            transform: translateY(100%); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .bot-bar.active { transform: translateY(0); }
+        .bottom-nav.show { transform: translateY(0); }
+        .price-tag { font-family: 'Orbitron'; line-height: 1; }
+        .price-tag small { font-size: 0.6rem; color: var(--neon); }
+        .price-tag div { font-size: 1.4rem; font-weight: 900; color: #fff; }
 
-        .btn-glitch {
-            background: var(--neon); color: #000; border: none; padding: 18px 40px;
-            font-family: 'Orbitron', sans-serif; font-weight: 900; border-radius: 5px;
-            cursor: pointer; position: relative; text-transform: uppercase;
-            box-shadow: 0 0 20px var(--neon-glow); transition: 0.2s;
-        }
-        .btn-glitch:hover { letter-spacing: 2px; }
-
-        /* --- NOTIFICATION --- */
-        #alert {
-            position: fixed; bottom: 150px; left: 50%; transform: translateX(-50%);
-            background: var(--neon); color: #000; padding: 10px 25px; border-radius: 50px;
-            font-weight: 900; font-size: 0.8rem; display: none; z-index: 1001;
+        .btn-checkout { 
+            background: var(--neon); color: black; border: none; padding: 15px 30px;
+            font-family: 'Orbitron'; font-weight: 900; font-size: 0.9rem; cursor: pointer;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
         }
 
-        #success { display: none; text-align: center; padding: 80px 20px; }
-        .order-box { border: 2px dashed var(--neon); padding: 20px; border-radius: 15px; margin: 30px 0; background: rgba(0,255,163,0.05); }
+        /* --- SUCCESS VIEW --- */
+        #success { display: none; text-align: center; padding: 50px 20px; }
+        .receipt { background: #000; border: 1px solid var(--neon); padding: 20px; text-align: left; font-family: monospace; position: relative; }
+        .receipt::after { content: "VALIDATED"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 3rem; opacity: 0.1; color: var(--neon); border: 5px solid var(--neon); padding: 10px; }
 
     </style>
 </head>
 <body>
 
-    <div id="loader">
-        <div class="logo">TITAN<span>BUX</span></div>
-        <div class="scan-line"></div>
-        <p style="margin-top:20px; font-family:'Orbitron'; font-size:0.6rem; letter-spacing:5px;">AUTHORIZING ACCESS...</p>
-    </div>
-
-    <canvas id="cyber-bg"></canvas>
-    <div id="alert">SYSTEM UPDATED</div>
-
     <header>
-        <div class="logo">TITAN<span>BUX</span></div>
-        <div style="text-align:right">
-            <div style="font-size:0.5rem; letter-spacing:2px;">ENCRYPTION</div>
-            <div style="font-size:0.7rem; color:var(--neon); font-weight:900;">AES-256 ACTIVE</div>
+        <div class="title">TITAN<span>BUX</span>_v10</div>
+        <div class="stats">
+            <div>STK: <span id="stok">142K</span></div>
+            <div>LAT: <span id="lat">12ms</span></div>
         </div>
     </header>
 
-    <div class="container" id="app">
+    <div class="container" id="main-ui">
         
         <div class="card">
-            <span class="label">/ LOGIN_IDENTITY</span>
-            <div class="input-group">
-                <input type="text" id="username" placeholder="IDENTIFY USERNAME..." oninput="sync()">
+            <div class="card-head"><span>[01] USER_IDENTIFICATION</span> <span>REV_4.0</span></div>
+            <input type="text" id="user" placeholder="INPUT_ROBLOX_USERNAME..." oninput="update()">
+            <div class="toggles">
+                <div class="toggle-btn on">ENC_ACTIVE</div>
+                <div class="toggle-btn on">ANTI_BAN</div>
+                <div class="toggle-btn">PROXY_OFF</div>
             </div>
-            <div id="status-msg" style="margin-top:15px; font-size:0.6rem; color:var(--neon); opacity:0.6;">AWAITING DATA INPUT...</div>
         </div>
 
         <div class="card">
-            <span class="label">/ SELECT_AMMOUNT</span>
+            <div class="card-head"><span>[02] ROBUX_RESOURCES</span> <span>STOCK_READY</span></div>
+            
+            <div class="custom-box">
+                <div style="font-size: 0.7rem; color: var(--neon);">KUSTOM_ROBUX_SLIDER</div>
+                <div class="rbx-count" id="rbx-val">400</div>
+                <input type="range" id="slider" min="50" max="20000" step="50" value="400" oninput="sliderMove()">
+            </div>
+
             <div class="grid">
-                <div class="pkg" onclick="selectPkg(400, 52800, this)">
-                    <b>400</b><span>IDR 52.800</span>
-                </div>
-                <div class="pkg" onclick="selectPkg(1000, 132000, this)">
-                    <div style="position:absolute; top:0; right:0; background:var(--neon); color:#000; font-size:0.5rem; padding:2px 8px; font-weight:900;">BEST</div>
-                    <b>1000</b><span>IDR 132.000</span>
-                </div>
-                <div class="pkg" onclick="selectPkg(2000, 260000, this)">
-                    <b>2000</b><span>IDR 260.000</span>
-                </div>
-                <div class="pkg" onclick="selectPkg(5000, 650000, this)">
-                    <b>5000</b><span>IDR 650.000</span>
-                </div>
+                <div class="btn-pkg" onclick="setPkg(400, 52800, this)">400<span>Rp 52.8k</span></div>
+                <div class="btn-pkg" onclick="setPkg(800, 105000, this)">800<span>Rp 105k</span></div>
+                <div class="btn-pkg" onclick="setPkg(1000, 132000, this)">1000<span>Rp 132k</span></div>
+                <div class="btn-pkg" onclick="setPkg(1700, 225000, this)">1700<span>Rp 225k</span></div>
+                <div class="btn-pkg" onclick="setPkg(4500, 595000, this)">4500<span>Rp 595k</span></div>
+                <div class="btn-pkg" onclick="setPkg(10000, 1300000, this)">10000<span>Rp 1.3M</span></div>
             </div>
         </div>
 
         <div class="card">
-            <span class="label">/ TRANSACTION_GATEWAY</span>
-            <div style="display:flex; gap:10px;">
-                <div id="pay-dana" class="pkg active" style="flex:1; text-align:center" onclick="setPay('DANA')"><b>DANA</b></div>
-                <div id="pay-qris" class="pkg" style="flex:1; text-align:center" onclick="setPay('QRIS')"><b>QRIS</b></div>
+            <div class="card-head"><span>[03] PAYMENT_GATEWAY</span></div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-pkg active" style="flex:1" id="p-dana" onclick="setPay('DANA')">DANA_E-WALLET</button>
+                <button class="btn-pkg" style="flex:1" id="p-qris" onclick="setPay('QRIS')">QRIS_INSTANT</button>
             </div>
         </div>
 
-        <div style="text-align:center; font-family:'Orbitron'; font-size:0.6rem; opacity:0.4; letter-spacing:3px;">
-            TERMINAL v9.0.4 - NO LOGS SAVED
+        <div style="font-size: 0.6rem; color: var(--neon); opacity: 0.5; text-align: center; letter-spacing: 2px;">
+            SYSTEM_OVERRIDE_ACTIVE // NO_REFUND_POLICY // TITAN_BUX_GATEWAY
         </div>
     </div>
 
     <div id="success">
-        <div style="font-size:5rem; text-shadow: 0 0 30px var(--neon);">⚡</div>
-        <h1 style="font-family:'Orbitron'; font-weight:900; font-size:2rem;">ORDER_CONFIRMED</h1>
-        <div class="order-box">
-            <span class="label" style="margin-bottom:10px;">SERIAL_NUMBER</span>
-            <div id="order-id" style="font-family:'Orbitron'; font-size:1.5rem; font-weight:900; color:var(--neon);"></div>
+        <h1 style="font-family:'Orbitron'; color:var(--neon); margin-bottom: 20px;">TRANSACTION_SUCCESS</h1>
+        <div class="receipt">
+            <div style="color: var(--neon);">--- ORDER_SUMMARY ---</div>
+            <br>
+            ID: <span id="res-id"></span><br>
+            USER: <span id="res-user"></span><br>
+            QTY: <span id="res-rbx"></span> RBX<br>
+            PRICE: <span id="res-price"></span><br>
+            GATEWAY: <span id="res-pay"></span><br>
+            STATUS: <span style="color:var(--neon)">AUTHORIZED</span>
         </div>
-        <button class="btn-glitch" style="width:100%" onclick="sendWA()">ESTABLISH_CONNECTION</button>
+        <button class="btn-checkout" style="margin-top: 30px; width: 100%;" onclick="toWA()">CHAT_ADMIN_CONFIRM</button>
     </div>
 
-    <div class="bot-bar" id="bot-bar">
-        <div>
-            <div style="font-family:'Orbitron'; font-size:0.6rem; letter-spacing:2px; opacity:0.6;">CREDITS_REQUIRED</div>
-            <div id="total-ui" style="font-family:'Orbitron'; font-size:1.5rem; font-weight:900; color:var(--neon);">Rp 0</div>
+    <div class="bottom-nav" id="bot-bar">
+        <div class="price-tag">
+            <small>TOTAL_PAYMENT</small>
+            <div id="price-ui">Rp 0</div>
         </div>
-        <button class="btn-glitch" onclick="process()">INIT_CHECKOUT</button>
+        <button class="btn-checkout" onclick="checkout()">INIT_PROCESS</button>
     </div>
 
     <script>
-        let data = { user: "", rbx: 0, price: 0, pay: "DANA", id: "" };
+        let db = { user: "", rbx: 400, price: 52800, pay: "DANA", id: "" };
+        const RATE = 132; // Rp per Robux
 
-        // 1. CYBER BACKGROUND ENGINE
-        const canvas = document.getElementById('cyber-bg');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // 1. Header Logic
+        setInterval(() => {
+            document.getElementById('lat').innerText = Math.floor(Math.random()*20 + 5) + "ms";
+        }, 2000);
 
-        function drawBg() {
-            ctx.fillStyle = 'rgba(5, 10, 9, 0.1)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = '#00ffa3';
-            ctx.lineWidth = 0.5;
-            for(let i=0; i<5; i++) {
-                ctx.beginPath();
-                ctx.moveTo(Math.random()*canvas.width, 0);
-                ctx.lineTo(Math.random()*canvas.width, canvas.height);
-                ctx.stroke();
-            }
-            requestAnimationFrame(drawBg);
-        }
-        drawBg();
-
-        // 2. APP LOGIC
-        window.onload = () => {
-            setTimeout(() => { document.getElementById('loader').style.display='none'; }, 2000);
-        };
-
-        function sync() {
-            data.user = document.getElementById('username').value;
-            const msg = document.getElementById('status-msg');
-            if(data.user.length > 3) {
-                msg.innerText = "USER_LOCATED: " + data.user.toUpperCase();
-                msg.style.opacity = "1";
-            }
-            render();
+        // 2. Slider Logic
+        function sliderMove() {
+            let val = document.getElementById('slider').value;
+            document.getElementById('rbx-val').innerText = val;
+            db.rbx = parseInt(val);
+            db.price = db.rbx * RATE;
+            // Remove active from grid
+            document.querySelectorAll('.btn-pkg').forEach(b => b.classList.remove('active'));
+            update();
         }
 
-        function selectPkg(r, p, el) {
-            document.querySelectorAll('.pkg').forEach(k => k.classList.remove('active'));
+        // 3. Grid Logic
+        function setPkg(r, p, el) {
+            document.querySelectorAll('.btn-pkg').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-            data.rbx = r;
-            data.price = p;
-            showAlert(r + " RBX SELECTED");
-            render();
+            db.rbx = r;
+            db.price = p;
+            document.getElementById('slider').value = r;
+            document.getElementById('rbx-val').innerText = r;
+            update();
         }
 
         function setPay(m) {
-            data.pay = m;
-            document.getElementById('pay-dana').classList.toggle('active', m==='DANA');
-            document.getElementById('pay-qris').classList.toggle('active', m==='QRIS');
-            render();
+            db.pay = m;
+            document.getElementById('p-dana').classList.toggle('active', m==='DANA');
+            document.getElementById('p-qris').classList.toggle('active', m==='QRIS');
+            update();
         }
 
-        function render() {
-            document.getElementById('total-ui').innerText = "Rp " + data.price.toLocaleString('id-ID');
+        function update() {
+            db.user = document.getElementById('user').value;
+            document.getElementById('price-ui').innerText = "Rp " + db.price.toLocaleString('id-ID');
+            
             const bar = document.getElementById('bot-bar');
-            if(data.user.length > 3 && data.rbx > 0) bar.classList.add('active');
-            else bar.classList.remove('active');
+            if(db.user.length > 2 && db.rbx > 0) bar.classList.add('show');
+            else bar.classList.remove('show');
         }
 
-        function showAlert(t) {
-            const a = document.getElementById('alert');
-            a.innerText = t; a.style.display = 'block';
-            setTimeout(() => a.style.display = 'none', 2000);
-        }
-
-        function process() {
-            data.id = "TNB-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-            document.getElementById('order-id').innerText = data.id;
-            document.getElementById('app').style.display = 'none';
-            document.getElementById('bot-bar').style.display = 'none';
+        function checkout() {
+            db.id = "TTN-" + Math.floor(Math.random()*900000 + 100000);
+            document.getElementById('main-ui').style.display = 'none';
+            document.getElementById('bot-bar').classList.remove('show');
             document.getElementById('success').style.display = 'block';
+            
+            // Fill Receipt
+            document.getElementById('res-id').innerText = db.id;
+            document.getElementById('res-user').innerText = db.user.toUpperCase();
+            document.getElementById('res-rbx').innerText = db.rbx;
+            document.getElementById('res-price').innerText = "Rp " + db.price.toLocaleString('id-ID');
+            document.getElementById('res-pay').innerText = db.pay;
             window.scrollTo(0,0);
         }
 
-        function sendWA() {
-            const msg = `⚡ *TITANBUX OVERDRIVE INVOICE*\n` +
+        function toWA() {
+            const msg = `⚡ *TITANBUX HYPER-ENGINE REPORT*\n` +
                         `--------------------------\n` +
-                        `ID: ${data.id}\n` +
-                        `USER: ${data.user}\n` +
-                        `ITEM: ${data.rbx} RBX\n` +
-                        `PAY: ${data.pay}\n` +
-                        `TOTAL: Rp ${data.price.toLocaleString('id-ID')}\n` +
+                        `🆔 ORDER_ID: ${db.id}\n` +
+                        `👤 USERNAME: ${db.user}\n` +
+                        `💎 AMOUNT: ${db.rbx} RBX\n` +
+                        `💳 GATEWAY: ${db.pay}\n` +
+                        `💰 TOTAL: Rp ${db.price.toLocaleString('id-ID')}\n` +
                         `--------------------------\n` +
-                        `_System Authorized. Proceeding..._`;
+                        `_System status: Awaiting Payment_`;
             window.open(`https://wa.me/6285716075774?text=${encodeURIComponent(msg)}`);
         }
     </script>
