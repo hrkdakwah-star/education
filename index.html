@@ -3,256 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITANBUX MAX | DANA EDITION</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <title>TITANBUX | THE OVERKILL ENGINE</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #00c352; --p-dim: #e6f7ed; --bg: #f0f4f2; --text: #0f172a; }
+        :root { --p: #00c352; --p-dim: #f0fff4; --border: #d1dfda; --text: #1a1c1b; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); padding-bottom: 120px; }
+        body { background: #f8fafc; color: var(--text); padding-bottom: 150px; }
+        
+        /* HEADER RAME */
+        header { background: white; padding: 15px 25px; border-bottom: 4px solid var(--p); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .logo-box b { font-size: 1.5rem; color: var(--p); letter-spacing: -1px; }
+        .server-status { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; text-align: right; color: #64748b; }
 
-        /* HEADER COMPLEX */
-        header { 
-            background: white; padding: 20px; border-bottom: 4px solid var(--p);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .brand { font-weight: 800; font-size: 1.4rem; color: var(--p); letter-spacing: -1px; }
-        .sys-info { text-align: right; font-size: 0.6rem; font-weight: 700; color: #64748b; line-height: 1.2; }
-
-        .container { max-width: 500px; margin: 20px auto; padding: 0 15px; }
+        .container { max-width: 500px; margin: 15px auto; padding: 0 10px; }
 
         /* MULTI-PANEL CARDS */
-        .card { 
-            background: white; border-radius: 16px; padding: 20px; margin-bottom: 15px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
-            position: relative; overflow: hidden;
-        }
-        .card::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--p); }
-        .card-h { font-size: 0.75rem; font-weight: 800; color: var(--p); margin-bottom: 15px; display: flex; justify-content: space-between; }
+        .card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 12px; position: relative; }
+        .card-h { font-size: 0.7rem; font-weight: 800; color: var(--p); margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; display: flex; justify-content: space-between; }
 
-        /* INPUT STYLE */
-        .field-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.7rem; font-weight: 800; margin-bottom: 5px; color: #64748b; }
-        input { 
-            width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #f1f5f9;
-            background: #f8fafc; font-weight: 700; outline: none; transition: 0.3s;
-        }
+        /* ACCOUNT SCANNER */
+        .scan-grid { display: flex; gap: 12px; align-items: center; }
+        #av-preview { width: 60px; height: 60px; border-radius: 8px; border: 2px solid var(--p); display: none; }
+        input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-weight: 700; outline: none; transition: 0.2s; background: #f8fafc; }
         input:focus { border-color: var(--p); background: white; }
 
-        /* AVATAR DYNAMICS */
-        .avatar-box { 
-            display: none; align-items: center; gap: 15px; padding: 15px;
-            background: var(--p-dim); border-radius: 12px; margin-top: 10px;
-        }
-        #av-img { width: 55px; height: 55px; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .av-info div { font-size: 0.8rem; font-weight: 800; }
-        .av-info small { font-size: 0.6rem; color: var(--p); font-weight: 700; }
+        /* ROBUX INPUT & MULTIPLIER */
+        .input-wrap { position: relative; margin-top: 10px; }
+        .btn-plus { padding: 5px 10px; font-size: 0.7rem; background: var(--p-dim); border: 1px solid var(--p); color: var(--p); border-radius: 4px; cursor: pointer; font-weight: 700; margin-right: 5px; margin-top: 10px; }
 
-        /* PACKAGE SELECTOR */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-        .opt { 
-            padding: 12px 5px; border-radius: 8px; border: 1px solid #e2e8f0;
-            text-align: center; cursor: pointer; font-size: 0.8rem; font-weight: 700;
-        }
-        .opt.act { background: var(--p); color: white; border-color: var(--p); }
-        .opt span { display: block; font-size: 0.6rem; opacity: 0.8; }
+        /* LIVE RATE BOX */
+        .rate-box { background: #1e293b; color: #10b981; padding: 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; margin-top: 10px; }
 
-        /* LOG PANEL (GAK SIMPEL) */
-        .logs { 
-            background: #1e293b; color: #38bdf8; font-family: 'JetBrains Mono', monospace;
-            padding: 15px; border-radius: 10px; font-size: 0.6rem; margin-top: 10px;
-            height: 80px; overflow-y: hidden;
-        }
+        /* VOUCHER SYSTEM */
+        .v-box { display: flex; gap: 5px; margin-top: 10px; }
+        .btn-v { background: var(--text); color: white; border: none; padding: 0 15px; border-radius: 6px; font-weight: 700; font-size: 0.7rem; cursor: pointer; }
 
-        /* DANA BADGE */
-        .dana-panel { 
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 15px; background: #eef2ff; border-radius: 12px; border: 1px solid #dee7ff;
-        }
-        .dana-text { font-weight: 800; color: #1e40af; font-size: 0.9rem; }
+        /* RECENT TRANSACTIONS (LIVE) */
+        .recent-box { font-size: 0.65rem; color: #64748b; height: 40px; overflow: hidden; margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 5px; }
+        .recent-item { animation: slideUp 3s infinite; }
+        @keyframes slideUp { 0% { transform: translateY(0); } 33% { transform: translateY(-20px); } 66% { transform: translateY(-40px); } }
 
-        /* FOOTER ACTION */
-        .bottom-buy { 
-            position: fixed; bottom: 0; left: 0; right: 0; background: white;
-            padding: 20px; border-top: 2px solid #e2e8f0; display: none; z-index: 1000;
-        }
-        .flex-foot { max-width: 500px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .price-tag b { font-size: 1.4rem; color: var(--p); display: block; }
-        .price-tag small { font-size: 0.65rem; color: #64748b; font-weight: 700; }
-        .buy-btn { 
-            background: var(--p); color: white; border: none; padding: 14px 25px;
-            border-radius: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px var(--p-dim);
-        }
+        /* PAYMENT DANA DETAIL */
+        .dana-detail { background: #f0f7ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 8px; margin-top: 10px; display: flex; align-items: center; gap: 10px; }
 
-        /* RECEIPT */
-        #done { display: none; text-align: center; padding: 40px 15px; }
-        .res-card { background: white; border: 2px solid var(--p); border-radius: 16px; padding: 25px; text-align: left; position: relative; }
-        .res-card::after { content: "LUNAS"; position: absolute; top: 10px; right: 10px; font-size: 0.6rem; border: 1px solid var(--p); padding: 2px 5px; color: var(--p); }
+        /* LOADING PROGRESS */
+        #proc-box { display: none; margin-top: 20px; }
+        .bar-bg { background: #e2e8f0; height: 8px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { background: var(--p); width: 0%; height: 100%; transition: 0.3s; }
+
+        /* FOOTER PRICE */
+        .foot { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 2px solid var(--p); padding: 20px; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); }
+        .foot-flex { max-width: 500px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .total-info b { font-size: 1.5rem; color: var(--p); display: block; line-height: 1; }
+        .total-info small { font-size: 0.6rem; font-weight: 800; color: #94a3b8; }
+        .btn-main { background: var(--p); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: 800; cursor: pointer; }
+
+        /* SUCCESS SCREEN */
+        #success { display: none; text-align: center; padding: 30px 15px; }
+        .nota { background: white; border: 2px solid var(--p); padding: 20px; text-align: left; border-radius: 12px; position: relative; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="brand">TITAN<span>MAX</span></div>
-    <div class="sys-info">
-        v.14.0.2 SECURE<br>
-        DANA GATEWAY ACTIVE
+    <div class="logo-box"><b>TITAN<span>BUX</span></b></div>
+    <div class="server-status">
+        NODE: SG-01 (ACTIVE)<br>
+        PING: <span id="ms">14</span>ms
     </div>
 </header>
 
-<div class="container" id="order-ui">
+<div class="container" id="app">
     
     <div class="card">
-        <div class="card-h"><span>[01] ROBLOX_IDENTITY</span> <span style="color:#64748b">AUTO_VERIFY</span></div>
-        <div class="field-group">
-            <label>ROBLOX USERNAME</label>
-            <input type="text" id="user" placeholder="Nama Akun..." oninput="sync()">
-        </div>
-        <div class="avatar-box" id="box">
-            <img id="av-img" src="">
-            <div class="av-info">
-                <div id="av-name">Builderman</div>
-                <small id="av-id">UID: 12345678</small>
+        <div class="card-h"><span>[01] USER_VERIFICATION</span> <span>LIVE_SYNC</span></div>
+        <div class="scan-grid">
+            <img id="av-preview" src="">
+            <div style="flex:1">
+                <input type="text" id="user" placeholder="Ketik Username Roblox..." oninput="handleUser()">
+                <div id="u-status" style="font-size: 0.6rem; margin-top: 5px; font-weight: 700; color: #94a3b8;">AWAITING_INPUT...</div>
             </div>
         </div>
     </div>
 
     <div class="card">
-        <div class="card-h"><span>[02] RESOURCE_ALLOCATION</span> <span style="color:#64748b">MIN: 50 RBX</span></div>
-        <div class="grid">
-            <div class="opt" onclick="set(400, 52800, this)">400<span>Rp 52k</span></div>
-            <div class="opt" onclick="set(800, 105600, this)">800<span>Rp 105k</span></div>
-            <div class="opt" onclick="set(1000, 132000, this)">1000<span>Rp 132k</span></div>
+        <div class="card-h"><span>[02] ROBUX_ALLOCATION</span> <span>MIN_50_RBX</span></div>
+        <div class="input-wrap">
+            <input type="number" id="amount" placeholder="Jumlah Robux (Minimal 50)..." oninput="updateAll()">
         </div>
-        <div class="field-group">
-            <label>KUSTOM NOMINAL (MINIMAL 50)</label>
-            <input type="number" id="custom" placeholder="Ketik jumlah sendiri..." oninput="calc()">
+        <div>
+            <button class="btn-plus" onclick="addR(100)">+100</button>
+            <button class="btn-plus" onclick="addR(500)">+500</button>
+            <button class="btn-plus" onclick="addR(1000)">+1000</button>
         </div>
-        <div class="logs" id="log-box">
-            > INITIALIZING...<br>
-            > STANDBY FOR INPUT...
+        <div class="rate-box" id="rate-text">
+            > CURRENT_EXCHANGE: Rp 132.00 / 1 RBX<br>
+            > MARKET_STATUS: STABLE
         </div>
     </div>
 
     <div class="card">
-        <div class="card-h"><span>[03] SECURE_PAYMENT</span></div>
-        <div class="dana-panel">
-            <div>
-                <div class="dana-text">DANA E-WALLET</div>
-                <div style="font-size: 0.6rem; color: #64748b;">Proses Instan 1-5 Menit</div>
+        <div class="card-h"><span>[03] VOUCHER_&_HISTORY</span></div>
+        <div class="v-box">
+            <input type="text" id="v-code" placeholder="Kode Promo..." style="padding:8px">
+            <button class="btn-v" onclick="applyV()">APPLY</button>
+        </div>
+        <div class="recent-box">
+            <div class="recent-item">⚡ User <b>Rox**</b> baru saja beli 400 RBX</div>
+            <div class="recent-item">⚡ User <b>King**</b> baru saja beli 1,200 RBX</div>
+            <div class="recent-item">⚡ User <b>Dev**</b> baru saja beli 50 RBX</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-h"><span>[04] PAYMENT_METHOD_DANA</span></div>
+        <div class="dana-detail">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/1200px-Logo_dana_blue.svg.png" width="60">
+            <div style="font-size: 0.7rem; font-weight: 700;">
+                <div style="color:#1e40af">DANA AUTOMATIC TRANSFER</div>
+                <div style="color: #64748b;">Fee: Rp 0 (Gratis)</div>
             </div>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/1200px-Logo_dana_blue.svg.png" style="height: 20px;">
+        </div>
+        
+        <div id="proc-box">
+            <div style="font-size:0.6rem; font-weight:800; margin-bottom:5px;" id="proc-text">ENCRYPTING DATA...</div>
+            <div class="bar-bg"><div class="bar-fill" id="bar"></div></div>
         </div>
     </div>
 
 </div>
 
-<div class="container" id="done">
-    <div style="font-size:3rem; margin-bottom:20px;">⚡</div>
-    <h2 style="font-weight: 800; margin-bottom: 20px;">INVOICE GENERATED</h2>
-    <div class="res-card">
-        <div style="font-size: 0.7rem; color: #64748b; margin-bottom: 15px;">ORDER_DETAILS:</div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>ORDER ID</span><b id="r-id"></b></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>USER</span><b id="r-u"></b></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>ROBUX</span><b id="r-r"></b></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>TOTAL</span><b id="r-p" style="color:var(--p)"></b></div>
-        <hr style="border:1px dashed #e2e8f0; margin: 15px 0;">
-        <div style="font-size:0.6rem; color:#64748b;">METODE: DANA (TRANSFER)</div>
+<div class="container" id="success">
+    <h2 style="font-weight: 800; color: var(--p); margin-bottom: 20px;">TRANSACTION_AUTHORIZED</h2>
+    <div class="nota">
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; line-height: 1.8;">
+            INVOICE: <span id="r-id" style="color:var(--p)"></span><br>
+            TIMESTAMP: 2026-02-19<br>
+            TARGET: <span id="r-u"></span><br>
+            AMOUNT: <span id="r-r"></span> RBX<br>
+            TOTAL: <span id="r-p"></span><br>
+            GATEWAY: DANA_INSTANT
+        </div>
     </div>
-    <button class="buy-btn" style="width:100%; margin-top:20px; padding: 20px;" onclick="send()">KONFIRMASI VIA WHATSAPP</button>
+    <button class="btn-main" style="width:100%; margin-top:20px;" onclick="toWA()">HUBUNGI ADMIN (WHATSAPP)</button>
 </div>
 
-<div class="bottom-buy" id="footer">
-    <div class="flex-foot">
-        <div class="price-tag">
-            <small>ESTIMASI BIAYA</small>
+<div class="foot" id="foot" style="display:none">
+    <div class="foot-flex">
+        <div class="total-info">
+            <small>TOTAL_PAYMENT</small>
             <b id="price-ui">Rp 0</b>
         </div>
-        <button class="buy-btn" onclick="process()">PROSES ORDER</button>
+        <button class="btn-main" onclick="startProc()">CHECKOUT</button>
     </div>
 </div>
 
 <script>
-    let d = { u: "", r: 0, p: 0, id: "" };
-    const RATE = 132;
+    let db = { u: "", r: 0, p: 0, id: "", disc: 0 };
+    const BASE_RATE = 132;
 
-    function addLog(t) {
-        const box = document.getElementById('log-box');
-        box.innerHTML += `<br>> ${t}`;
-        box.scrollTop = box.scrollHeight;
-    }
+    // 1. LIVE PING & RATE SIMULATOR
+    setInterval(() => {
+        document.getElementById('ms').innerText = Math.floor(Math.random()*15 + 5);
+        let flex = (Math.random() * 0.5 - 0.25).toFixed(2);
+        document.getElementById('rate-text').innerHTML = `> CURRENT_EXCHANGE: Rp ${(BASE_RATE + parseFloat(flex)).toFixed(2)} / 1 RBX<br>> MARKET_STATUS: VOLATILE (${flex})`;
+    }, 3000);
 
-    async function sync() {
-        d.u = document.getElementById('user').value;
-        const box = document.getElementById('box');
-        if(d.u.length < 3) { box.style.display = "none"; return; }
-
-        addLog(`SCANNING USER: ${d.u.toUpperCase()}`);
+    // 2. ROBLOX SCANNER
+    async function handleUser() {
+        db.u = document.getElementById('user').value;
+        const img = document.getElementById('av-preview');
+        const st = document.getElementById('u-status');
+        
+        if(db.u.length < 3) { img.style.display="none"; st.innerText="AWAITING_INPUT..."; return; }
+        
+        st.innerText = "SCANNING_DATABASE...";
         try {
-            const res = await fetch(`https://users.roproxy.com/v1/users/search?keyword=${d.u}&limit=1`);
-            const j = await res.json();
+            const r = await fetch(`https://users.roproxy.com/v1/users/search?keyword=${db.u}&limit=1`);
+            const j = await r.json();
             if(j.data && j.data.length > 0) {
                 const u = j.data[0];
                 const tr = await fetch(`https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds=${u.id}&size=150x150&format=Png&isCircular=true`);
                 const tj = await tr.json();
-                document.getElementById('av-img').src = tj.data[0].imageUrl;
-                document.getElementById('av-name').innerText = u.displayName;
-                document.getElementById('av-id').innerText = "UID: " + u.id;
-                box.style.display = "flex";
-                addLog(`USER_VALIDATED: OK`);
+                img.src = tj.data[0].imageUrl;
+                img.style.display = "block";
+                st.innerText = "USER_FOUND: " + u.displayName;
+                st.style.color = "var(--p)";
             }
-        } catch(e) { addLog(`SCANNER_BUSY: BYPASS ACTIVE`); }
-        render();
+        } catch(e) { st.innerText = "OFFLINE_MODE_ACTIVE"; }
+        updateUI();
     }
 
-    function calc() {
-        let v = parseInt(document.getElementById('custom').value);
-        document.querySelectorAll('.opt').forEach(i => i.classList.remove('act'));
-        if(v >= 50) {
-            d.r = v;
-            d.p = v * RATE;
-            addLog(`REQ_AMOUNT: ${v} RBX`);
-        } else { d.r = 0; d.p = 0; }
-        render();
+    // 3. LOGIC BELI
+    function addR(n) {
+        let el = document.getElementById('amount');
+        el.value = (parseInt(el.value) || 0) + n;
+        updateAll();
     }
 
-    function set(r, p, el) {
-        document.querySelectorAll('.opt').forEach(i => i.classList.remove('act'));
-        el.classList.add('act');
-        document.getElementById('custom').value = "";
-        d.r = r; d.p = p;
-        addLog(`PACKAGE_SELECTED: ${r} RBX`);
-        render();
+    function applyV() {
+        let code = document.getElementById('v-code').value;
+        if(code === "DISKON10") {
+            db.disc = 0.1;
+            alert("Voucher Berhasil! Diskon 10% Diterapkan.");
+        } else {
+            alert("Voucher Tidak Valid!");
+            db.disc = 0;
+        }
+        updateAll();
     }
 
-    function render() {
-        document.getElementById('price-ui').innerText = "Rp " + d.p.toLocaleString('id-ID');
-        document.getElementById('footer').style.display = (d.u.length > 2 && d.r >= 50) ? "block" : "none";
+    function updateAll() {
+        db.r = parseInt(document.getElementById('amount').value) || 0;
+        db.p = db.r * BASE_RATE;
+        if(db.disc > 0) db.p = db.p - (db.p * db.disc);
+        updateUI();
     }
 
-    function process() {
-        d.id = "TMX-" + Math.floor(Math.random()*90000 + 10000);
-        document.getElementById('order-ui').style.display = "none";
-        document.getElementById('footer').style.display = "none";
-        document.getElementById('done').style.display = "block";
+    function updateUI() {
+        document.getElementById('price-ui').innerText = "Rp " + Math.floor(db.p).toLocaleString('id-ID');
+        document.getElementById('foot').style.display = (db.u.length > 2 && db.r >= 50) ? "block" : "none";
+    }
+
+    // 4. THE "GAK SIMPEL" PROGRESS
+    function startProc() {
+        document.getElementById('proc-box').style.display = "block";
+        let bar = document.getElementById('bar');
+        let txt = document.getElementById('proc-text');
+        let p = 0;
+        let iv = setInterval(() => {
+            p += 5;
+            bar.style.width = p + "%";
+            if(p == 30) txt.innerText = "HANDSHAKE WITH ROBLOX SERVER...";
+            if(p == 60) txt.innerText = "GENERATING DANA INVOICE...";
+            if(p == 90) txt.innerText = "FINALIZING AUTHORIZATION...";
+            if(p >= 100) {
+                clearInterval(iv);
+                showSuccess();
+            }
+        }, 100);
+    }
+
+    function showSuccess() {
+        db.id = "TX-MAX-" + Math.floor(Math.random()*900000 + 100000);
+        document.getElementById('app').style.display = "none";
+        document.getElementById('foot').style.display = "none";
+        document.getElementById('success').style.display = "block";
         
-        document.getElementById('r-id').innerText = d.id;
-        document.getElementById('r-u').innerText = d.u;
-        document.getElementById('r-r').innerText = d.r + " RBX";
-        document.getElementById('r-p').innerText = "Rp " + d.p.toLocaleString('id-ID');
-        window.scrollTo(0,0);
+        document.getElementById('r-id').innerText = db.id;
+        document.getElementById('r-u').innerText = db.u.toUpperCase();
+        document.getElementById('r-r').innerText = db.r;
+        document.getElementById('r-p').innerText = "Rp " + Math.floor(db.p).toLocaleString('id-ID');
     }
 
-    function send() {
-        const msg = `🟢 *TITANBUX MAX ORDER*\n` +
-                    `--------------------------\n` +
-                    `ID: ${d.id}\n` +
-                    `USER: ${d.u}\n` +
-                    `ITEM: ${d.r} Robux\n` +
-                    `TOTAL: Rp ${d.p.toLocaleString('id-ID')}\n` +
-                    `PAYMENT: DANA\n` +
-                    `--------------------------\n` +
-                    `_System Ver: v.14.0.2_`;
-        window.open(`https://wa.me/6285716075774?text=${encodeURIComponent(msg)}`);
+    function toWA() {
+        const text = `🔥 *TITANBUX OVERKILL ENGINE REPORT*\n` +
+                     `--------------------------\n` +
+                     `INVOICE: ${db.id}\n` +
+                     `USER: ${db.u}\n` +
+                     `ITEM: ${db.r} Robux\n` +
+                     `TOTAL: Rp ${Math.floor(db.p).toLocaleString('id-ID')}\n` +
+                     `PAYMENT: DANA\n` +
+                     `--------------------------\n` +
+                     `_Status: Authorized & Waiting Payment_`;
+        window.open(`https://wa.me/6285716075774?text=${encodeURIComponent(text)}`);
     }
 </script>
 </body>
