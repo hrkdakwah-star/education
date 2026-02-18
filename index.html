@@ -3,288 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITANBUX | Aether Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>TITANBUX | OVERDRIVE EDITION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00ffa3;
-            --primary-dark: #00c47d;
-            --bg: #fdfdfd;
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --border: rgba(0, 255, 163, 0.15);
-            --text: #0f172a;
-            --text-dim: #64748b;
+            --neon: #00ffa3;
+            --neon-glow: rgba(0, 255, 163, 0.4);
+            --bg-dark: #050a09;
+            --surface: rgba(10, 20, 18, 0.8);
+            --border: rgba(0, 255, 163, 0.2);
+            --text: #e2fef4;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { 
+            background: var(--bg-dark); 
+            color: var(--text); 
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 163, 0.15) 0%, transparent 50%),
+                linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+        }
 
-        /* BACKGROUND ENGINE */
-        canvas#canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.4; }
+        /* --- CYBER BACKGROUND --- */
+        #cyber-bg { position: fixed; inset: 0; z-index: -1; opacity: 0.5; }
 
-        /* PROGRESS TOP BAR */
-        #scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(to right, var(--primary), #00d2ff); z-index: 1001; transition: 0.2s; }
+        /* --- LUXURY LOADER --- */
+        #loader { 
+            position: fixed; inset: 0; background: #000; z-index: 9999; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .scan-line { width: 200px; height: 2px; background: var(--neon); box-shadow: 0 0 20px var(--neon); animation: scan 2s infinite; }
+        @keyframes scan { 0% { transform: translateY(-50px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(50px); opacity: 0; } }
 
-        /* PRE-LOADER */
-        #preloader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .loader-ring { width: 60px; height: 60px; border: 4px solid #f1f5f9; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* --- HEADER --- */
+        header { 
+            padding: 25px; border-bottom: 1px solid var(--border); 
+            backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: 2px; font-size: 1.5rem; text-shadow: 0 0 10px var(--neon-glow); }
+        .logo span { color: var(--neon); }
 
-        header { position: sticky; top: 0; z-index: 1000; padding: 18px 25px; background: rgba(255,255,255,0.7); backdrop-filter: blur(25px); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 900; font-size: 1.4rem; letter-spacing: -1px; }
-        .logo span { color: var(--primary); }
+        /* --- MAIN CONTAINER --- */
+        .container { max-width: 500px; margin: 30px auto 150px; padding: 0 20px; }
 
-        .container { max-width: 500px; margin: 30px auto 140px; padding: 0 20px; }
+        /* --- GLOWING CARD --- */
+        .card { 
+            background: var(--surface); border: 1px solid var(--border); border-radius: 20px; 
+            padding: 30px; margin-bottom: 25px; position: relative; overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 255, 163, 0.05);
+            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .card::before {
+            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon)); animation: border-run 3s linear infinite;
+        }
+        @keyframes border-run { to { left: 100%; } }
 
-        /* LIVE FEED */
-        .live-feed { background: #e2fef4; padding: 10px 15px; border-radius: 15px; margin-bottom: 25px; border: 1px solid var(--border); overflow: hidden; white-space: nowrap; font-size: 0.7rem; font-weight: 700; color: var(--primary-dark); }
-        .feed-track { display: inline-block; animation: scroll 20s linear infinite; }
-        @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        .label { 
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem; color: var(--neon); 
+            margin-bottom: 20px; display: block; letter-spacing: 2px; font-weight: 700;
+        }
 
-        /* CARD STYLE */
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 35px; padding: 30px; margin-bottom: 25px; box-shadow: 0 15px 35px rgba(0, 255, 163, 0.05); position: relative; overflow: hidden; transition: 0.4s; }
-        .card:hover { transform: translateY(-8px); border-color: var(--primary); }
-        
-        .label { font-size: 0.75rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
-        .label i { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; }
+        /* --- CYBER INPUT --- */
+        .input-group { position: relative; }
+        input { 
+            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); 
+            padding: 18px 20px; border-radius: 12px; color: var(--neon); font-size: 1rem;
+            outline: none; transition: 0.3s; font-family: 'Orbitron', sans-serif;
+        }
+        input:focus { border-color: var(--neon); box-shadow: 0 0 20px rgba(0, 255, 163, 0.2); }
 
-        input { width: 100%; border: 2px solid #f1f5f9; padding: 18px; border-radius: 20px; font-size: 1rem; outline: none; transition: 0.3s; background: white; }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 25px rgba(0, 255, 163, 0.15); }
+        /* --- PACKAGE GRID --- */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .pkg { 
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border); 
+            padding: 20px; border-radius: 15px; cursor: pointer; transition: 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .pkg:hover { background: rgba(0, 255, 163, 0.1); transform: translateY(-5px); }
+        .pkg.active { background: var(--neon); color: #000; box-shadow: 0 0 30px var(--neon-glow); }
+        .pkg b { display: block; font-size: 1.2rem; font-family: 'Orbitron', sans-serif; }
+        .pkg span { font-size: 0.8rem; font-weight: 800; }
 
-        /* SELECTOR GRID */
-        .selector-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .chip { background: white; border: 2px solid #f1f5f9; padding: 20px; border-radius: 25px; cursor: pointer; transition: 0.3s; position: relative; }
-        .chip.active { border-color: var(--primary); background: #f0fff9; transform: scale(0.96); }
-        .chip b { display: block; font-size: 1.2rem; }
-        .chip span { font-size: 0.8rem; color: var(--primary-dark); font-weight: 700; }
-        .pop-tag { position: absolute; top: -10px; right: 10px; background: var(--primary); color: white; font-size: 0.6rem; font-weight: 900; padding: 4px 12px; border-radius: 50px; }
+        /* --- BOT BAR --- */
+        .bot-bar { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(0,0,0,0.9); padding: 30px 25px 50px;
+            border-top: 2px solid var(--neon); backdrop-filter: blur(20px);
+            display: flex; justify-content: space-between; align-items: center;
+            transform: translateY(100%); transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .bot-bar.active { transform: translateY(0); }
 
-        /* NOTIFICATION TOAST */
-        #toast { position: fixed; top: 100px; right: -300px; background: var(--text); color: white; padding: 15px 25px; border-radius: 20px; font-weight: 700; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .btn-glitch {
+            background: var(--neon); color: #000; border: none; padding: 18px 40px;
+            font-family: 'Orbitron', sans-serif; font-weight: 900; border-radius: 5px;
+            cursor: pointer; position: relative; text-transform: uppercase;
+            box-shadow: 0 0 20px var(--neon-glow); transition: 0.2s;
+        }
+        .btn-glitch:hover { letter-spacing: 2px; }
 
-        /* BOTTOM NAV BAR */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(30px); border-top: 1px solid var(--border); padding: 25px 30px 45px; display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1); z-index: 1000; }
-        .bottom-nav.show { transform: translateY(0); }
-        .price-info b { font-size: 1.6rem; font-weight: 900; display: block; }
-        .price-info span { font-size: 0.7rem; color: var(--text-dim); font-weight: 800; }
+        /* --- NOTIFICATION --- */
+        #alert {
+            position: fixed; bottom: 150px; left: 50%; transform: translateX(-50%);
+            background: var(--neon); color: #000; padding: 10px 25px; border-radius: 50px;
+            font-weight: 900; font-size: 0.8rem; display: none; z-index: 1001;
+        }
 
-        .btn-main { background: var(--primary); color: white; border: none; padding: 18px 40px; border-radius: 22px; font-weight: 800; font-size: 1rem; cursor: pointer; box-shadow: 0 10px 25px rgba(0, 255, 163, 0.3); transition: 0.3s; }
-        .btn-main:active { transform: scale(0.92); }
+        #success { display: none; text-align: center; padding: 80px 20px; }
+        .order-box { border: 2px dashed var(--neon); padding: 20px; border-radius: 15px; margin: 30px 0; background: rgba(0,255,163,0.05); }
 
-        /* MODAL OVERLAY */
-        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); z-index: 2001; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { background: white; width: 100%; max-width: 400px; border-radius: 40px; padding: 35px; animation: modalIn 0.4s forwards; }
-        @keyframes modalIn { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        #success { display: none; text-align: center; padding: 60px 20px; }
     </style>
 </head>
 <body>
 
-    <div id="scroll-progress"></div>
-    <canvas id="canvas"></canvas>
-    <div id="toast">Notifikasi!</div>
-
-    <div id="preloader">
-        <div class="loader-ring"></div>
-        <p style="margin-top:20px; font-weight:800; color:var(--text-dim); font-size:0.7rem; letter-spacing:3px;">INITIALIZING SYSTEM</p>
+    <div id="loader">
+        <div class="logo">TITAN<span>BUX</span></div>
+        <div class="scan-line"></div>
+        <p style="margin-top:20px; font-family:'Orbitron'; font-size:0.6rem; letter-spacing:5px;">AUTHORIZING ACCESS...</p>
     </div>
+
+    <canvas id="cyber-bg"></canvas>
+    <div id="alert">SYSTEM UPDATED</div>
 
     <header>
         <div class="logo">TITAN<span>BUX</span></div>
-        <div style="text-align: right;">
-            <div id="status" style="font-size: 0.6rem; color: var(--primary-dark); font-weight: 800;">● SYSTEM ACTIVE</div>
-            <div id="time" style="font-size: 0.75rem; font-weight: 700; color: var(--text-dim);">00:00:00</div>
+        <div style="text-align:right">
+            <div style="font-size:0.5rem; letter-spacing:2px;">ENCRYPTION</div>
+            <div style="font-size:0.7rem; color:var(--neon); font-weight:900;">AES-256 ACTIVE</div>
         </div>
     </header>
 
-    <div class="container" id="main-view">
-        <div class="live-feed">
-            <div class="feed-track">
-                🔥 Pesanan Baru: User "Bax***" beli 1000 RBX — User "Gen***" beli 400 RBX — User "Zil***" beli 5000 RBX — Sistem sedang memproses 4 antrean pengiriman...
+    <div class="container" id="app">
+        
+        <div class="card">
+            <span class="label">/ LOGIN_IDENTITY</span>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="IDENTIFY USERNAME..." oninput="sync()">
             </div>
+            <div id="status-msg" style="margin-top:15px; font-size:0.6rem; color:var(--neon); opacity:0.6;">AWAITING DATA INPUT...</div>
         </div>
 
         <div class="card">
-            <span class="label"><i></i> Account Identity</span>
-            <input type="text" id="username" placeholder="Type Roblox Username..." oninput="update()">
-            <div id="user-hint" style="margin-top:15px; display:none; align-items:center; gap:10px;">
-                <div style="width:10px; height:10px; background:var(--primary); border-radius:50%;"></div>
-                <span style="font-size:0.8rem; font-weight:700; color:var(--primary-dark);">Verified Profile Data Ready</span>
-            </div>
-        </div>
-
-        <div class="card">
-            <span class="label"><i></i> Select Robux Amount</span>
-            <div class="selector-grid">
-                <div class="chip" onclick="select(400, 52800, this)"><b>400</b><span>Rp 52.800</span></div>
-                <div class="chip" onclick="select(1000, 132000, this)">
-                    <div class="pop-tag">BEST SELLER</div>
-                    <b>1000</b><span>Rp 132.000</span>
+            <span class="label">/ SELECT_AMMOUNT</span>
+            <div class="grid">
+                <div class="pkg" onclick="selectPkg(400, 52800, this)">
+                    <b>400</b><span>IDR 52.800</span>
                 </div>
-                <div class="chip" onclick="select(2000, 260000, this)"><b>2000</b><span>Rp 260.000</span></div>
-                <div class="chip" onclick="select(5000, 650000, this)"><b>5000</b><span>Rp 650.000</span></div>
+                <div class="pkg" onclick="selectPkg(1000, 132000, this)">
+                    <div style="position:absolute; top:0; right:0; background:var(--neon); color:#000; font-size:0.5rem; padding:2px 8px; font-weight:900;">BEST</div>
+                    <b>1000</b><span>IDR 132.000</span>
+                </div>
+                <div class="pkg" onclick="selectPkg(2000, 260000, this)">
+                    <b>2000</b><span>IDR 260.000</span>
+                </div>
+                <div class="pkg" onclick="selectPkg(5000, 650000, this)">
+                    <b>5000</b><span>IDR 650.000</span>
+                </div>
             </div>
         </div>
 
         <div class="card">
-            <span class="label"><i></i> Promo & Discount</span>
-            <input type="text" id="voucher" placeholder="Enter Voucher Code..." oninput="update()">
-        </div>
-
-        <div style="text-align:center; font-size:0.7rem; color:var(--text-dim); margin-top:10px; line-height:1.5;">
-            🔒 Enkripsi Sesi: <b>SHA-256 v8.1</b><br>
-            TitanBux © 2026 High-Performance Robux Gateway
-        </div>
-    </div>
-
-    <div id="modal">
-        <div class="modal-card">
-            <h2 style="font-weight:900; margin-bottom:20px;">Review Pesanan</h2>
-            <div style="border-top:1px solid #f1f5f9; padding-top:20px; font-size:0.9rem;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Username</span><b id="m-user">-</b></div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Item</span><b id="m-rbx">-</b></div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Voucher</span><b id="m-voc">-</b></div>
-                <div style="display:flex; justify-content:space-between; margin-top:20px; font-size:1.2rem; color:var(--primary-dark);"><span>Total</span><b id="m-total">-</b></div>
+            <span class="label">/ TRANSACTION_GATEWAY</span>
+            <div style="display:flex; gap:10px;">
+                <div id="pay-dana" class="pkg active" style="flex:1; text-align:center" onclick="setPay('DANA')"><b>DANA</b></div>
+                <div id="pay-qris" class="pkg" style="flex:1; text-align:center" onclick="setPay('QRIS')"><b>QRIS</b></div>
             </div>
-            <button class="btn-main" style="width:100%; margin-top:30px;" onclick="finalConfirm()">Proses Sekarang</button>
-            <button onclick="closeModal()" style="width:100%; border:none; background:none; margin-top:15px; color:var(--text-dim); font-weight:700; cursor:pointer;">Batalkan</button>
+        </div>
+
+        <div style="text-align:center; font-family:'Orbitron'; font-size:0.6rem; opacity:0.4; letter-spacing:3px;">
+            TERMINAL v9.0.4 - NO LOGS SAVED
         </div>
     </div>
 
     <div id="success">
-        <div style="font-size:6rem; margin-bottom:20px;">💎</div>
-        <h1 style="font-weight:900;">ANTREAN DITERIMA!</h1>
-        <p style="color:var(--text-dim); margin-top:10px;">ID Transaksi Anda:</p>
-        <div class="card" style="border-style:dashed; margin:20px 0; background:#f0fff9;">
-            <b id="order-id" style="font-size:1.8rem; color:var(--primary-dark);"></b>
+        <div style="font-size:5rem; text-shadow: 0 0 30px var(--neon);">⚡</div>
+        <h1 style="font-family:'Orbitron'; font-weight:900; font-size:2rem;">ORDER_CONFIRMED</h1>
+        <div class="order-box">
+            <span class="label" style="margin-bottom:10px;">SERIAL_NUMBER</span>
+            <div id="order-id" style="font-family:'Orbitron'; font-size:1.5rem; font-weight:900; color:var(--neon);"></div>
         </div>
-        <button class="btn-main" style="width:100%;" onclick="sendWA()">KONFIRMASI WHATSAPP</button>
+        <button class="btn-glitch" style="width:100%" onclick="sendWA()">ESTABLISH_CONNECTION</button>
     </div>
 
-    <div class="bottom-nav" id="bot-bar">
-        <div class="price-info">
-            <span>TOTAL ESTIMASI</span>
-            <b id="price-ui">Rp 0</b>
+    <div class="bot-bar" id="bot-bar">
+        <div>
+            <div style="font-family:'Orbitron'; font-size:0.6rem; letter-spacing:2px; opacity:0.6;">CREDITS_REQUIRED</div>
+            <div id="total-ui" style="font-family:'Orbitron'; font-size:1.5rem; font-weight:900; color:var(--neon);">Rp 0</div>
         </div>
-        <button class="btn-main" onclick="openReview()">Checkout</button>
+        <button class="btn-glitch" onclick="process()">INIT_CHECKOUT</button>
     </div>
 
     <script>
-        let state = { user: "", rbx: 0, price: 0, disc: 1, id: "" };
+        let data = { user: "", rbx: 0, price: 0, pay: "DANA", id: "" };
 
-        // 1. Particle Canvas Engine
-        const canvas = document.getElementById('canvas');
+        // 1. CYBER BACKGROUND ENGINE
+        const canvas = document.getElementById('cyber-bg');
         const ctx = canvas.getContext('2d');
-        let particles = [];
-        function initCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            for(let i=0; i<40; i++) particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: Math.random()-0.5, vy: Math.random()-0.5 });
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function drawBg() {
+            ctx.fillStyle = 'rgba(5, 10, 9, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#00ffa3';
+            ctx.lineWidth = 0.5;
+            for(let i=0; i<5; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random()*canvas.width, 0);
+                ctx.lineTo(Math.random()*canvas.width, canvas.height);
+                ctx.stroke();
+            }
+            requestAnimationFrame(drawBg);
         }
-        function draw() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = '#00ffa3';
-            particles.forEach(p => {
-                p.x += p.vx; p.y += p.vy;
-                if(p.x<0 || p.x>canvas.width) p.vx*=-1;
-                if(p.y<0 || p.y>canvas.height) p.vy*=-1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
-            });
-            requestAnimationFrame(draw);
-        }
+        drawBg();
 
-        // 2. Real-time Clock
-        setInterval(() => {
-            const d = new Date();
-            document.getElementById('time').innerText = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0') + ":" + d.getSeconds().toString().padStart(2,'0');
-        }, 1000);
-
-        // 3. Scroll Progress
-        window.onscroll = () => {
-            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            document.getElementById('scroll-progress').style.width = (winScroll / height) * 100 + "%";
-        };
-
-        // 4. Main App Logic
+        // 2. APP LOGIC
         window.onload = () => {
-            initCanvas(); draw();
-            setTimeout(() => { document.getElementById('preloader').style.display='none'; }, 1500);
+            setTimeout(() => { document.getElementById('loader').style.display='none'; }, 2000);
         };
 
-        function update() {
-            state.user = document.getElementById('username').value;
-            const voc = document.getElementById('voucher').value.toUpperCase();
-            
-            document.getElementById('user-hint').style.display = state.user.length > 2 ? 'flex' : 'none';
-            
-            if(voc === "TITAN10") {
-                if(state.disc !== 0.9) showToast("Voucher Aktif: Diskon 10%!");
-                state.disc = 0.9;
-            } else { state.disc = 1; }
-
+        function sync() {
+            data.user = document.getElementById('username').value;
+            const msg = document.getElementById('status-msg');
+            if(data.user.length > 3) {
+                msg.innerText = "USER_LOCATED: " + data.user.toUpperCase();
+                msg.style.opacity = "1";
+            }
             render();
         }
 
-        function select(r, p, el) {
-            playSfx();
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('chip active'); // Fix class assignment
-            el.className = "chip active";
-            state.rbx = r;
-            state.price = p;
+        function selectPkg(r, p, el) {
+            document.querySelectorAll('.pkg').forEach(k => k.classList.remove('active'));
+            el.classList.add('active');
+            data.rbx = r;
+            data.price = p;
+            showAlert(r + " RBX SELECTED");
+            render();
+        }
+
+        function setPay(m) {
+            data.pay = m;
+            document.getElementById('pay-dana').classList.toggle('active', m==='DANA');
+            document.getElementById('pay-qris').classList.toggle('active', m==='QRIS');
             render();
         }
 
         function render() {
-            const final = Math.floor(state.price * state.disc);
-            document.getElementById('price-ui').innerText = "Rp " + final.toLocaleString('id-ID');
+            document.getElementById('total-ui').innerText = "Rp " + data.price.toLocaleString('id-ID');
             const bar = document.getElementById('bot-bar');
-            if(state.user.length > 2 && state.rbx > 0) bar.classList.add('show');
-            else bar.classList.remove('show');
+            if(data.user.length > 3 && data.rbx > 0) bar.classList.add('active');
+            else bar.classList.remove('active');
         }
 
-        function showToast(m) {
-            const t = document.getElementById('toast');
-            t.innerText = m; t.style.right = '20px';
-            setTimeout(() => t.style.right = '-300px', 3000);
+        function showAlert(t) {
+            const a = document.getElementById('alert');
+            a.innerText = t; a.style.display = 'block';
+            setTimeout(() => a.style.display = 'none', 2000);
         }
 
-        function playSfx() {
-            // Placeholder for audio context
-        }
-
-        function openReview() {
-            document.getElementById('modal').style.display = 'flex';
-            document.getElementById('m-user').innerText = state.user;
-            document.getElementById('m-rbx').innerText = state.rbx + " RBX";
-            document.getElementById('m-voc').innerText = state.disc < 1 ? "TITAN10 (10%)" : "-";
-            document.getElementById('m-total').innerText = "Rp " + Math.floor(state.price * state.disc).toLocaleString('id-ID');
-        }
-
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
-        function finalConfirm() {
-            state.id = "ATX-" + Math.floor(100000 + Math.random() * 899999);
-            document.getElementById('order-id').innerText = state.id;
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('main-view').style.display = 'none';
+        function process() {
+            data.id = "TNB-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+            document.getElementById('order-id').innerText = data.id;
+            document.getElementById('app').style.display = 'none';
             document.getElementById('bot-bar').style.display = 'none';
             document.getElementById('success').style.display = 'block';
             window.scrollTo(0,0);
         }
 
         function sendWA() {
-            const total = Math.floor(state.price * state.disc);
-            const msg = `👑 *TITANBUX AETHER ORDER*\n` +
+            const msg = `⚡ *TITANBUX OVERDRIVE INVOICE*\n` +
                         `--------------------------\n` +
-                        `ID: ${state.id}\n` +
-                        `User: ${state.user}\n` +
-                        `Item: ${state.rbx} RBX\n` +
-                        `Total: Rp ${total.toLocaleString('id-ID')}\n` +
+                        `ID: ${data.id}\n` +
+                        `USER: ${data.user}\n` +
+                        `ITEM: ${data.rbx} RBX\n` +
+                        `PAY: ${data.pay}\n` +
+                        `TOTAL: Rp ${data.price.toLocaleString('id-ID')}\n` +
                         `--------------------------\n` +
-                        `_Sistem Aether memverifikasi data. Mohon proses!_`;
+                        `_System Authorized. Proceeding..._`;
             window.open(`https://wa.me/6285716075774?text=${encodeURIComponent(msg)}`);
         }
     </script>
