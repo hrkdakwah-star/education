@@ -3,251 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITANBUX | GOL-TITAN EDITION</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>RbxGold - Premium Robux Provider</title>
     <style>
         :root {
-            --primary: #00c352;
-            --primary-dark: #00a544;
-            --bg: #f4f7f6;
-            --white: #ffffff;
-            --text: #1f2937;
-            --border: #e5e7eb;
+            --primary-green: #00e676;
+            --dark-bg: #0a0b10;
+            --card-glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-dim: #8e8e93;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); line-height: 1.6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
 
-        /* HEADER */
-        header { background: var(--white); padding: 15px 20px; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .logo { font-weight: 800; font-size: 1.3rem; color: var(--primary); letter-spacing: -0.5px; }
-        .logo span { color: var(--text); }
-        .status-dot { width: 10px; height: 10px; background: var(--primary); border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 10px var(--primary); }
+        body { 
+            background-color: var(--dark-bg); 
+            color: var(--text-main); 
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at top right, rgba(0, 230, 118, 0.05), transparent),
+                              radial-gradient(circle at bottom left, rgba(0, 230, 118, 0.03), transparent);
+        }
 
-        .container { max-width: 500px; margin: 20px auto 120px; padding: 0 15px; }
+        /* Welcome Screen */
+        #splash {
+            position: fixed; inset: 0; background: var(--dark-bg); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 0.8s ease-out;
+        }
 
-        /* BOX STYLE */
-        .section { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .section-title { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .section-title i { width: 4px; height: 15px; background: var(--primary); border-radius: 10px; }
-
-        /* INPUT FIELD */
-        label { display: block; font-size: 0.8rem; font-weight: 600; color: #6b7280; margin-bottom: 8px; }
-        .input-group { position: relative; margin-bottom: 15px; }
-        input { width: 100%; border: 1px solid var(--border); padding: 12px 15px; border-radius: 8px; font-size: 1rem; outline: none; transition: 0.2s; background: #fafafa; }
-        input:focus { border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 3px rgba(0, 195, 82, 0.1); }
-
-        /* AVATAR DISPLAY */
-        .user-preview { display: flex; align-items: center; gap: 12px; background: var(--bg); padding: 10px; border-radius: 8px; display: none; margin-top: 10px; }
-        #avatar-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
-        #username-display { font-size: 0.85rem; font-weight: 700; }
-
-        /* CUSTOM GRID FOR PACKAGES */
-        .pkg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-        .pkg-item { background: var(--white); border: 1px solid var(--border); padding: 12px 5px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .pkg-item:hover { border-color: var(--primary); }
-        .pkg-item.active { background: var(--primary); border-color: var(--primary); color: var(--white); }
-        .pkg-item b { display: block; font-size: 0.9rem; }
-        .pkg-item span { font-size: 0.65rem; opacity: 0.8; }
-
-        /* CUSTOM INPUT ROBUX */
-        .custom-input-container { background: #f0fff4; border: 1px dashed var(--primary); padding: 15px; border-radius: 8px; margin-top: 15px; }
+        .hero-title { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; text-align: center; }
+        .hero-title span { color: var(--primary-green); }
+        .hero-sub { color: var(--text-dim); margin-top: 8px; font-size: 0.9rem; letter-spacing: 2px; }
         
-        /* PAYMENT SELECTION */
-        .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .pay-item { border: 1px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 700; font-size: 0.85rem; }
-        .pay-item.active { border-color: var(--primary); color: var(--primary); background: #f0fff4; }
+        .btn-start {
+            margin-top: 40px; padding: 16px 45px; border-radius: 50px; border: 1px solid var(--primary-green);
+            background: transparent; color: var(--primary-green); font-weight: 700; cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-start:hover { background: var(--primary-green); color: var(--dark-bg); box-shadow: 0 0 20px rgba(0, 230, 118, 0.4); }
 
-        /* FLOATING FOOTER */
-        .footer-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 20px; display: none; z-index: 1000; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
-        .footer-content { max-width: 500px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .total-price { line-height: 1.2; }
-        .total-price span { font-size: 0.75rem; color: #6b7280; font-weight: 600; }
-        .total-price div { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
+        /* Main App */
+        #app { display: none; opacity: 0; transition: 1s; padding-top: 80px; }
+
+        header {
+            position: fixed; top: 0; width: 100%; padding: 20px 6%; display: flex;
+            justify-content: space-between; align-items: center; z-index: 100;
+            background: rgba(10, 11, 16, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass);
+        }
+
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+
+        /* Product Card */
+        .glass-card {
+            background: var(--card-glass); border: 1px solid var(--border-glass);
+            border-radius: 30px; padding: 30px; backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .stok-badge {
+            background: rgba(0, 230, 118, 0.1); color: var(--primary-green);
+            padding: 6px 15px; border-radius: 50px; font-size: 0.75rem; font-weight: 700;
+            display: inline-block; margin-bottom: 20px;
+        }
+
+        .input-box { margin-bottom: 25px; }
+        .input-box label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-dim); margin-bottom: 10px; }
         
-        .btn-order { background: var(--primary); color: var(--white); border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; }
-        .btn-order:hover { background: var(--primary-dark); }
+        input {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass);
+            padding: 18px; border-radius: 16px; color: white; font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary-green); background: rgba(255,255,255,0.08); }
 
-        /* SUCCESS INFO */
-        #success-view { display: none; text-align: center; padding: 40px 15px; }
-        .receipt-card { background: var(--white); border: 1px solid var(--border); padding: 20px; text-align: left; border-radius: 12px; margin-top: 20px; border-top: 4px solid var(--primary); }
+        /* Checkout Steps */
+        .step { display: none; animation: slideUp 0.5s ease forwards; }
+        .active-step { display: block; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .summary-box {
+            background: rgba(0,0,0,0.2); border-radius: 20px; padding: 20px; margin: 20px 0;
+            border: 1px dashed var(--border-glass);
+        }
+        .summary-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; }
+        .summary-item .val { font-weight: 700; color: var(--primary-green); }
+
+        .btn-primary {
+            width: 100%; padding: 20px; border-radius: 18px; border: none;
+            background: var(--primary-green); color: var(--dark-bg);
+            font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.3s;
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 230, 118, 0.2); }
+
+        /* Mini Components */
+        .progress-container { height: 4px; background: var(--border-glass); border-radius: 10px; margin: 25px 0; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: var(--primary-green); transition: 1.5s ease-in-out; }
+
+        .notif {
+            position: fixed; top: 100px; left: 50%; transform: translateX(-50%) translateY(-200px);
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); padding: 12px 25px;
+            border-radius: 50px; border: 1px solid var(--border-glass); font-size: 0.8rem;
+            transition: 0.5s; z-index: 1000;
+        }
+        .notif.show { transform: translateX(-50%) translateY(0); }
 
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">TITAN<span>BUX</span></div>
-        <div style="font-size: 0.7rem; font-weight: 700;"><span class="status-dot"></span>SERVER ONLINE</div>
-    </header>
+    <div id="splash">
+        <h1 class="hero-title">RBX<span>GOLD</span></h1>
+        <p class="hero-sub">PREMIUM • INSTANT • SECURE</p>
+        <button class="btn-start" onclick="initApp()">ENTER STORE</button>
+    </div>
 
-    <div class="container" id="order-view">
-        
-        <div class="section">
-            <div class="section-title"><i></i> INFORMASI AKUN</div>
-            <label>Username Roblox</label>
-            <input type="text" id="inp-user" placeholder="Masukkan Username..." oninput="handleUser()">
-            <div class="user-preview" id="preview-box">
-                <img id="avatar-img" src="">
-                <div>
-                    <div id="username-display"></div>
-                    <div style="font-size: 0.65rem; color: var(--primary); font-weight: 700;">USER VALIDATED</div>
+    <div id="app">
+        <header>
+            <div style="font-weight: 900; font-size: 1.2rem;">RBX<span style="color:var(--primary-green)">GOLD</span></div>
+            <div style="font-size: 0.8rem; opacity: 0.5;">Support 24/7</div>
+        </header>
+
+        <div class="container">
+            <div class="glass-card">
+                <div class="stok-badge">🟢 <span id="stok-ui">507.756</span> Stok Tersedia</div>
+                
+                <div id="step-1" class="step active-step">
+                    <h2 style="margin-bottom: 25px;">Top Up Robux</h2>
+                    
+                    <div class="input-box">
+                        <label>Roblox Username</label>
+                        <input type="text" id="username" placeholder="Username kamu...">
+                    </div>
+
+                    <div class="input-box">
+                        <label>Jumlah Robux (Min. 50)</label>
+                        <input type="number" id="qty" placeholder="Contoh: 1000" oninput="recalc()">
+                    </div>
+
+                    <div class="input-box">
+                        <label>Kode Voucher (Opsional)</label>
+                        <input type="text" id="voucher" placeholder="DISKON10" oninput="recalc()">
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                        <span style="font-size:0.8rem; color:var(--text-dim);">Total Harga</span>
+                        <span id="total-ui" style="font-size:1.5rem; font-weight:900; color:var(--primary-green)">Rp 0</span>
+                    </div>
+
+                    <button class="btn-primary" style="margin-top:30px;" onclick="goToReview()">BELI SEKARANG</button>
                 </div>
-            </div>
-        </div>
 
-        <div class="section">
-            <div class="section-title"><i></i> PILIH NOMINAL ROBUX</div>
-            
-            <div class="pkg-grid">
-                <div class="pkg-item" onclick="selectPkg(400, 52800, this)"><b>400</b><span>Rp 52.8k</span></div>
-                <div class="pkg-item" onclick="selectPkg(800, 105600, this)"><b>800</b><span>Rp 105k</span></div>
-                <div class="pkg-item" onclick="selectPkg(1000, 132000, this)"><b>1000</b><span>Rp 132k</span></div>
-            </div>
-
-            <div class="custom-input-container">
-                <label style="color: var(--primary);">Ngetik Sendiri (Minimal 50)</label>
-                <div style="position: relative;">
-                    <input type="number" id="inp-custom" placeholder="Contoh: 150" oninput="handleCustom()">
-                    <span style="position: absolute; right: 15px; top: 12px; font-weight: 700; color: #ccc;">RBX</span>
+                <div id="step-2" class="step">
+                    <h3 style="text-align:center;">Review Order</h3>
+                    <div class="summary-box">
+                        <div class="summary-item"><span>ID Pesanan</span> <span class="val" id="res-id">-</span></div>
+                        <div class="summary-item"><span>Username</span> <span class="val" id="res-user">-</span></div>
+                        <div class="summary-item"><span>Jumlah</span> <span class="val" id="res-qty">-</span></div>
+                        <div class="summary-item"><span>Total Bayar</span> <span class="val" id="res-total">-</span></div>
+                    </div>
+                    <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
+                    <button class="btn-primary" id="btn-confirm" onclick="finalize()">KONFIRMASI</button>
+                    <button onclick="backToStep1()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:15px; cursor:pointer;">Kembali</button>
                 </div>
-                <div style="font-size: 0.65rem; margin-top: 8px; color: #6b7280;">Kurs: Rp 132 / 1 Robux</div>
-            </div>
-        </div>
 
-        <div class="section">
-            <div class="section-title"><i></i> METODE PEMBAYARAN</div>
-            <div class="pay-grid">
-                <div class="pay-item active" id="p-dana" onclick="setPay('DANA')">DANA</div>
-                <div class="pay-item" id="p-qris" onclick="setPay('QRIS')">QRIS / ALL BANK</div>
-            </div>
-        </div>
+                <div id="step-3" class="step" style="text-align:center;">
+                    <div style="font-size:4rem; margin-bottom:20px;">💎</div>
+                    <h2>Order Diproses!</h2>
+                    <p style="color:var(--text-dim); font-size:0.9rem; margin:15px 0 25px;">Silahkan hubungi admin melalui WhatsApp untuk mengirimkan bukti transfer.</p>
+                    <button class="btn-primary" onclick="contactAdmin()">HUBUNGI ADMIN (WA)</button>
+                </div>
 
-        <div style="background: #fff9e6; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba; font-size: 0.75rem; color: #856404;">
-            <b>Catatan:</b> Pastikan akun Roblox tidak dalam keadaan diprivate agar proses pengiriman lancar.
+            </div>
+
+            <p style="text-align:center; margin-top:30px; font-size:0.7rem; color:var(--text-dim); line-height:1.6;">
+                RbxGold tidak berafiliasi dengan Roblox Corporation.<br>
+                Seluruh transaksi bersifat final dan aman.
+            </p>
         </div>
     </div>
 
-    <div class="container" id="success-view">
-        <div style="font-size: 4rem;">🎉</div>
-        <h2 style="font-weight: 800; margin-bottom: 10px;">PESANAN DIBUAT!</h2>
-        <p style="font-size: 0.85rem; color: #6b7280;">Silahkan screenshot nota ini dan hubungi admin.</p>
-        
-        <div class="receipt-card">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><span>Invoice ID:</span><b id="res-id"></b></div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><span>Username:</span><b id="res-user"></b></div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><span>Jumlah:</span><b id="res-rbx"></b></div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><span>Total:</span><b id="res-price" style="color: var(--primary);"></b></div>
-            <div style="display: flex; justify-content: space-between;"><span>Metode:</span><b id="res-pay"></b></div>
-        </div>
-
-        <button class="btn-order" style="width: 100%; margin-top: 25px; height: 55px;" onclick="sendWA()">KIRIM KE WHATSAPP</button>
-    </div>
-
-    <div class="footer-bar" id="footer-bar">
-        <div class="footer-content">
-            <div class="total-price">
-                <span>Total Bayar:</span>
-                <div id="price-display">Rp 0</div>
-            </div>
-            <button class="btn-order" onclick="processOrder()">BELI SEKARANG</button>
-        </div>
-    </div>
+    <div id="toast" class="notif">Seseorang baru saja membeli 500 Robux!</div>
 
     <script>
-        let db = { user: "", rbx: 0, price: 0, pay: "DANA", id: "" };
-        const RATE = 132;
+        let state = { user: "", qty: 0, total: 0, orderId: "" };
+        const PRICE_PER_RBX = 132;
+        let stok = 507756;
 
-        // USER SCANNER
-        async function fetchUser(name) {
-            const preview = document.getElementById('preview-box');
-            const img = document.getElementById('avatar-img');
-            const nameDisp = document.getElementById('username-display');
-
-            if(name.length < 3) { preview.style.display = "none"; return; }
-
-            try {
-                const r = await fetch(`https://users.roproxy.com/v1/users/search?keyword=${name}&limit=1`);
-                const j = await r.json();
-                if(j.data && j.data.length > 0) {
-                    const u = j.data[0];
-                    const tr = await fetch(`https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds=${u.id}&size=150x150&format=Png&isCircular=true`);
-                    const tj = await tr.json();
-                    img.src = tj.data[0].imageUrl;
-                    nameDisp.innerText = u.displayName + " (@" + u.name + ")";
-                    preview.style.display = "flex";
-                }
-            } catch(e) {}
+        function initApp() {
+            document.getElementById('splash').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('splash').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                setTimeout(() => { document.getElementById('app').style.opacity = '1'; }, 50);
+                startNotifs();
+            }, 800);
         }
 
-        function handleUser() {
-            db.user = document.getElementById('inp-user').value;
-            clearTimeout(window.t);
-            window.t = setTimeout(() => fetchUser(db.user), 800);
-            update();
-        }
-
-        // NOMINAL LOGIC
-        function handleCustom() {
-            let val = parseInt(document.getElementById('inp-custom').value);
-            document.querySelectorAll('.pkg-item').forEach(i => i.classList.remove('active'));
-            if(val >= 50) {
-                db.rbx = val;
-                db.price = val * RATE;
-            } else {
-                db.rbx = 0;
-                db.price = 0;
-            }
-            update();
-        }
-
-        function selectPkg(r, p, el) {
-            document.querySelectorAll('.pkg-item').forEach(i => i.classList.remove('active'));
-            el.classList.add('active');
-            document.getElementById('inp-custom').value = "";
-            db.rbx = r;
-            db.price = p;
-            update();
-        }
-
-        function setPay(m) {
-            db.pay = m;
-            document.getElementById('p-dana').classList.toggle('active', m === 'DANA');
-            document.getElementById('p-qris').classList.toggle('active', m === 'QRIS');
-        }
-
-        function update() {
-            document.getElementById('price-display').innerText = "Rp " + db.price.toLocaleString('id-ID');
-            const bar = document.getElementById('footer-bar');
-            if(db.user.length > 2 && db.rbx >= 50) bar.style.display = "block";
-            else bar.style.display = "none";
-        }
-
-        function processOrder() {
-            db.id = "TITAN-" + Math.floor(Math.random()*89999 + 10000);
-            document.getElementById('order-view').style.display = "none";
-            document.getElementById('footer-bar').style.display = "none";
-            document.getElementById('success-view').style.display = "block";
+        function recalc() {
+            const q = document.getElementById('qty').value;
+            const v = document.getElementById('voucher').value.toUpperCase();
+            let total = q * PRICE_PER_RBX;
             
-            document.getElementById('res-id').innerText = db.id;
-            document.getElementById('res-user').innerText = db.user;
-            document.getElementById('res-rbx').innerText = db.rbx + " Robux";
-            document.getElementById('res-price').innerText = "Rp " + db.price.toLocaleString('id-ID');
-            document.getElementById('res-pay').innerText = db.pay;
-            window.scrollTo(0,0);
+            if(v === "DISKON10") total *= 0.9;
+            
+            state.total = Math.floor(total);
+            state.qty = q;
+            document.getElementById('total-ui').innerText = "Rp " + state.total.toLocaleString('id-ID');
         }
 
-        function sendWA() {
-            const msg = `🟢 *TITANBUX ORDER GOL-TITAN*\n` +
-                        `--------------------------\n` +
-                        `Invoice: ${db.id}\n` +
-                        `User: ${db.user}\n` +
-                        `Order: ${db.rbx} Robux\n` +
-                        `Total: Rp ${db.price.toLocaleString('id-ID')}\n` +
-                        `Metode: ${db.pay}\n` +
-                        `--------------------------\n` +
-                        `_Link Akun: https://www.roblox.com/users/profile?username=${db.user}_`;
-            window.open(`https://wa.me/6285716075774?text=${encodeURIComponent(msg)}`);
+        function goToReview() {
+            state.user = document.getElementById('username').value;
+            if(!state.user || state.qty < 50) return alert("Username harus diisi & Minimal 50 Robux!");
+            
+            state.orderId = "RBX-" + Math.floor(100000 + Math.random() * 900000);
+            
+            document.getElementById('res-id').innerText = state.orderId;
+            document.getElementById('res-user').innerText = state.user;
+            document.getElementById('res-qty').innerText = state.qty + " Robux";
+            document.getElementById('res-total').innerText = "Rp " + state.total.toLocaleString('id-ID');
+
+            showStep(2);
+        }
+
+        function finalize() {
+            const btn = document.getElementById('btn-confirm');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+            document.getElementById('p-bar').style.width = "100%";
+
+            setTimeout(() => {
+                stok -= state.qty;
+                document.getElementById('stok-ui').innerText = stok.toLocaleString('id-ID');
+                showStep(3);
+            }, 1800);
+        }
+
+        function showStep(n) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active-step'));
+            document.getElementById('step-' + n).classList.add('active-step');
+        }
+
+        function backToStep1() { showStep(1); }
+
+        function contactAdmin() {
+            const phone = "6285716075774";
+            const msg = `Halo Admin RbxGold!\n\nSaya ingin konfirmasi order Robux:\nID: ${state.orderId}\nUsername: ${state.user}\nJumlah: ${state.qty} Robux\nTotal: Rp${state.total.toLocaleString('id-ID')}\n\nMohon instruksi selanjutnya.`;
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+        }
+
+        function startNotifs() {
+            const fakeUsers = ["Andi_Rbx", "SkyWalker", "Roxie", "PlayerOne", "Budi88"];
+            setInterval(() => {
+                const u = fakeUsers[Math.floor(Math.random()*fakeUsers.length)];
+                const r = [100, 500, 1000, 2000][Math.floor(Math.random()*4)];
+                const t = document.getElementById('toast');
+                t.innerText = `${u} baru saja membeli ${r} Robux!`;
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 4000);
+            }, 15000);
         }
     </script>
 </body>
