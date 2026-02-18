@@ -53,7 +53,6 @@
 
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
 
-        /* Product Card */
         .glass-card {
             background: var(--card-glass); border: 1px solid var(--border-glass);
             border-radius: 30px; padding: 30px; backdrop-filter: blur(10px);
@@ -75,11 +74,17 @@
         }
         input:focus { border-color: var(--primary-green); background: rgba(255,255,255,0.08); }
 
-        /* Checkout Steps */
+        /* Step Management */
         .step { display: none; animation: slideUp 0.5s ease forwards; }
         .active-step { display: block; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Gamepass Notice */
+        .gp-notice {
+            background: rgba(0, 230, 118, 0.1); border: 1px dashed var(--primary-green);
+            padding: 15px; border-radius: 15px; margin: 15px 0; text-align: center;
+        }
 
         .summary-box {
             background: rgba(0,0,0,0.2); border-radius: 20px; padding: 20px; margin: 20px 0;
@@ -94,10 +99,6 @@
             font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.3s;
         }
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 230, 118, 0.2); }
-
-        /* Mini Components */
-        .progress-container { height: 4px; background: var(--border-glass); border-radius: 10px; margin: 25px 0; overflow: hidden; }
-        .progress-bar { height: 100%; width: 0%; background: var(--primary-green); transition: 1.5s ease-in-out; }
 
         .notif {
             position: fixed; top: 100px; left: 50%; transform: translateX(-50%) translateY(-200px);
@@ -120,7 +121,7 @@
     <div id="app">
         <header>
             <div style="font-weight: 900; font-size: 1.2rem;">RBX<span style="color:var(--primary-green)">GOLD</span></div>
-            <div style="font-size: 0.8rem; opacity: 0.5;">Support 24/7</div>
+            <div style="font-size: 0.8rem; opacity: 0.5;">DANA Verified</div>
         </header>
 
         <div class="container">
@@ -128,25 +129,26 @@
                 <div class="stok-badge">🟢 <span id="stok-ui">507.756</span> Stok Robux Tersedia</div>
                 
                 <div id="step-1" class="step active-step">
-                    <h2 style="margin-bottom: 25px;">Top Up Robux</h2>
+                    <h2 style="margin-bottom: 25px;">Konfigurasi Order</h2>
                     
                     <div class="input-box">
                         <label>Roblox Username</label>
-                        <input type="text" id="username" placeholder="Username(pastikan sudah benar)...">
+                        <input type="text" id="username" placeholder="Masukkan Username...">
                     </div>
 
                     <div class="input-box">
-                        <label>Jumlah Robux (Min. 50)</label>
-                        <input type="number" id="qty" placeholder="Contoh: 1000" oninput="recalc()">
+                        <label>Jumlah Robux (Diterima)</label>
+                        <input type="number" id="qty" placeholder="Contoh: 100" oninput="recalc()">
                     </div>
 
-                    <div class="input-box">
-                        <label>Kode Voucher (Opsional)</label>
-                        <input type="text" id="voucher" placeholder="DISKON10" oninput="recalc()">
+                    <div class="gp-notice">
+                        <span style="font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 5px;">HARGA GAMEPASS (WAJIB SET):</span>
+                        <span id="gp-price-ui" style="font-size: 1.8rem; font-weight: 900; color: var(--primary-green);">0</span>
+                        <span style="font-size: 0.65rem; color: var(--primary-green); display: block;">Robux (+30% Pajak Roblox)</span>
                     </div>
 
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                        <span style="font-size:0.8rem; color:var(--text-dim);">Total Harga</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+                        <span style="font-size:0.8rem; color:var(--text-dim);">Total Bayar (DANA)</span>
                         <span id="total-ui" style="font-size:1.5rem; font-weight:900; color:var(--primary-green)">Rp 0</span>
                     </div>
 
@@ -154,38 +156,35 @@
                 </div>
 
                 <div id="step-2" class="step">
-                    <h3 style="text-align:center;">Review Order</h3>
+                    <h3 style="text-align:center;">Review Transaksi</h3>
                     <div class="summary-box">
                         <div class="summary-item"><span>ID Pesanan</span> <span class="val" id="res-id">-</span></div>
                         <div class="summary-item"><span>Username</span> <span class="val" id="res-user">-</span></div>
-                        <div class="summary-item"><span>Jumlah</span> <span class="val" id="res-qty">-</span></div>
-                        <div class="summary-item"><span>Total Bayar</span> <span class="val" id="res-total">-</span></div>
+                        <div class="summary-item"><span>Robux Diterima</span> <span class="val" id="res-qty">-</span></div>
+                        <div class="summary-item" style="border-top: 1px solid var(--border-glass); padding-top: 10px; margin-top: 10px;">
+                            <span>Set Gamepass ke</span> <span class="val" id="res-gp" style="color: #fff; background: var(--primary-green); padding: 2px 8px; border-radius: 5px;">-</span>
+                        </div>
+                        <div class="summary-item"><span>Total Transfer</span> <span class="val" id="res-total">-</span></div>
                     </div>
-                    <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
-                    <button class="btn-primary" id="btn-confirm" onclick="finalize()">KONFIRMASI</button>
-                    <button onclick="backToStep1()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:15px; cursor:pointer;">Kembali</button>
+                    <button class="btn-primary" onclick="finalize()">KONFIRMASI</button>
+                    <button onclick="backToStep1()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:15px; cursor:pointer;">Edit Pesanan</button>
                 </div>
 
                 <div id="step-3" class="step" style="text-align:center;">
-                    <div style="font-size:4rem; margin-bottom:20px;">💎</div>
-                    <h2>Order Diproses!</h2>
-                    <p style="color:var(--text-dim); font-size:0.9rem; margin:15px 0 25px;">Silahkan hubungi admin melalui WhatsApp untuk mengirimkan bukti transfer.</p>
+                    <div style="font-size:4rem; margin-bottom:20px;">⚡</div>
+                    <h2>Data Terkirim!</h2>
+                    <p style="color:var(--text-dim); font-size:0.9rem; margin:15px 0 25px;">Silahkan selesaikan pembayaran via DANA dan kirim bukti ke Admin.</p>
                     <button class="btn-primary" onclick="contactAdmin()">HUBUNGI ADMIN (WA)</button>
                 </div>
 
             </div>
-
-            <p style="text-align:center; margin-top:30px; font-size:0.7rem; color:var(--text-dim); line-height:1.6;">
-                RbxGold tidak berafiliasi dengan Roblox Corporation.<br>
-                Seluruh transaksi bersifat final dan aman.
-            </p>
         </div>
     </div>
 
     <div id="toast" class="notif">Seseorang baru saja membeli 500 Robux!</div>
 
     <script>
-        let state = { user: "", qty: 0, total: 0, orderId: "" };
+        let state = { user: "", qty: 0, total: 0, gpPrice: 0, orderId: "" };
         const PRICE_PER_RBX = 137;
         let stok = 507756;
 
@@ -200,42 +199,38 @@
         }
 
         function recalc() {
-            const q = document.getElementById('qty').value;
-            const v = document.getElementById('voucher').value.toUpperCase();
-            let total = q * PRICE_PER_RBX;
+            const q = parseInt(document.getElementById('qty').value) || 0;
             
-            if(v === "ROMAND67") total *= 0.9;
+            // Perhitungan Total Bayar
+            state.total = Math.floor(q * PRICE_PER_RBX);
             
-            state.total = Math.floor(total);
+            // Perhitungan Gamepass (Robux Diterima / 0.7 agar hasil akhirnya pas setelah potong 30%)
+            state.gpPrice = Math.ceil(q / 0.7);
+            
             state.qty = q;
             document.getElementById('total-ui').innerText = "Rp " + state.total.toLocaleString('id-ID');
+            document.getElementById('gp-price-ui').innerText = state.gpPrice.toLocaleString('id-ID');
         }
 
         function goToReview() {
             state.user = document.getElementById('username').value;
             if(!state.user || state.qty < 50) return alert("Username harus diisi & Minimal 50 Robux!");
             
-            state.orderId = "RBX-" + Math.floor(100000 + Math.random() * 900000);
+            state.orderId = "GOLD-" + Math.floor(100000 + Math.random() * 900000);
             
             document.getElementById('res-id').innerText = state.orderId;
             document.getElementById('res-user').innerText = state.user;
             document.getElementById('res-qty').innerText = state.qty + " Robux";
+            document.getElementById('res-gp').innerText = state.gpPrice + " RBX";
             document.getElementById('res-total').innerText = "Rp " + state.total.toLocaleString('id-ID');
 
             showStep(2);
         }
 
         function finalize() {
-            const btn = document.getElementById('btn-confirm');
-            btn.innerText = "Processing...";
-            btn.disabled = true;
-            document.getElementById('p-bar').style.width = "100%";
-
-            setTimeout(() => {
-                stok -= state.qty;
-                document.getElementById('stok-ui').innerText = stok.toLocaleString('id-ID');
-                showStep(3);
-            }, 1800);
+            stok -= state.qty;
+            document.getElementById('stok-ui').innerText = stok.toLocaleString('id-ID');
+            showStep(3);
         }
 
         function showStep(n) {
@@ -247,7 +242,7 @@
 
         function contactAdmin() {
             const phone = "6285716075774";
-            const msg = `Halo Admin RbxGold!\n\nSaya ingin konfirmasi order Robux:\nID: ${state.orderId}\nUsername: ${state.user}\nJumlah: ${state.qty} Robux\nTotal: Rp${state.total.toLocaleString('id-ID')}\n\nMohon instruksi selanjutnya.`;
+            const msg = `Halo Admin RbxGold!\n\nSaya ingin konfirmasi order Robux:\nID: ${state.orderId}\nUsername: ${state.user}\nJumlah: ${state.qty} Robux\nSET GAMEPASS: ${state.gpPrice} Robux\nTotal Bayar: Rp${state.total.toLocaleString('id-ID')}\n\nMohon instruksi selanjutnya.`;
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
         }
 
