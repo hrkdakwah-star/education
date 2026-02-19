@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITANBUX | School Edition</title>
+    <title>TITANBUX | Modern School Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -16,17 +16,36 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
 
+        /* Welcome Message Overlay */
+        #welcome-overlay {
+            position: fixed; inset: 0; background: #ffffff; z-index: 2000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 30px; transition: 0.6s ease-in-out;
+        }
+        .welcome-icon { font-size: 4rem; margin-bottom: 20px; animation: wave 2s infinite; }
+        @keyframes wave { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(15deg); } }
+        .welcome-title { font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+        .welcome-title span { color: var(--primary); }
+        .welcome-desc { color: #64748b; font-size: 0.9rem; margin-bottom: 30px; line-height: 1.6; }
+        .btn-enter { 
+            background: var(--primary); color: white; border: none; padding: 16px 40px; 
+            border-radius: 50px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(0,195,82,0.2);
+        }
+
+        /* Header */
         header { background: var(--card); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 1.2rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
 
         .container { max-width: 450px; margin: 20px auto; padding: 0 15px; padding-bottom: 120px; }
 
+        /* Stepper */
         .step-container { display: flex; justify-content: space-between; margin-bottom: 25px; padding: 0 10px; }
         .step-pill { font-size: 0.65rem; font-weight: 800; color: #94a3b8; background: #e2e8f0; padding: 6px 12px; border-radius: 50px; }
         .step-pill.active { background: var(--primary); color: white; }
 
+        /* Card */
         .card { background: var(--card); border-radius: 24px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
         .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; color: #0f172a; }
 
@@ -34,14 +53,13 @@
         .input-box label { display: block; font-size: 0.75rem; font-weight: 700; color: #64748b; margin-bottom: 8px; }
         input, select { 
             width: 100%; padding: 16px; border-radius: 16px; border: 1.5px solid var(--border); 
-            background: #fdfdfd; font-size: 1rem; font-weight: 600; outline: none; 
+            background: #fdfdfd; font-size: 1rem; font-weight: 600; outline: none; transition: 0.2s;
         }
         input:focus { border-color: var(--primary); background: #fff; }
 
         .gp-card { background: #f0fff4; border: 2px dashed var(--primary); border-radius: 20px; padding: 20px; text-align: center; margin: 20px 0; }
         .gp-value { font-size: 2.2rem; font-weight: 900; color: var(--text); }
         
-        /* Nav Buttons */
         .footer-action { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; z-index: 100; }
         .btn-main { flex: 2; padding: 18px; border-radius: 16px; border: none; background: var(--primary); color: white; font-weight: 800; cursor: pointer; }
         .btn-back { flex: 1; padding: 18px; border-radius: 16px; border: 1.5px solid var(--border); background: white; color: #64748b; font-weight: 700; cursor: pointer; }
@@ -55,9 +73,16 @@
 </head>
 <body>
 
+<div id="welcome-overlay">
+    <div class="welcome-icon">👋</div>
+    <h1 class="welcome-title">Selamat Datang di <span>TITANBUX</span></h1>
+    <p class="welcome-desc">Solusi Top Up Robux termurah, tercepat, dan aman.<br>Tersedia metode pembayaran DANA & Tunai Sekolah!</p>
+    <button class="btn-enter" onclick="closeWelcome()">MULAI TOP UP</button>
+</div>
+
 <header>
     <div class="logo">TITAN<span>BUX</span></div>
-    <div style="font-size: 0.7rem; font-weight: 800; opacity: 0.5;">V.20 SCHOOL</div>
+    <div style="font-size: 0.7rem; font-weight: 800; opacity: 0.5;">V.21 SCHOOL</div>
 </header>
 
 <div class="container">
@@ -132,6 +157,14 @@
     let data = { usn: "", rbx: 0, total: 0, gp: 0, method: "" };
     const RATE = 137;
 
+    // Fungsi tutup Welcome Screen
+    function closeWelcome() {
+        const overlay = document.getElementById('welcome-overlay');
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+        setTimeout(() => { overlay.style.display = 'none'; }, 600);
+    }
+
     function toggleSchoolInput() {
         const method = document.getElementById('method').value;
         document.getElementById('school-field').style.display = (method === "CASH") ? "block" : "none";
@@ -153,7 +186,6 @@
             
             if(!data.usn || data.rbx < 50) return alert("Harap isi username dan minimal 50 Robux!");
             
-            // Validasi Sekolah jika pilih CASH
             if(data.method === "CASH") {
                 const scName = document.getElementById('school-name').value.toLowerCase().trim();
                 if(scName !== "nurul hidayah") {
@@ -205,7 +237,7 @@
 
     function sendWA() {
         const phone = "6285716075774";
-        const msg = `*ORDER TITANBUX V.20*\n----------------------\nUsername: ${data.usn}\nJumlah: ${data.rbx} Robux\nGamepass: ${data.gp} RBX\nTotal: Rp${data.total.toLocaleString('id-ID')}\nMetode: ${data.method}\n----------------------\n_Mohon diproses min!_`;
+        const msg = `*ORDER TITANBUX V.21*\n----------------------\nUsername: ${data.usn}\nJumlah: ${data.rbx} Robux\nGamepass: ${data.gp} RBX\nTotal: Rp${data.total.toLocaleString('id-ID')}\nMetode: ${data.method}\n----------------------\n_Mohon diproses min!_`;
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
     }
 </script>
