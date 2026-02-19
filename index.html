@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITANBUX | Pro Edition</title>
+    <title>TITANBUX | Pro Edition V.26</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -16,7 +16,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; transition: 0.3s; }
 
         /* Welcome Screen */
         #welcome-overlay {
@@ -29,15 +29,6 @@
             border-radius: 50px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(0,195,82,0.2);
         }
 
-        /* Modal Tutorial */
-        #modal-tutorial {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 3000;
-            display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-        .modal-content { background: white; padding: 25px; border-radius: 24px; max-width: 400px; width: 100%; }
-        .modal-content h3 { margin-bottom: 15px; font-weight: 800; }
-        .modal-content li { font-size: 0.85rem; margin-bottom: 10px; color: #64748b; margin-left: 15px; }
-
         /* Main UI */
         header { background: var(--card); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 1.2rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
@@ -46,10 +37,10 @@
         .step-pill { font-size: 0.65rem; font-weight: 800; color: #94a3b8; background: #e2e8f0; padding: 6px 12px; border-radius: 50px; }
         .step-pill.active { background: var(--primary); color: white; }
 
-        .card { background: var(--card); border-radius: 24px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+        .card { background: var(--card); border-radius: 24px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.03); margin-bottom: 20px; }
         .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; }
 
-        input, select { width: 100%; padding: 16px; border-radius: 16px; border: 1.5px solid var(--border); background: #fdfdfd; font-size: 1rem; font-weight: 600; outline: none; margin-bottom: 15px; }
+        input, select { width: 100%; padding: 16px; border-radius: 16px; border: 1.5px solid var(--border); background: #fdfdfd; font-size: 1rem; font-weight: 600; outline: none; margin-bottom: 15px; transition: 0.2s; }
         input:focus { border-color: var(--primary); background: #fff; }
         label { display: block; font-size: 0.75rem; font-weight: 700; color: #64748b; margin-bottom: 8px; }
 
@@ -57,13 +48,24 @@
         .gp-value { font-size: 2.2rem; font-weight: 900; }
 
         .btn-cek { background: #e2e8f0; border: none; padding: 8px 15px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; cursor: pointer; margin-top: -5px; margin-bottom: 15px; }
-        .btn-tutorial { background: none; border: 1.5px solid var(--primary); color: var(--primary); padding: 8px 15px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
-
         .est-tag { background: #fff9db; color: #f08c00; font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 5px; display: inline-block; margin-top: 10px; }
 
         .footer-action { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; z-index: 100; }
         .btn-main { flex: 2; padding: 18px; border-radius: 16px; border: none; background: var(--primary); color: white; font-weight: 800; cursor: pointer; }
         .btn-back { flex: 1; padding: 18px; border-radius: 16px; border: 1.5px solid var(--border); background: white; color: #64748b; font-weight: 700; cursor: pointer; }
+
+        /* Dark Mode Toggle */
+        #dark-toggle { position: fixed; top: 80px; right: 15px; background: white; border: 1.5px solid var(--border); width: 40px; height: 40px; border-radius: 50%; z-index: 1000; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+
+        /* Extra Animations */
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .shake-error { animation: shake 0.3s ease-in-out; border-color: var(--danger) !important; }
+
+        /* Dark Mode Class */
+        body.dark-mode { background-color: #0f172a; color: white; }
+        body.dark-mode .card, body.dark-mode header, body.dark-mode .footer-action { background-color: #1e293b; border-color: #334155; color: white; }
+        body.dark-mode input, body.dark-mode select { background: #0f172a; border-color: #334155; color: white; }
+        body.dark-mode #welcome-overlay { background: #0f172a; color: white; }
 
         .step-div { display: none; }
         .step-div.active { display: block; animation: fadeInUp 0.4s ease; }
@@ -73,30 +75,17 @@
 <body>
 
 <div id="welcome-overlay">
-    <div style="font-size:4rem; margin-bottom:20px;">💎</div>
-    <h1 style="font-weight:800; font-size:1.8rem; margin-bottom:10px;">Welcome to <span>TITANBUX</span></h1>
-    <p style="color:#64748b; font-size:0.9rem; margin-bottom:30px;">Top Up Robux Aman & Bergaransi</p>
-    <button class="btn-enter" onclick="closeWelcome()">MULAI SEKARANG</button>
+    <div style="font-size:4rem; margin-bottom:20px;">⚡</div>
+    <h1 style="font-weight:800; font-size:1.8rem; margin-bottom:10px;">TITAN<span>BUX</span></h1>
+    <p style="color:#64748b; font-size:0.9rem; margin-bottom:30px;">Top Up Robux Jujur & Terpercaya</p>
+    <button class="btn-enter" onclick="closeWelcome()">MULAI TOP UP</button>
 </div>
 
-<div id="modal-tutorial" onclick="closeTutorial()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <h3 style="color:var(--primary)">Cara Buat Gamepass</h3>
-        <ul>
-            <li>Buka <b>roblox.com/create</b> di browser.</li>
-            <li>Klik "Manage my experiences" (jika ada).</li>
-            <li>Pilih salah satu Game kamu, lalu klik <b>Associated Items</b>.</li>
-            <li>Klik Tab <b>Passes</b> -> Create a Pass.</li>
-            <li>Setelah jadi, klik Pass itu -> <b>Sales</b> -> Item for Sale (On).</li>
-            <li>Masukkan harga Robux sesuai instruksi TITANBUX.</li>
-        </ul>
-        <button class="btn-enter" style="width:100%" onclick="closeTutorial()">SAYA MENGERTI</button>
-    </div>
-</div>
+<button id="dark-toggle" onclick="toggleDarkMode()">🌙</button>
 
 <header>
     <div class="logo">TITAN<span>BUX</span></div>
-    <div style="font-size: 0.7rem; font-weight: 800; opacity: 0.5;">V.22 PRO</div>
+    <div style="font-size: 0.7rem; font-weight: 800; opacity: 0.5;">V.26 FINAL</div>
 </header>
 
 <div class="container">
@@ -130,32 +119,41 @@
             <div style="border-top:1px solid #eee; padding-top:15px; margin-top:5px; text-align:right;">
                 <p style="font-size:0.7rem; font-weight:700; color:#64748b;">TOTAL BAYAR:</p>
                 <h1 id="price-ui" style="color:var(--primary); font-weight:900;">Rp 0</h1>
-                <div class="est-tag">⏳ Estimasi Robux Masuk: 5-7 Hari</div>
+                <div class="est-tag">⏳ Estimasi Masuk: 5-7 Hari</div>
             </div>
         </div>
 
         <div id="step2" class="step-div">
             <h2 class="section-title">Setup Gamepass</h2>
             <div class="gp-card">
-                <p style="font-size:0.6rem; font-weight:800; color:var(--primary);">HARGA JUAL DI ROBLOX:</p>
+                <p style="font-size:0.6rem; font-weight:800; color:var(--primary);">SET HARGA DI ROBLOX:</p>
                 <div class="gp-value" id="gp-price">0</div>
                 <button onclick="copyGP()" style="background:var(--primary); color:white; border:none; padding:5px 12px; border-radius:8px; font-size:0.6rem; font-weight:800; margin-top:10px;">SALIN HARGA</button>
             </div>
-            <div style="text-align:center;">
-                <button class="btn-tutorial" onclick="showTutorial()">❓ CARA BUAT GAMEPASS</button>
-            </div>
+            <p style="font-size:0.75rem; color:#64748b; line-height:1.5; text-align:center;">
+                Pajak Roblox 30% ditanggung pembeli agar Robux yang masuk utuh.
+            </p>
         </div>
 
         <div id="step3" class="step-div" style="text-align:center;">
-            <h2 class="section-title">Siap Bayar?</h2>
+            <h2 class="section-title">Konfirmasi Akhir</h2>
             <div id="dana-info">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/1200px-Logo_dana_blue.svg.png" style="width:100px; margin:20px 0;">
-                <p style="font-size:0.8rem; color:#64748b;">Klik tombol di bawah untuk mendapatkan instruksi transfer DANA.</p>
+                <p style="font-size:0.8rem; color:#64748b;">Kirim bukti transfer ke WhatsApp admin.</p>
             </div>
             <div id="cash-info" style="display:none;">
                 <div style="font-size:3.5rem; margin:20px 0;">🏫</div>
-                <p style="font-size:0.85rem; color:#64748b;"><b>Pembayaran Tunai.</b><br>Silahkan cari admin di sekolah untuk bayar lunas.</p>
+                <p style="font-size:0.85rem; color:#64748b;"><b>Pembayaran Tunai.</b><br>Silahkan temui admin di sekolah Nurul Hidayah.</p>
             </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h4 style="font-size:0.8rem; margin-bottom:10px;">Cek Harga Cepat 💸</h4>
+        <input type="range" id="price-slider" min="50" max="2000" step="50" value="100" style="accent-color: var(--primary);">
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:800;">
+            <span><span id="slide-rbx">100</span> RBX</span>
+            <span style="color:var(--primary);">Rp <span id="slide-price">13.700</span></span>
         </div>
     </div>
 </div>
@@ -171,15 +169,8 @@
     const RATE = 137;
 
     function closeWelcome() { document.getElementById('welcome-overlay').style.display = 'none'; }
-    function showTutorial() { document.getElementById('modal-tutorial').style.display = 'flex'; }
-    function closeTutorial() { document.getElementById('modal-tutorial').style.display = 'none'; }
+    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); document.getElementById('dark-toggle').innerText = document.body.classList.contains('dark-mode') ? "☀️" : "🌙"; }
     function toggleSchool() { document.getElementById('school-field').style.display = (document.getElementById('method').value === "CASH") ? "block" : "none"; }
-
-    function cekProfil() {
-        let u = document.getElementById('usn').value;
-        if(!u) return alert("Isi username dulu!");
-        window.open(`https://www.roblox.com/users/profile?username=${u}`);
-    }
 
     function calculate() {
         const r = parseInt(document.getElementById('rbx').value) || 0;
@@ -190,12 +181,31 @@
         document.getElementById('gp-price').innerText = data.gp;
     }
 
+    // Slider Logic
+    document.getElementById('price-slider').addEventListener('input', function() {
+        document.getElementById('slide-rbx').innerText = this.value;
+        document.getElementById('slide-price').innerText = (this.value * RATE).toLocaleString('id-ID');
+    });
+
+    function cekProfil() {
+        let u = document.getElementById('usn').value;
+        if(!u) return alert("Isi username!");
+        window.open(`https://www.roblox.com/users/profile?username=${u}`);
+    }
+
     function nextStep() {
+        const schoolInput = document.getElementById('school-name');
         if(currentStep === 1) {
             data.usn = document.getElementById('usn').value;
             data.method = document.getElementById('method').value;
-            if(!data.usn || data.rbx < 50) return alert("Input tidak valid!");
-            if(data.method === "CASH" && document.getElementById('school-name').value.toLowerCase().trim() !== "nurul hidayah") return alert("Nama sekolah salah!");
+            if(!data.usn || data.rbx < 50) return alert("Data tidak lengkap!");
+            if(data.method === "CASH") {
+                if(schoolInput.value.toLowerCase().trim() !== "nurul hidayah") {
+                    schoolInput.classList.add('shake-error');
+                    setTimeout(() => schoolInput.classList.remove('shake-error'), 400);
+                    return alert("Nama sekolah salah!");
+                }
+            }
             currentStep = 2;
         } else if (currentStep === 2) {
             currentStep = 3;
@@ -216,7 +226,7 @@
         document.getElementById('backBtn').style.display = (currentStep === 1) ? "none" : "block";
         const btn = document.getElementById('mainBtn');
         if(currentStep === 3) {
-            btn.innerText = "ORDER VIA WA";
+            btn.innerText = "ORDER VIA WHATSAPP";
             document.getElementById('dana-info').style.display = (data.method === "DANA") ? "block" : "none";
             document.getElementById('cash-info').style.display = (data.method === "CASH") ? "block" : "none";
         } else {
@@ -227,10 +237,9 @@
     function copyGP() { navigator.clipboard.writeText(data.gp); alert("Harga disalin!"); }
 
     function sendWA() {
-        const msg = `*ORDER TITANBUX V.22*\n----------------------\nUser: ${data.usn}\nBeli: ${data.rbx} RBX\nGamepass: ${data.gp} RBX\nTotal: Rp${data.total.toLocaleString('id-ID')}\nMetode: ${data.method}\n----------------------\nEstimasi: 5-7 Hari`;
+        const msg = `*ORDER TITANBUX*\n----------------------\nUser: ${data.usn}\nRobux: ${data.rbx}\nGamepass: ${data.gp} RBX\nTotal: Rp${data.total.toLocaleString('id-ID')}\nMetode: ${data.method}\n----------------------\nEstimasi: 5-7 Hari`;
         window.open(`https://wa.me/6285716075774?text=${encodeURIComponent(msg)}`);
     }
 </script>
-
 </body>
 </html>
