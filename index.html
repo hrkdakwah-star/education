@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITANBUX | Modern Top-Up</title>
+    <title>TITANBUX | School Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,72 +12,52 @@
             --card: #ffffff;
             --text: #1e293b;
             --border: #e2e8f0;
+            --danger: #ff4757;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: var(--bg); color: var(--text); }
 
-        /* Header */
         header { background: var(--card); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 1.2rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
-        .status { font-size: 0.7rem; font-weight: 700; background: #f0fff4; color: var(--primary); padding: 5px 12px; border-radius: 50px; }
 
-        .container { max-width: 450px; margin: 20px auto; padding: 0 15px; }
+        .container { max-width: 450px; margin: 20px auto; padding: 0 15px; padding-bottom: 120px; }
 
-        /* Steps */
         .step-container { display: flex; justify-content: space-between; margin-bottom: 25px; padding: 0 10px; }
-        .step-pill { font-size: 0.65rem; font-weight: 800; color: #94a3b8; background: #e2e8f0; padding: 6px 15px; border-radius: 50px; transition: 0.3s; }
+        .step-pill { font-size: 0.65rem; font-weight: 800; color: #94a3b8; background: #e2e8f0; padding: 6px 12px; border-radius: 50px; }
         .step-pill.active { background: var(--primary); color: white; }
 
-        /* Card */
-        .card { background: var(--card); border-radius: 24px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.03); margin-bottom: 100px; }
+        .card { background: var(--card); border-radius: 24px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
         .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; color: #0f172a; }
 
-        /* Inputs */
         .input-box { margin-bottom: 20px; }
         .input-box label { display: block; font-size: 0.75rem; font-weight: 700; color: #64748b; margin-bottom: 8px; }
-        input { 
+        input, select { 
             width: 100%; padding: 16px; border-radius: 16px; border: 1.5px solid var(--border); 
-            background: #fdfdfd; font-size: 1rem; font-weight: 600; outline: none; transition: 0.2s;
+            background: #fdfdfd; font-size: 1rem; font-weight: 600; outline: none; 
         }
-        input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(0, 195, 82, 0.1); }
+        input:focus { border-color: var(--primary); background: #fff; }
 
-        /* Gamepass Highlight */
-        .gp-card { 
-            background: #f0fff4; border: 2px dashed var(--primary); border-radius: 20px; 
-            padding: 20px; text-align: center; margin: 20px 0; 
-        }
-        .gp-label { font-size: 0.65rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
-        .gp-value { font-size: 2.2rem; font-weight: 900; color: var(--text); margin: 5px 0; }
+        .gp-card { background: #f0fff4; border: 2px dashed var(--primary); border-radius: 20px; padding: 20px; text-align: center; margin: 20px 0; }
+        .gp-value { font-size: 2.2rem; font-weight: 900; color: var(--text); }
         
-        /* Footer Button */
-        .footer-action { 
-            position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); 
-            padding: 20px; border-top: 1px solid var(--border); display: flex; 
-            justify-content: center; z-index: 100;
-        }
-        .btn-main { 
-            width: 100%; max-width: 420px; padding: 18px; border-radius: 16px; 
-            border: none; background: var(--primary); color: white; font-weight: 800; 
-            font-size: 1rem; cursor: pointer; transition: 0.2s;
-        }
-        .btn-main:active { transform: scale(0.98); }
-
-        /* Success Step */
-        .success-box { text-align: center; display: none; }
-        .dana-logo { width: 100px; margin: 15px 0; }
-
+        /* Nav Buttons */
+        .footer-action { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; z-index: 100; }
+        .btn-main { flex: 2; padding: 18px; border-radius: 16px; border: none; background: var(--primary); color: white; font-weight: 800; cursor: pointer; }
+        .btn-back { flex: 1; padding: 18px; border-radius: 16px; border: 1.5px solid var(--border); background: white; color: #64748b; font-weight: 700; cursor: pointer; }
+        
         .step-div { display: none; }
         .step-div.active { display: block; animation: fadeInUp 0.4s ease; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        .error-msg { color: var(--danger); font-size: 0.7rem; font-weight: 700; margin-top: 5px; display: none; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo">TITAN<span>BUX</span></div>
-    <div class="status">SERVER ONLINE</div>
+    <div style="font-size: 0.7rem; font-weight: 800; opacity: 0.5;">V.20 SCHOOL</div>
 </header>
 
 <div class="container">
@@ -92,88 +72,130 @@
             <h2 class="section-title">Informasi Pesanan</h2>
             <div class="input-box">
                 <label>USERNAME ROBLOX</label>
-                <input type="text" id="usn" placeholder="Masukkan username anda...">
+                <input type="text" id="usn" placeholder="Username anda...">
             </div>
             <div class="input-box">
                 <label>JUMLAH ROBUX (BERSIH)</label>
                 <input type="number" id="rbx" placeholder="Min. 50" oninput="calculate()">
             </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:25px; padding-top:20px; border-top:1px solid var(--border);">
-                <span style="font-weight:700; color:#64748b;">TOTAL HARGA:</span>
+            <div class="input-box">
+                <label>METODE PEMBAYARAN</label>
+                <select id="method" onchange="toggleSchoolInput()">
+                    <option value="DANA">DANA (E-Wallet)</option>
+                    <option value="CASH">CASH / TUNAI (Khusus Teman)</option>
+                </select>
+            </div>
+            <div class="input-box" id="school-field" style="display:none;">
+                <label>NAMA SEKOLAH (VALIDASI)</label>
+                <input type="text" id="school-name" placeholder="Ketik nama sekolah...">
+                <p class="error-msg" id="school-error">Nama sekolah salah! Gunakan DANA atau masukkan nama sekolah yang benar.</p>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                <span style="font-weight:700; color:#64748b;">HARGA:</span>
                 <span id="price-ui" style="font-size:1.4rem; font-weight:900; color:var(--primary);">Rp 0</span>
             </div>
         </div>
 
         <div id="step2" class="step-div">
             <h2 class="section-title">Setup Gamepass</h2>
-            <p style="font-size:0.8rem; color:#64748b; margin-bottom:15px; line-height:1.5;">
-                Silahkan buat atau atur harga Gamepass anda sesuai angka di bawah ini agar Robux masuk sesuai pesanan.
-            </p>
             <div class="gp-card">
-                <div class="gp-label">Set Harga Gamepass ke:</div>
+                <div style="font-size:0.6rem; font-weight:800; color:var(--primary);">HARGA GAMEPASS (+30%):</div>
                 <div class="gp-value" id="gp-price">0</div>
-                <button onclick="copyGP()" style="background:var(--primary); color:white; border:none; padding:5px 12px; border-radius:8px; font-size:0.6rem; font-weight:800; cursor:pointer;">SALIN HARGA</button>
+                <button onclick="copyGP()" style="background:var(--primary); color:white; border:none; padding:6px 15px; border-radius:10px; font-size:0.65rem; font-weight:800; margin-top:10px;">SALIN HARGA</button>
             </div>
-            <div style="font-size:0.7rem; color:#94a3b8; text-align:center;">(Sudah termasuk pajak 30% dari Roblox)</div>
+            <p style="font-size:0.75rem; color:#64748b; line-height:1.5; text-align:center;">
+                Pastikan harga di web Roblox sama dengan angka di atas agar Robux yang masuk tidak kurang.
+            </p>
         </div>
 
-        <div id="step3" class="step-div success-box">
-            <h2 class="section-title">Pesanan Berhasil!</h2>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/1200px-Logo_dana_blue.svg.png" class="dana-logo">
-            <p style="font-size:0.85rem; color:#64748b; line-height:1.6;">
-                Selesaikan pembayaran melalui aplikasi <b>DANA</b> dan kirimkan bukti transfer ke WhatsApp admin di bawah ini.
-            </p>
+        <div id="step3" class="step-div" style="text-align:center;">
+            <h2 class="section-title">Konfirmasi Akhir</h2>
+            <div id="dana-info">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/1200px-Logo_dana_blue.svg.png" style="width:100px; margin-bottom:15px;">
+                <p style="font-size:0.8rem; color:#64748b;">Silahkan transfer ke DANA admin setelah menekan tombol di bawah.</p>
+            </div>
+            <div id="cash-info" style="display:none;">
+                <div style="font-size:3rem;">🤝</div>
+                <p style="font-size:0.8rem; color:#64748b;"><b>Pembayaran Tunai Terpilih.</b><br>Silahkan temui admin di sekolah untuk memberikan uangnya secara langsung.</p>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="footer-action">
+    <button class="btn-back" id="backBtn" onclick="prevStep()" style="display:none;">KEMBALI</button>
     <button class="btn-main" id="mainBtn" onclick="nextStep()">LANJUTKAN</button>
 </div>
 
 <script>
     let currentStep = 1;
-    let data = { usn: "", rbx: 0, total: 0, gp: 0 };
+    let data = { usn: "", rbx: 0, total: 0, gp: 0, method: "" };
     const RATE = 137;
+
+    function toggleSchoolInput() {
+        const method = document.getElementById('method').value;
+        document.getElementById('school-field').style.display = (method === "CASH") ? "block" : "none";
+    }
 
     function calculate() {
         const r = parseInt(document.getElementById('rbx').value) || 0;
         data.rbx = r;
         data.total = r * RATE;
-        // Gamepass 30% Tax Calculation
         data.gp = Math.ceil(r / 0.7);
-        
         document.getElementById('price-ui').innerText = "Rp " + data.total.toLocaleString('id-ID');
         document.getElementById('gp-price').innerText = data.gp;
     }
 
     function nextStep() {
-        data.usn = document.getElementById('usn').value;
-        
         if(currentStep === 1) {
+            data.usn = document.getElementById('usn').value;
+            data.method = document.getElementById('method').value;
+            
             if(!data.usn || data.rbx < 50) return alert("Harap isi username dan minimal 50 Robux!");
+            
+            // Validasi Sekolah jika pilih CASH
+            if(data.method === "CASH") {
+                const scName = document.getElementById('school-name').value.toLowerCase().trim();
+                if(scName !== "nurul hidayah") {
+                    document.getElementById('school-error').style.display = "block";
+                    return;
+                }
+            }
+            document.getElementById('school-error').style.display = "none";
             currentStep = 2;
-            updateUI();
         } else if (currentStep === 2) {
             currentStep = 3;
-            updateUI();
         } else {
             sendWA();
+            return;
+        }
+        updateUI();
+    }
+
+    function prevStep() {
+        if(currentStep > 1) {
+            currentStep--;
+            updateUI();
         }
     }
 
     function updateUI() {
-        // Hide all
         document.querySelectorAll('.step-div').forEach(d => d.classList.remove('active'));
         document.querySelectorAll('.step-pill').forEach(p => p.classList.remove('active'));
         
-        // Show current
         document.getElementById('step' + currentStep).classList.add('active');
         document.getElementById('p' + currentStep).classList.add('active');
         
+        document.getElementById('backBtn').style.display = (currentStep === 1) ? "none" : "block";
+        
         const btn = document.getElementById('mainBtn');
+        if(currentStep === 1) btn.innerText = "LANJUTKAN";
         if(currentStep === 2) btn.innerText = "SAYA SUDAH SET GAMEPASS";
-        if(currentStep === 3) btn.innerText = "HUBUNGI ADMIN (WA)";
+        if(currentStep === 3) {
+            btn.innerText = "HUBUNGI ADMIN (WA)";
+            document.getElementById('dana-info').style.display = (data.method === "DANA") ? "block" : "none";
+            document.getElementById('cash-info').style.display = (data.method === "CASH") ? "block" : "none";
+        }
     }
 
     function copyGP() {
@@ -183,7 +205,7 @@
 
     function sendWA() {
         const phone = "6285716075774";
-        const msg = `Halo Admin TITANBUX!\n\nSaya ingin beli Robux:\nUsername: ${data.usn}\nJumlah: ${data.rbx} Robux\nHarga Gamepass: ${data.gp} Robux\nTotal Bayar: Rp${data.total.toLocaleString('id-ID')}\n\nMohon petunjuk pembayarannya.`;
+        const msg = `*ORDER TITANBUX V.20*\n----------------------\nUsername: ${data.usn}\nJumlah: ${data.rbx} Robux\nGamepass: ${data.gp} RBX\nTotal: Rp${data.total.toLocaleString('id-ID')}\nMetode: ${data.method}\n----------------------\n_Mohon diproses min!_`;
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
     }
 </script>
