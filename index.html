@@ -3,166 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITANBUX | V.39 BEAST</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <title>TITANBUX | V.40 LUXURY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --accent: #ff003c;
-            --dark-bg: #050505;
-            --card-bg: rgba(20, 20, 20, 0.8);
+            --primary: #00ff73;
+            --bg: #0a0a0a;
+            --card: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
             --text: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            background: var(--dark-bg); 
-            color: var(--text);
-            background-image: radial-gradient(circle at 50% -20%, #30000a, #050505);
+            background: var(--bg); 
+            color: var(--text); 
             min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #0a0a0a 100%);
         }
 
-        /* WELCOME SCREEN */
-        #welcome-overlay {
+        /* WELCOME OVERLAY */
+        #welcome {
             position: fixed; inset: 0; z-index: 9999;
             background: #000; display: flex; align-items: center; justify-content: center;
-            text-align: center; transition: 0.8s cubic-bezier(0.9, 0, 0.1, 1);
+            transition: 1s cubic-bezier(0.85, 0, 0.15, 1);
         }
-        .welcome-content h1 { font-size: 3.5rem; letter-spacing: -3px; font-weight: 800; }
-        .welcome-content span { color: var(--accent); text-shadow: 0 0 20px var(--accent); }
+        .welcome-box { text-align: center; padding: 20px; }
+        .welcome-box h1 { font-size: 3rem; font-weight: 800; letter-spacing: -2px; margin-bottom: 10px; }
+        .welcome-box span { color: var(--primary); text-shadow: 0 0 20px rgba(0,255,115,0.4); }
         .btn-start { 
-            margin-top: 30px; padding: 20px 60px; border-radius: 15px; border: none;
-            background: var(--accent); color: white; font-weight: 800; cursor: pointer;
-            box-shadow: 0 0 30px rgba(255, 0, 60, 0.4);
+            margin-top: 20px; padding: 18px 45px; border-radius: 50px; border: none;
+            background: #fff; color: #000; font-weight: 700; cursor: pointer; transition: 0.3s;
         }
 
-        #top-progress { position: fixed; top: 0; left: 0; height: 6px; background: var(--accent); width: 33.3%; z-index: 2001; transition: 0.5s; box-shadow: 0 0 20px var(--accent); }
+        #progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--primary); width: 0%; z-index: 2001; transition: 0.5s; }
 
-        header { padding: 25px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
+        header { padding: 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: -1px; }
+        .status { font-size: 0.6rem; background: rgba(0,255,115,0.1); color: var(--primary); padding: 5px 12px; border-radius: 50px; font-weight: 700; border: 1px solid var(--primary); }
 
-        .container { max-width: 450px; margin: 0 auto; padding: 20px; padding-bottom: 150px; }
+        .container { max-width: 450px; margin: 0 auto; padding: 0 20px 150px 20px; }
 
-        /* BANTUAN STYLE GAHAR */
-        .help-box { 
-            background: var(--card-bg); border-left: 4px solid var(--accent);
-            padding: 15px; border-radius: 12px; margin-bottom: 25px;
-        }
-        .help-box summary { font-size: 0.9rem; font-weight: 800; cursor: pointer; color: var(--accent); list-style: none; }
+        .help-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 25px; cursor: pointer; }
+        .help-card summary { list-style: none; font-size: 0.85rem; font-weight: 700; display: flex; justify-content: space-between; opacity: 0.8; }
 
-        .card { 
-            background: var(--card-bg); backdrop-filter: blur(10px);
-            border-radius: 25px; padding: 25px; border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
+        .card { background: var(--card); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 30px; padding: 30px; }
 
-        label { font-size: 0.75rem; font-weight: 800; color: #666; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        label { font-size: 0.7rem; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block; }
         input { 
-            width: 100%; padding: 18px; border-radius: 15px; border: 1px solid #222;
-            background: #111; color: white; font-weight: 700; outline: none; margin-bottom: 20px;
+            width: 100%; padding: 20px; border-radius: 20px; border: 1px solid var(--border);
+            background: rgba(255,255,255,0.03); color: white; font-size: 1rem; font-weight: 600; outline: none; margin-bottom: 20px;
         }
-        input:focus { border-color: var(--accent); }
+        input:focus { border-color: var(--primary); }
 
-        .pkg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .pkg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
         .pkg-item { 
-            background: #111; border: 1px solid #222; padding: 20px; border-radius: 18px;
-            text-align: center; cursor: pointer; transition: 0.2s;
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; 
+            border-radius: 24px; text-align: center; cursor: pointer; transition: 0.3s;
         }
-        .pkg-item.active { border-color: var(--accent); background: rgba(255, 0, 60, 0.1); }
+        .pkg-item.active { border-color: var(--primary); background: rgba(0,255,115,0.05); transform: scale(1.02); }
 
-        .summary { background: #1a1a1a; padding: 20px; border-radius: 20px; border: 1px solid #333; margin-top: 10px; }
+        .price-box { 
+            background: #fff; color: #000; border-radius: 24px; padding: 25px; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
 
-        /* GP BOX */
-        .gp-box { background: #000; border: 2px dashed var(--accent); padding: 30px; border-radius: 20px; text-align: center; margin: 20px 0; }
-        .gp-val { font-size: 3.5rem; font-weight: 800; color: var(--accent); }
+        .gp-box { 
+            background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 25px; 
+            padding: 40px 20px; text-align: center; margin: 20px 0;
+        }
+        .gp-val { font-size: 4rem; font-weight: 800; color: var(--primary); line-height: 1; }
 
-        /* NAVIGATION FOOTER */
+        /* FOOTER NAVIGATION */
         .footer { 
-            position: fixed; bottom: 0; left: 0; right: 0; padding: 25px; 
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(20px);
+            position: fixed; bottom: 0; left: 0; right: 0; padding: 30px; 
+            background: linear-gradient(to top, #000, transparent);
             display: flex; gap: 15px; z-index: 1000;
         }
-        .btn-back { flex: 1; padding: 20px; border-radius: 15px; border: 1px solid #333; background: #111; color: white; font-weight: 800; cursor: pointer; display: none; }
-        .btn-next { flex: 2; padding: 20px; border-radius: 15px; border: none; background: var(--accent); color: white; font-weight: 800; font-size: 1.1rem; cursor: pointer; }
+        .btn { padding: 22px; border-radius: 22px; border: none; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+        .btn-back { background: #222; color: #fff; flex: 1; display: none; }
+        .btn-next { background: var(--primary); color: #000; flex: 2; box-shadow: 0 10px 30px rgba(0,255,115,0.2); }
 
-        .step-div { display: none; }
-        .step-div.active { display: block; animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .step { display: none; }
+        .step.active { display: block; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<div id="welcome-overlay">
-    <div class="welcome-content">
+<div id="welcome">
+    <div class="welcome-box">
         <h1>TITAN<span>BUX</span></h1>
-        <p style="color: #666; font-weight: 600;">NO CAP • FAST • LEGIT</p>
-        <button class="btn-start" onclick="closeWelcome()">MASUK SEKARANG</button>
+        <p style="opacity: 0.5; font-weight: 500;">Premium Top-Up Experience</p>
+        <button class="btn-start" onclick="closeWelcome()">Mulai Order</button>
     </div>
 </div>
 
-<div id="top-progress"></div>
+<div id="progress"></div>
 
 <header>
-    <div class="logo">TITAN<span style="color:var(--accent)">BUX</span></div>
+    <div class="logo">TITAN<span style="color:var(--primary)">BUX</span></div>
+    <div class="status">SYSTEM ONLINE</div>
 </header>
 
 <div class="container">
-    <details class="help-box">
-        <summary>CARA ORDER (BACA BOS) ⚠️</summary>
-        <p style="font-size: 0.8rem; color: #999; margin-top: 10px; line-height: 1.6;">
-            1. Input Username.<br>
+    <details class="help-card">
+        <summary>BANTUAN ORDER 💡 <span>▼</span></summary>
+        <div style="margin-top: 15px; font-size: 0.8rem; color: #888; line-height: 1.6;">
+            1. Masukkan Username.<br>
             2. Pilih paket Robux.<br>
-            3. Set harga Gamepass di Roblox.<br>
-            4. Bayar & Robux mendarat dlm 5-7 hari.
-        </p>
+            3. Ikuti harga Gamepass yang muncul.<br>
+            4. Selesaikan pembayaran & kirim bukti via WhatsApp.
+        </div>
     </details>
 
     <div class="card">
-        <div id="step1" class="step-div active">
-            <label>User Roblox</label>
-            <input type="text" id="usn" placeholder="Username...">
-            <button onclick="cekProfil()" style="width:100%; padding:12px; background:#222; border:none; color:#999; border-radius:10px; font-weight:800; margin-bottom:20px; cursor:pointer;">CEK PROFIL</button>
+        <div id="step1" class="step active">
+            <label>Username Roblox</label>
+            <input type="text" id="usn" placeholder="Contoh: Titan_Gamer" oninput="vibrate(5)">
+            <button onclick="cekProfil()" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:none; color:#888; border-radius:15px; font-weight:700; margin-bottom:25px; cursor:pointer;">CEK & COPY PROFIL</button>
 
             <label>Pilih Paket</label>
             <div class="pkg-grid">
                 <div class="pkg-item" onclick="selectPkg(80, 11000, this)">
                     <p style="font-weight:800;">80 RBX</p>
-                    <p style="font-size:0.7rem; color:var(--accent);">Rp 11.000</p>
+                    <p style="font-size:0.7rem; opacity:0.6;">Rp 11.000</p>
                 </div>
                 <div class="pkg-item" onclick="selectPkg(1000, 137000, this)">
                     <p style="font-weight:800;">1000 RBX</p>
-                    <p style="font-size:0.7rem; color:var(--accent);">Rp 137.000</p>
+                    <p style="font-size:0.7rem; opacity:0.6;">Rp 137.000</p>
                 </div>
             </div>
 
-            <div class="summary">
-                <p style="font-size:0.7rem; color:#666;">TOTAL PEMBAYARAN</p>
-                <h2 id="price-ui" style="font-weight:800; color:var(--accent);">Rp 0</h2>
+            <div class="price-box">
+                <div>
+                    <p style="font-size:0.6rem; font-weight:800; opacity:0.5;">TOTAL BAYAR</p>
+                    <h2 id="price-ui" style="font-weight:800;">Rp 0</h2>
+                </div>
+                <div style="text-align:right;">
+                    <p style="font-size:0.6rem; color:var(--primary); font-weight:800;">PREMIUM</p>
+                </div>
             </div>
         </div>
 
-        <div id="step2" class="step-div">
-            <h2 style="text-align:center; margin-bottom:20px;">GAMEPASS SETUP</h2>
-            <button onclick="window.open('https://www.roblox.com/create', '_blank')" style="width:100%; background:#0084ff; padding:18px; border-radius:15px; border:none; color:white; font-weight:800; cursor:pointer;">BUKA ROBLOX CREATE</button>
+        <div id="step2" class="step">
+            <h2 style="text-align:center; font-weight:800; margin-bottom:20px;">Konfigurasi</h2>
+            <button onclick="window.open('https://www.roblox.com/create', '_blank')" style="width:100%; background:#0084ff; padding:20px; border-radius:20px; border:none; color:white; font-weight:800; cursor:pointer;">BUKA ROBLOX CREATE</button>
             <div class="gp-box">
-                <p style="font-size:0.7rem; color:#666;">PASANG HARGA JUAL:</p>
+                <p style="font-size:0.7rem; font-weight:700; opacity:0.5; margin-bottom:10px;">HARGA GAMEPASS:</p>
                 <div class="gp-val" id="gp-price">0</div>
-                <button onclick="copyGP()" style="margin-top:10px; padding:8px 20px; background:var(--accent); border:none; color:white; font-weight:800; border-radius:8px; cursor:pointer;">SALIN</button>
+                <button onclick="copyGP()" style="margin-top:20px; padding:10px 30px; background:var(--primary); color:#000; border:none; font-weight:800; border-radius:12px; cursor:pointer;">SALIN ANGKA</button>
             </div>
+            <p style="font-size:0.7rem; color:#666; text-align:center;">Pastikan angka sama persis agar Robux masuk otomatis.</p>
         </div>
 
-        <div id="step3" class="step-div" style="text-align:center;">
-            <div style="font-size:5rem; margin-bottom:20px;">🔥</div>
-            <h2 style="font-weight:800;">READY TO BLAST!</h2>
-            <p style="color:#666; margin-top:10px;">Klik tombol bawah untuk konfirmasi via WhatsApp.</p>
+        <div id="step3" class="step" style="text-align:center;">
+            <div style="font-size:5rem; margin-bottom:20px;">⚡</div>
+            <h2 style="font-weight:800;">PESANAN SIAP</h2>
+            <p style="opacity:0.5; font-size:0.85rem; margin-top:10px;">Langkah terakhir, kirim bukti bayar ke WhatsApp admin.</p>
         </div>
     </div>
 </div>
 
 <div class="footer">
-    <button class="btn-back" id="backBtn" onclick="prevStep()">KEMBALI</button>
-    <button class="btn-next" id="mainBtn" onclick="nextStep()">LANJUTKAN</button>
+    <button class="btn btn-back" id="btnBack" onclick="prevStep()">KEMBALI</button>
+    <button class="btn btn-next" id="btnNext" onclick="nextStep()">LANJUTKAN</button>
 </div>
 
 <script>
@@ -171,16 +178,14 @@
     const RATE = 137;
 
     function closeWelcome() {
-        document.getElementById('welcome-overlay').style.transform = 'translateY(-100%)';
+        document.getElementById('welcome').style.transform = 'translateY(-100%)';
+        updateUI();
     }
 
     function selectPkg(rbx, price, el) {
         document.querySelectorAll('.pkg-item').forEach(p => p.classList.remove('active'));
         el.classList.add('active');
-        updateData(rbx, price);
-    }
-
-    function updateData(rbx, price) {
+        vibrate(10);
         data.rbx = rbx; data.total = price; data.gp = Math.ceil(rbx / 0.7);
         document.getElementById('price-ui').innerText = "Rp " + price.toLocaleString('id-ID');
         document.getElementById('gp-price').innerText = data.gp;
@@ -188,14 +193,16 @@
 
     function cekProfil() {
         let u = document.getElementById('usn').value;
-        if(!u) return alert("User mana?");
+        if(!u) return alert("Isi username bos!");
+        navigator.clipboard.writeText(u);
         window.open(`https://www.roblox.com/users/profile?username=${u}`);
     }
 
     function nextStep() {
+        vibrate(15);
         if(currentStep === 1) {
             data.usn = document.getElementById('usn').value;
-            if(!data.usn || data.rbx < 50) return alert("Lengkapi data!");
+            if(!data.usn || data.rbx === 0) return alert("Lengkapi pilihan dulu!");
             currentStep = 2;
         } else if (currentStep === 2) {
             currentStep = 3;
@@ -207,6 +214,7 @@
     }
 
     function prevStep() {
+        vibrate(10);
         if(currentStep > 1) {
             currentStep--;
             updateUI();
@@ -214,22 +222,30 @@
     }
 
     function updateUI() {
-        document.querySelectorAll('.step-div').forEach(d => d.classList.remove('active'));
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById('step' + currentStep).classList.add('active');
-        document.getElementById('top-progress').style.width = (currentStep * 33.3) + "%";
-        document.getElementById('backBtn').style.display = (currentStep > 1) ? "block" : "none";
-        const mainBtn = document.getElementById('mainBtn');
-        if(currentStep === 3) mainBtn.innerText = "KONFIRMASI WA";
-        else if(currentStep === 2) mainBtn.innerText = "SAYA SUDAH SET";
-        else mainBtn.innerText = "LANJUTKAN";
+        document.getElementById('progress').style.width = (currentStep * 33.3) + "%";
+        
+        document.getElementById('btnBack').style.display = (currentStep > 1) ? "block" : "none";
+        
+        const next = document.getElementById('btnNext');
+        if(currentStep === 3) next.innerText = "KIRIM KE WA";
+        else if(currentStep === 2) next.innerText = "SAYA SUDAH SET";
+        else next.innerText = "LANJUTKAN";
     }
 
-    function copyGP() { navigator.clipboard.writeText(data.gp); alert("Angka copied!"); }
+    function copyGP() { 
+        navigator.clipboard.writeText(data.gp); 
+        alert("Harga disalin!"); 
+        vibrate(20);
+    }
 
     function sendWA() {
-        const msg = `*ORDER TITANBUX BEAST*\nUser: ${data.usn}\nRobux: ${data.rbx}\nTotal: Rp${data.total.toLocaleString('id-ID')}`;
+        const msg = `*ORDER TITANBUX LUXURY*\n----------------\nUser: ${data.usn}\nRobux: ${data.rbx}\nTotal: Rp${data.total.toLocaleString('id-ID')}\n----------------\n_Mohon diproses min!_`;
         window.open(`https://wa.me/6285716075774?text=${encodeURIComponent(msg)}`);
     }
+
+    function vibrate(ms) { if(navigator.vibrate) navigator.vibrate(ms); }
 </script>
 </body>
 </html>
