@@ -3,620 +3,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warung Masakan Indonesia - Bakso & Mie Ayam</title>
+    <title>Game Memasak: Bakso & Mie Ayam</title>
     <style>
-        :root {
-            --wood-color: #8B5A2B;
-            --table-color: #CD853F;
-            --text-color: #333;
-        }
-
-        body {
+        /* === RESET & VARIABEL CSS === */
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #2c3e50;
-            display: flex;
-            justify-center: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
             user-select: none;
         }
 
+        :root {
+            --primary: #FF7B54;
+            --secondary: #FFB26B;
+            --accent: #FFD56F;
+            --bg-color: #FFF2CC;
+            --text-dark: #4A4A4A;
+            --danger: #FF4B4B;
+            --success: #4CAF50;
+        }
+
+        body {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* === CONTAINER UTAMA === */
         #game-container {
-            width: 960px;
-            height: 540px;
-            background: linear-gradient(to bottom, #dff9fb, #ffffff);
+            background-color: var(--bg-color);
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            max-height: 850px;
             position: relative;
-            border: 8px solid #222;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
-        /* --- BAGIAN ATAS: PELANGGAN & HUD --- */
-        #top-section {
-            height: 220px;
-            position: relative;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f5f6fa"/><circle cx="50" cy="50" r="40" fill="%23f1f2f6" opacity="0.5"/></svg>');
-            border-bottom: 5px solid #bdc581;
-        }
-
-        #hud {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
+        /* === HEADER (SKOR & WAKTU) === */
+        #header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 8px 15px;
-            border-radius: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 1.2rem;
             font-weight: bold;
-            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             z-index: 10;
         }
 
-        .hud-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* Pelanggan */
+        /* === AREA PELANGGAN (ATAS) === */
         #customer-area {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            padding: 0 50px;
-            box-sizing: border-box;
-        }
-
-        .customer {
-            width: 100px;
-            height: 140px;
-            position: relative;
+            flex: 1;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: walkIn 0.5s ease-out;
-        }
-
-        @keyframes walkIn {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .avatar {
-            width: 70px;
-            height: 70px;
-            background: #ff7675;
-            border-radius: 50%;
-            border: 3px solid #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 35px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-
-        .avatar.hijab { background: #74b9ff; }
-        .avatar.pria { background: #ffeaa7; }
-
-        .order-bubble {
-            position: absolute;
-            top: -65px;
-            background: white;
-            padding: 6px 12px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            border: 2px solid #fdcb6e;
-        }
-        .order-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 8px 8px 0;
-            border-style: solid;
-            border-color: white transparent;
-        }
-
-        .patience-bar {
-            width: 60px;
-            height: 6px;
-            background: #eee;
-            border-radius: 3px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        .patience-fill {
-            width: 100%;
-            height: 100%;
-            background: #2ecc71;
-            transition: width 0.1s linear, background-color 0.5s;
-        }
-
-        /* --- BAGIAN BAWAH: MEJA MASAK (DAPUR) --- */
-        #kitchen-table {
-            height: 320px;
-            background: linear-gradient(135deg, var(--table-color), var(--wood-color));
-            border-top: 8px solid #5c3a21;
-            padding: 15px;
-            box-sizing: border-box;
-            display: grid;
-            grid-template-columns: 1fr 1.5fr 1fr;
-            gap: 15px;
+            justify-content: flex-end;
+            padding-bottom: 20px;
             position: relative;
         }
 
-        .kitchen-section {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            border: 2px dashed rgba(255,255,255,0.3);
-            padding: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-content: center;
-            justify-content: center;
+        .speech-bubble {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            border-bottom-left-radius: 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            text-align: center;
+            margin-bottom: 15px;
+            max-width: 80%;
+            animation: popIn 0.3s ease-out;
+            display: none; /* Disembunyikan sampai game mulai */
         }
 
-        .section-title {
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        .speech-bubble h3 {
+            color: var(--primary);
+            font-size: 1.1rem;
             margin-bottom: 5px;
         }
 
-        /* Bahan Mentah / Bahan Pelengkap */
-        .ingredient-btn {
-            width: 75px;
-            height: 75px;
-            background: #f8f9fa;
-            border: 3px solid #bdc3c7;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            font-weight: bold;
-            transition: transform 0.1s, box-shadow 0.1s;
-            box-shadow: 0 4px 0 #bdc3c7;
-        }
-        .ingredient-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0 #bdc3c7;
-        }
-        .ingredient-btn span { font-size: 28px; margin-bottom: 2px; }
-
-        /* Area Racikan (Mangkok) */
-        .assembly-slot {
-            width: 100px;
-            height: 100px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 50%;
-            border: 3px solid #fff;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .assembly-slot.active { background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23fff" stroke="%23e74c3c" stroke-width="4"/></svg>') no-repeat center; background-size: contain; }
-
-        .bowl-content {
-            font-size: 11px;
-            font-weight: bold;
-            text-align: center;
-            color: #2c3e50;
-            pointer-events: none;
-            padding: 5px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+        .speech-bubble p {
+            font-size: 0.9rem;
+            color: var(--text-dark);
         }
 
-        /* Banner Masakan Indonesia */
-        #banner {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #e74c3c;
-            color: white;
-            text-align: center;
-            font-weight: 900;
-            font-size: 24px;
-            padding: 5px 0;
-            letter-spacing: 2px;
-            border-top: 3px solid #f1c40f;
-            text-shadow: 2px 2px 0px #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-        }
-        .flag { width: 30px; height: 20px; background: linear-gradient(to bottom, red 50%, white 50%); border: 1px solid #ddd; }
-
-        /* Game Over / Win Overlay */
-        #overlay {
+        #customer-avatar {
+            font-size: 6rem;
+            transition: transform 0.3s;
             display: none;
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 100;
-            color: white;
+        }
+
+        /* Timer Kesabaran */
+        #patience-container {
+            width: 150px;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        #patience-bar {
+            height: 100%;
+            width: 100%;
+            background-color: var(--success);
+            transition: width 0.1s linear, background-color 0.3s;
+        }
+
+        /* === AREA DAPUR (BAWAH) === */
+        #kitchen-area {
+            height: 50%;
+            background-color: #8B4513; /* Warna meja kayu */
+            border-top: 5px solid #5C2E0B;
+            display: flex;
             flex-direction: column;
+        }
+
+        /* Area Racikan (Meja Saji) */
+        #prep-area {
+            height: 40%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
             justify-content: center;
             align-items: center;
-            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.1s;
         }
-        #overlay h1 { font-size: 48px; margin-bottom: 10px; color: #f1c40f; }
-        #overlay button {
-            padding: 12px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            background: #2ecc71;
+
+        #prep-area:active {
+            transform: scale(0.95);
+        }
+
+        #serving-bowl {
+            width: 120px;
+            height: 120px;
+            background-color: #fff;
+            border: 4px solid #ccc;
+            border-radius: 50%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            font-size: 1.5rem;
+            box-shadow: inset 0 -10px 15px rgba(0,0,0,0.1), 0 10px 15px rgba(0,0,0,0.3);
+        }
+
+        .serve-hint {
+            position: absolute;
+            bottom: 5px;
+            color: white;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Tombol Buang */
+        #trash-btn {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            background: var(--danger);
             color: white;
             border: none;
+            padding: 10px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        /* Papan Bahan Makanan */
+        #ingredients-board {
+            flex: 1;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            background-color: #A0522D;
+        }
+
+        .ingredient-btn {
+            background-color: var(--accent);
+            border: 2px solid #E6B800;
+            border-radius: 10px;
+            font-size: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #CC9900;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .ingredient-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #CC9900;
+        }
+
+        .ingredient-btn span {
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-top: 5px;
+            color: var(--text-dark);
+        }
+
+        /* === MODAL & POP-UP === */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 80%;
+            animation: popIn 0.3s ease-out;
+        }
+
+        .modal h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .btn-start {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2rem;
             border-radius: 25px;
             cursor: pointer;
-            margin-top: 20px;
-            box-shadow: 0 5px 0 #27ae60;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
-        #overlay button:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Animasi */
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 2s infinite ease-in-out;
+        }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <div id="top-section">
-            <div id="hud">
-                <div class="hud-item">💰 Pendapatan: <span id="score">Rp 0</span></div>
-                <div class="hud-item">🎯 Target: <span id="target">Rp 100.000</span></div>
-                <div class="hud-item">⏱️ Waktu: <span id="timer">60</span>s</div>
-            </div>
-
-            <div id="customer-area">
-                </div>
-        </div>
-
-        <div id="kitchen-table">
-            
-            <div class="kitchen-section">
-                <div class="section-title">Bahan Pokok</div>
-                <button class="ingredient-btn" onclick="addIngredient('Mie')"><span>🍜</span>Mie</button>
-                <button class="ingredient-btn" onclick="addIngredient('Bihun')"><span>⚪</span>Bihun</button>
-            </div>
-
-            <div class="kitchen-section">
-                <div class="section-title">Mangkok Racikan (Klik untuk Sajikan / Kosongkan)</div>
-                <div class="assembly-slot" id="slot-0" onclick="handleSlotClick(0)">
-                    <div class="bowl-content" id="content-0">Kosong</div>
-                </div>
-                <div class="assembly-slot" id="slot-1" onclick="handleSlotClick(1)">
-                    <div class="bowl-content" id="content-1">Kosong</div>
-                </div>
-                <div class="assembly-slot" id="slot-2" onclick="handleSlotClick(2)">
-                    <div class="bowl-content" id="content-2">Kosong</div>
-                </div>
-            </div>
-
-            <div class="kitchen-section">
-                <div class="section-title">Topping & Lauk</div>
-                <button class="ingredient-btn" onclick="addIngredient('Bakso')"><span>🥩</span>Bakso</button>
-                <button class="ingredient-btn" onclick="addIngredient('Pangsit')"><span>📐</span>Pangsit</button>
-                <button class="ingredient-btn" onclick="addIngredient('Sayur')"><span>🥬</span>Sayur</button>
-                <button class="ingredient-btn" onclick="addIngredient('Sambal')"><span>🌶️</span>Sambal</button>
-            </div>
-
-            <div id="banner">
-                <div class="flag"></div>
-                MASAKAN INDONESIA
-                <div class="flag"></div>
-            </div>
-        </div>
-
-        <div id="overlay">
-            <h1 id="overlay-title">GAME OVER</h1>
-            <p id="overlay-desc">Skor Akhir Anda: Rp 0</p>
-            <button onclick="restartGame()">Main Lagi</button>
+<div id="game-container">
+    <div id="screen-overlay" class="overlay">
+        <div class="modal">
+            <h2 id="modal-title">Warung Nusantara</h2>
+            <p id="modal-desc">Layani pesanan pelanggan dengan urutan bahan yang tepat sebelum mereka marah!</p>
+            <button class="btn-start" id="start-btn">Mulai Masak!</button>
         </div>
     </div>
 
-    <script>
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(type) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+    <div id="header">
+        <div>Koin: <span id="score-display">0</span> 🪙</div>
+        <div>Waktu: <span id="time-display">60</span>s ⏳</div>
+    </div>
+
+    <div id="customer-area">
+        <div class="speech-bubble" id="speech-bubble">
+            <h3 id="order-name">Pesanan</h3>
+            <p id="order-hint">Resep</p>
+        </div>
+        <div id="customer-avatar" class="floating">🧕</div>
+        <div id="patience-container">
+            <div id="patience-bar"></div>
+        </div>
+    </div>
+
+    <div id="kitchen-area">
+        <div id="prep-area" onclick="serveFood()">
+            <div id="serving-bowl"></div>
+            <span class="serve-hint">Ketuk Mangkuk untuk Menyajikan</span>
+            <button id="trash-btn" onclick="trashFood(event)">🗑️</button>
+        </div>
+
+        <div id="ingredients-board">
+            <div class="ingredient-btn" onclick="addIngredient('mangkuk', '🥣')">🥣<span>Mangkuk</span></div>
+            <div class="ingredient-btn" onclick="addIngredient('bakso', '🧆')">🧆<span>Bakso</span></div>
+            <div class="ingredient-btn" onclick="addIngredient('mie', '🍝')">🍝<span>Mie</span></div>
+            <div class="ingredient-btn" onclick="addIngredient('sawi', '🥬')">🥬<span>Sawi</span></div>
+            <div class="ingredient-btn" onclick="addIngredient('pangsit', '🥟')">🥟<span>Pangsit</span></div>
+            <div class="ingredient-btn" onclick="addIngredient('kuah', '🍲')">🍲<span>Kuah</span></div>
+            <div class="ingredient-btn" onclick="addIngredient('sambal', '🌶️')">🌶️<span>Sambal</span></div>
+            <div class="ingredient-btn" onclick="addIngredient('saus', '🍅')">🍅<span>Saus</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /** * ==========================================
+     * BAGIAN LOGIKA & PENGATURAN GAME
+     * ==========================================
+     * Logika ini mengatur cara kerja game, seperti resep, 
+     * timer pelanggan, skor, dan pendeteksian urutan klik.
+     */
+
+    // 1. Data Resep Makanan (Array berisi urutan kode bahan)
+    const recipes = {
+        "Bakso Lengkap": {
+            ingredients: ["mangkuk", "bakso", "sawi", "pangsit", "kuah"],
+            hint: "(Mangkuk ➔ Bakso ➔ Sawi ➔ Pangsit ➔ Kuah)",
+            reward: 20
+        },
+        "Mie Ayam": {
+            ingredients: ["mangkuk", "mie", "sawi", "pangsit", "kuah"],
+            hint: "(Mangkuk ➔ Mie ➔ Sawi ➔ Pangsit ➔ Kuah)",
+            reward: 20
+        }
+    };
+
+    // Varian avatar pelanggan yang akan muncul secara acak
+    const avatars = ["🧕", "👨‍💼", "👩‍🎓", "👲", "👨‍🏫"];
+
+    // 2. Variabel State (Penyimpan status game saat ini)
+    let score = 0;
+    let gameTime = 60; // Total waktu main dalam detik
+    let gameInterval;
+    
+    let currentBowl = []; // Array untuk menampung bahan yang sedang diracik pemain
+    let currentBowlEmojis = []; // Hanya untuk visual mangkuk
+
+    let currentOrderName = "";
+    let patienceTime = 100; // Persentase kesabaran (0-100)
+    let patienceInterval;
+
+    // 3. Mengambil elemen HTML untuk diubah menggunakan JavaScript
+    const scoreDisplay = document.getElementById("score-display");
+    const timeDisplay = document.getElementById("time-display");
+    const overlay = document.getElementById("screen-overlay");
+    const modalTitle = document.getElementById("modal-title");
+    const modalDesc = document.getElementById("modal-desc");
+    const startBtn = document.getElementById("start-btn");
+
+    const customerAvatar = document.getElementById("customer-avatar");
+    const speechBubble = document.getElementById("speech-bubble");
+    const orderNameDisplay = document.getElementById("order-name");
+    const orderHintDisplay = document.getElementById("order-hint");
+    
+    const patienceContainer = document.getElementById("patience-container");
+    const patienceBar = document.getElementById("patience-bar");
+    const servingBowl = document.getElementById("serving-bowl");
+
+    // Event Listener untuk Tombol Mulai
+    startBtn.addEventListener("click", startGame);
+
+    /**
+     * ==========================================
+     * FUNGSI-FUNGSI UTAMA GAME
+     * ==========================================
+     */
+
+    // Blok Fungsi: Memulai Game Baru
+    function startGame() {
+        // Reset semua status/variabel ke awal
+        score = 0;
+        gameTime = 60;
+        scoreDisplay.innerText = score;
+        timeDisplay.innerText = gameTime;
+        
+        overlay.style.display = "none"; // Sembunyikan layar menu
+        customerAvatar.style.display = "block";
+        speechBubble.style.display = "block";
+        patienceContainer.style.display = "block";
+        
+        clearBowl(); // Kosongkan mangkuk dapur
+        spawnCustomer(); // Munculkan pelanggan pertama
+
+        // Jalankan timer utama game (berkurang 1 setiap 1000ms / 1 detik)
+        gameInterval = setInterval(() => {
+            gameTime--;
+            timeDisplay.innerText = gameTime;
             
-            if (type === 'click') {
-                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-            } else if (type === 'success') {
-                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-            } else if (type === 'fail') {
-                osc.frequency.setValueAtTime(250, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            if (gameTime <= 0) {
+                endGame(); // Jika waktu habis, panggil fungsi endGame
             }
-        }
-    </script>
+        }, 1000);
+    }
 
-    <script>
-        // State Konfigurasi Game
-        let score = 0;
-        let timeLeft = 60;
-        const targetScore = 100000;
-        let gameInterval;
-        let customerInterval;
-        let activeSlot = 0; // Mangkok yang sedang aktif dipilih untuk diisi
+    // Blok Fungsi: Memunculkan Pelanggan Baru & Pesanannya
+    function spawnCustomer() {
+        // Hentikan timer kesabaran sebelumnya jika ada
+        clearInterval(patienceInterval);
 
-        // Variabel Data Hidangan
-        const menuRecipes = {
-            "Bakso Biasa": ["Bihun", "Bakso", "Sayur"],
-            "Mie Ayam Pangsit": ["Mie", "Pangsit", "Sayur"],
-            "Bakso Komplit": ["Mie", "Bihun", "Bakso", "Pangsit", "Sayur"],
-            "Bakso Pedas": ["Bihun", "Bakso", "Sayur", "Sambal"]
-        };
-        const menuPrices = {
-            "Bakso Biasa": 15000,
-            "Mie Ayam Pangsit": 18000,
-            "Bakso Komplit": 25000,
-            "Bakso Pedas": 17000
-        };
+        // Pilih pesanan acak ("Bakso Lengkap" atau "Mie Ayam")
+        const recipeKeys = Object.keys(recipes);
+        currentOrderName = recipeKeys[Math.floor(Math.random() * recipeKeys.length)];
+        
+        // Pilih avatar acak
+        customerAvatar.innerText = avatars[Math.floor(Math.random() * avatars.length)];
+        
+        // Tampilkan pesanan di balon teks
+        orderNameDisplay.innerText = currentOrderName;
+        orderHintDisplay.innerText = recipes[currentOrderName].hint;
 
-        // Data Slot Mangkok di Meja Racik
-        let slots = [
-            { ingredients: [], active: true },
-            { ingredients: [], active: false },
-            { ingredients: [], active: false }
-        ];
+        // Reset kesabaran pelanggan
+        patienceTime = 100;
+        updatePatienceBar();
 
-        let customers = [];
-        const maxCustomers = 3;
+        // Jalankan animasi pop-in agar terasa dinamis
+        customerAvatar.style.animation = 'none';
+        speechBubble.style.animation = 'none';
+        setTimeout(() => {
+            customerAvatar.style.animation = 'popIn 0.3s ease-out';
+            speechBubble.style.animation = 'popIn 0.3s ease-out';
+        }, 10);
 
-        // Inisialisasi Game
-        function startGame() {
-            score = 0;
-            timeLeft = 60;
-            slots = [
-                { ingredients: [], active: true },
-                { ingredients: [], active: false },
-                { ingredients: [], active: false }
-            ];
-            activeSlot = 0;
-            customers = [];
-            
-            document.getElementById('score').innerText = "Rp " + score.toLocaleString('id-ID');
-            document.getElementById('timer').innerText = timeLeft;
-            document.getElementById('overlay').style.display = 'none';
-            
-            updateSlotUI();
-            
-            // Core loops
-            gameInterval = setInterval(updateTimer, 1000);
-            customerInterval = setInterval(spawnCustomer, 3500);
-            
-            // Munculkan pelanggan pertama langsung
-            spawnCustomer();
-        }
+        // Kurangi kesabaran secara perlahan
+        patienceInterval = setInterval(() => {
+            patienceTime -= 2; // Kecepatan pelanggan marah (bisa disesuaikan)
+            updatePatienceBar();
 
-        function updateTimer() {
-            timeLeft--;
-            document.getElementById('timer').innerText = timeLeft;
-            
-            if (timeLeft <= 0) {
-                endGame();
+            if (patienceTime <= 0) {
+                // Pelanggan pergi karena marah
+                clearInterval(patienceInterval);
+                customerAvatar.innerText = "😤"; // Ubah wajah
+                setTimeout(() => {
+                    spawnCustomer(); // Ganti pelanggan baru setelah 1 detik
+                }, 1000);
             }
+        }, 300);
+    }
+
+    // Blok Fungsi: Visualisasi Bar Kesabaran
+    function updatePatienceBar() {
+        patienceBar.style.width = patienceTime + "%";
+        // Ubah warna bar menjadi merah jika hampir habis
+        if (patienceTime > 50) {
+            patienceBar.style.backgroundColor = "var(--success)";
+        } else if (patienceTime > 25) {
+            patienceBar.style.backgroundColor = "var(--accent)";
+        } else {
+            patienceBar.style.backgroundColor = "var(--danger)";
         }
+    }
 
-        // Fungsi Memasukkan Bahan ke Mangkok Aktif
-        function addIngredient(ing) {
-            playSound('click');
-            let currentSlot = slots[activeSlot];
-            if (!currentSlot.ingredients.includes(ing)) {
-                currentSlot.ingredients.push(ing);
-                updateSlotUI();
-            }
-        }
+    // Blok Fungsi: Menambahkan Bahan ke Mangkuk (Saat Tombol Ditekan)
+    function addIngredient(itemId, emoji) {
+        // Cegah menambahkan bahan jika melebihi kapasitas visual (maksimal 6 item)
+        if (currentBowl.length >= 6) return;
 
-        // Update visualisasi mangkok racikan
-        function updateSlotUI() {
-            for (let i = 0; i < 3; i++) {
-                const slotEl = document.getElementById(`slot-${i}`);
-                const contentEl = document.getElementById(`content-${i}`);
-                
-                // Set kelas aktif sorotan
-                if (i === activeSlot) {
-                    slotEl.style.borderColor = '#f1c40f';
-                    slotEl.style.boxShadow = '0 0 15px #f1c40f';
-                } else {
-                    slotEl.style.borderColor = '#fff';
-                    slotEl.style.boxShadow = 'none';
-                }
+        // Masukkan id bahan ke array logika, dan emoji ke array visual
+        currentBowl.push(itemId);
+        currentBowlEmojis.push(emoji);
 
-                if (slots[i].ingredients.length === 0) {
-                    contentEl.innerHTML = "<span style='color:#bbb;'>Kosong</span>";
-                    slotEl.classList.remove('active');
-                } else {
-                    contentEl.innerHTML = slots[i].ingredients.join("<br>");
-                    slotEl.classList.add('active');
-                }
-            }
-        }
+        renderBowl(); // Perbarui tampilan mangkuk
+    }
 
-        // Klik slot untuk ganti fokus mangkok atau buang masakan jika double klik / alternatif
-        function handleSlotClick(index) {
-            if (activeSlot === index) {
-                // Jika klik mangkok yang sama dan isinya ada, kita asumsikan sedang mencocokkan pesanan pelanggan
-                checkServe(index);
-            } else {
-                activeSlot = index;
-                updateSlotUI();
-            }
-        }
+    // Blok Fungsi: Merender (menggambar ulang) isi mangkuk di layar
+    function renderBowl() {
+        servingBowl.innerHTML = currentBowlEmojis.join(" ");
+    }
 
-        // Logika Pelanggan
-        function spawnCustomer() {
-            if (customers.length >= maxCustomers) return;
+    // Blok Fungsi: Membuang Racikan yang Salah
+    function trashFood(event) {
+        event.stopPropagation(); // Mencegah klik menembus ke elemen prep-area (menyajikan)
+        clearBowl();
+    }
 
-            const menuKeys = Object.keys(menuRecipes);
-            const randomMenu = menuKeys[Math.floor(Math.random() * menuKeys.length)];
-            const types = ['hijab', 'pria'];
-            const randomType = types[Math.floor(Math.random() * types.length)];
-            const emojis = randomType === 'hijab' ? '🧕' : '👨';
+    // Blok Fungsi: Mengosongkan Mangkuk
+    function clearBowl() {
+        currentBowl = [];
+        currentBowlEmojis = [];
+        renderBowl();
+    }
 
-            const customer = {
-                id: Date.now() + Math.random(),
-                menu: randomMenu,
-                patience: 100,
-                type: randomType,
-                emoji: emojis
-            };
+    // Blok Fungsi: Menyajikan Makanan ke Pelanggan (Validasi Logika)
+    function serveFood() {
+        // Jika mangkuk masih kosong, abaikan klik
+        if (currentBowl.length === 0) return;
 
-            customers.push(customer);
-            renderCustomers();
-        }
+        // Ambil array resep yang benar berdasarkan pesanan pelanggan saat ini
+        const correctRecipe = recipes[currentOrderName].ingredients;
 
-        function renderCustomers() {
-            const area = document.getElementById('customer-area');
-            area.innerHTML = '';
-
-            customers.forEach(c => {
-                const custEl = document.createElement('div');
-                custEl.className = 'customer';
-                
-                custEl.innerHTML = `
-                    <div class="order-bubble"> minta:<br>🛒 ${c.menu}</div>
-                    <div class="avatar ${c.type}">${c.emoji}</div>
-                    <div class="patience-bar">
-                        <div class="patience-fill" id="patience-${c.id}" style="width: ${c.patience}%"></div>
-                    </div>
-                `;
-                area.appendChild(custEl);
-            });
-        }
-
-        // Loop untuk mengurangi kesabaran pelanggan secara real-time
-        setInterval(() => {
-            if (timeLeft <= 0) return;
+        // Cek apakah racikan pemain (currentBowl) sama persis dengan resep (correctRecipe)
+        if (checkArraysMatch(currentBowl, correctRecipe)) {
+            // BENAR!
+            score += recipes[currentOrderName].reward;
+            scoreDisplay.innerText = score;
             
-            let burnedCustomer = false;
-            customers.forEach(c => {
-                c.patience -= 2.5; // Mengurangi bar kesabaran
-                const fillEl = document.getElementById(`patience-${c.id}`);
-                if (fillEl) {
-                    fillEl.style.width = c.patience + '%';
-                    if (c.patience < 30) fillEl.style.backgroundColor = '#e74c3c';
-                    else if (c.patience < 60) fillEl.style.backgroundColor = '#f39c12';
-                }
-
-                if (c.patience <= 0) {
-                    burnedCustomer = true;
-                }
-            });
-
-            if (burnedCustomer) {
-                customers = customers.filter(c => c.patience > 0);
-                playSound('fail');
-                renderCustomers();
-            }
-        }, 500);
-
-        // Logika Menyajikan Makanan ke Pelanggan
-        function checkServe(slotIndex) {
-            const cookedIngredients = slots[slotIndex].ingredients;
-            if (cookedIngredients.length === 0) return;
-
-            // Cari apakah ada pelanggan yang pesanannya cocok dengan racikan di mangkok
-            let matchIndex = -1;
-            for (let i = 0; i < customers.length; i++) {
-                const targetRecipe = menuRecipes[customers[i].menu];
-                
-                // Validasi kecocokan isi bahan (tanpa memandang urutan pembuatan)
-                const isMatch = targetRecipe.length === cookedIngredients.length &&
-                                targetRecipe.every(ing => cookedIngredients.includes(ing));
-
-                if (isMatch) {
-                    matchIndex = i;
-                    break;
-                }
-            }
-
-            if (matchIndex : text !== -1) {
-                // Berhasil menyajikan masakan yang tepat!
-                const servedMenu = customers[matchIndex].menu;
-                score += menuPrices[servedMenu];
-                document.getElementById('score').innerText = "Rp " + score.toLocaleString('id-ID');
-                
-                // Hapus pelanggan dan bersihkan mangkok
-                customers.splice(matchIndex, 1);
-                slots[slotIndex].ingredients = [];
-                
-                playSound('success');
-                renderCustomers();
-                updateSlotUI();
-            } else {
-                // Salah resep, reset/buang isi mangkok secara otomatis
-                slots[slotIndex].ingredients = [];
-                playSound('fail');
-                updateSlotUI();
-                alert("Waduh! Isian racikan tidak sesuai pesanan pembeli mana pun. Makanan terbuang!");
-            }
-        }
-
-        // Selesai Game
-        function endGame() {
-            clearInterval(gameInterval);
-            clearInterval(customerInterval);
+            // Animasi pelanggan senang
+            customerAvatar.innerText = "😍";
+            clearInterval(patienceInterval);
             
-            const overlay = document.getElementById('overlay');
-            const title = document.getElementById('overlay-title');
-            const desc = document.getElementById('overlay-desc');
-            
-            overlay.style.display = 'flex';
-            desc.innerText = "Pendapatan Warung Anda: Rp " + score.toLocaleString('id-ID');
-            
-            if (score >= targetScore) {
-                title.innerText = "SELAMAT! ANDA MENANG";
-                title.style.color = '#2ecc71';
-            } else {
-                title.innerText = "WAKTU HABIS!";
-                title.style.color = '#e74c3c';
-            }
-        }
+            // Buat pelanggan baru & bersihkan meja setelah jeda singkat
+            setTimeout(() => {
+                clearBowl();
+                spawnCustomer();
+            }, 500);
 
-        function restartGame() {
-            startGame();
+        } else {
+            // SALAH! Animasi goyang (shake) untuk memberi tahu pemain
+            servingBowl.style.transform = "translateX(-10px)";
+            setTimeout(() => servingBowl.style.transform = "translateX(10px)", 100);
+            setTimeout(() => servingBowl.style.transform = "translateX(0)", 200);
         }
+    }
 
-        // Memulai game saat pertama kali dimuat
-        window.onload = startGame;
-    </script>
+    // Blok Fungsi Helper: Mengecek apakah 2 Array isinya sama persis secara berurutan
+    function checkArraysMatch(arr1, arr2) {
+        if (arr1.length !== arr2.length) return false;
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) return false;
+        }
+        return true;
+    }
+
+    // Blok Fungsi: Mengakhiri Permainan
+    function endGame() {
+        clearInterval(gameInterval);
+        clearInterval(patienceInterval);
+        
+        // Tampilkan kembali menu overlay dengan hasil akhir
+        overlay.style.display = "flex";
+        modalTitle.innerText = "Waktu Habis!";
+        modalDesc.innerHTML = `Luar biasa!<br>Kamu mengumpulkan <strong>${score} Koin</strong>.`;
+        startBtn.innerText = "Main Lagi";
+        
+        // Sembunyikan elemen pelanggan sementara
+        customerAvatar.style.display = "none";
+        speechBubble.style.display = "none";
+        patienceContainer.style.display = "none";
+    }
+
+</script>
 </body>
 </html>
