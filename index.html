@@ -3,847 +3,620 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Web 3D - Advanced Edition</title>
+    <title>Warung Masakan Indonesia - Bakso & Mie Ayam</title>
     <style>
-        * { box-sizing: border-box; user-select: none; margin: 0; padding: 0; }
-        body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Courier New', Courier, monospace; background-color: #000; }
-        #canvas-container { width: 100%; height: 100%; display: block; }
-        
-        #crosshair {
-            position: absolute; top: 50%; left: 50%; width: 20px; height: 20px;
-            transform: translate(-50%, -50%); pointer-events: none; z-index: 10;
+        :root {
+            --wood-color: #8B5A2B;
+            --table-color: #CD853F;
+            --text-color: #333;
         }
-        #crosshair::before, #crosshair::after { content: ''; position: absolute; background: rgba(255, 255, 255, 0.8); }
-        #crosshair::before { top: 9px; left: 0; width: 20px; height: 2px; }
-        #crosshair::after { top: 0; left: 9px; width: 2px; height: 20px; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2c3e50;
+            display: flex;
+            justify-center: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #game-container {
+            width: 960px;
+            height: 540px;
+            background: linear-gradient(to bottom, #dff9fb, #ffffff);
+            position: relative;
+            border: 8px solid #222;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        /* --- BAGIAN ATAS: PELANGGAN & HUD --- */
+        #top-section {
+            height: 220px;
+            position: relative;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f5f6fa"/><circle cx="50" cy="50" r="40" fill="%23f1f2f6" opacity="0.5"/></svg>');
+            border-bottom: 5px solid #bdc581;
+        }
 
         #hud {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; display: flex; flex-direction: column;
-            justify-content: space-between; padding: 20px; z-index: 5;
-        }
-        .stats-container { display: flex; flex-direction: column; gap: 5px; }
-        .bar-wrapper { display: flex; gap: 4px; }
-        .heart {
-            width: 18px; height: 18px; background: #ff2a2a;
-            clip-path: polygon(50% 15%, 75% 0%, 100% 25%, 100% 55%, 50% 95%, 0% 55%, 0% 25%, 25% 0%);
-            transition: opacity 0.2s;
-        }
-        .heart.empty { background: #444 !important; }
-        
-        #hotbar-container {
-            align-self: center; background: rgba(0, 0, 0, 0.6); border: 4px solid #4a4a4a;
-            display: flex; padding: 2px; gap: 4px; pointer-events: auto; margin-bottom: 10px;
-        }
-        .hotbar-slot {
-            width: 46px; height: 46px; background: rgba(120, 120, 120, 0.5);
-            border: 2px solid #3a3a3a; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer;
-        }
-        .hotbar-slot.active { border: 4px solid #ffffff; box-shadow: inset 0 0 5px #000; }
-        .slot-preview { width: 32px; height: 32px; }
-
-        #block-info {
-            position: absolute; bottom: 80px; left: 20px; color: white;
-            font-weight: bold; text-shadow: 2px 2px black; font-size: 14px; line-height: 1.6;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+            font-size: 16px;
+            z-index: 10;
         }
 
-        .menu-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 30;
+        .hud-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-        .menu-card { background: rgba(16, 16, 16, 0.9); border: 4px solid #555; padding: 30px; text-align: center; min-width: 350px; }
-        .menu-card h1 { color: #fff; margin-bottom: 20px; font-size: 26px; text-shadow: 2px 2px #000; }
-        .btn {
-            display: block; width: 100%; padding: 12px; margin: 10px 0; background: #5c5c5c;
-            color: white; border: 2px solid #2a2a2a; font-size: 14px; cursor: pointer; font-weight: bold;
-            box-shadow: inset -3px -3px #222, inset 3px 3px #888;
+
+        /* Pelanggan */
+        #customer-area {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 50px;
+            box-sizing: border-box;
         }
-        .btn:hover { background: #6c6c6c; }
-        
-        #damage-flash {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 0, 0, 0); pointer-events: none; z-index: 15; transition: background 0.1s ease;
+
+        .customer {
+            width: 100px;
+            height: 140px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: walkIn 0.5s ease-out;
         }
-        #game-over-screen { display: none; background: rgba(100, 0, 0, 0.85); }
+
+        @keyframes walkIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            background: #ff7675;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 35px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .avatar.hijab { background: #74b9ff; }
+        .avatar.pria { background: #ffeaa7; }
+
+        .order-bubble {
+            position: absolute;
+            top: -65px;
+            background: white;
+            padding: 6px 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid #fdcb6e;
+        }
+        .order-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px 8px 0;
+            border-style: solid;
+            border-color: white transparent;
+        }
+
+        .patience-bar {
+            width: 60px;
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .patience-fill {
+            width: 100%;
+            height: 100%;
+            background: #2ecc71;
+            transition: width 0.1s linear, background-color 0.5s;
+        }
+
+        /* --- BAGIAN BAWAH: MEJA MASAK (DAPUR) --- */
+        #kitchen-table {
+            height: 320px;
+            background: linear-gradient(135deg, var(--table-color), var(--wood-color));
+            border-top: 8px solid #5c3a21;
+            padding: 15px;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 15px;
+            position: relative;
+        }
+
+        .kitchen-section {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-content: center;
+            justify-content: center;
+        }
+
+        .section-title {
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+        }
+
+        /* Bahan Mentah / Bahan Pelengkap */
+        .ingredient-btn {
+            width: 75px;
+            height: 75px;
+            background: #f8f9fa;
+            border: 3px solid #bdc3c7;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 4px 0 #bdc3c7;
+        }
+        .ingredient-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 #bdc3c7;
+        }
+        .ingredient-btn span { font-size: 28px; margin-bottom: 2px; }
+
+        /* Area Racikan (Mangkok) */
+        .assembly-slot {
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            border: 3px solid #fff;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .assembly-slot.active { background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23fff" stroke="%23e74c3c" stroke-width="4"/></svg>') no-repeat center; background-size: contain; }
+
+        .bowl-content {
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            color: #2c3e50;
+            pointer-events: none;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        /* Banner Masakan Indonesia */
+        #banner {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #e74c3c;
+            color: white;
+            text-align: center;
+            font-weight: 900;
+            font-size: 24px;
+            padding: 5px 0;
+            letter-spacing: 2px;
+            border-top: 3px solid #f1c40f;
+            text-shadow: 2px 2px 0px #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        .flag { width: 30px; height: 20px; background: linear-gradient(to bottom, red 50%, white 50%); border: 1px solid #ddd; }
+
+        /* Game Over / Win Overlay */
+        #overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            color: white;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+        }
+        #overlay h1 { font-size: 48px; margin-bottom: 10px; color: #f1c40f; }
+        #overlay button {
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 5px 0 #27ae60;
+        }
+        #overlay button:active { transform: translateY(4px); box-shadow: none; }
     </style>
 </head>
 <body>
 
-    <div id="canvas-container"></div>
-    <div id="crosshair"></div>
-    <div id="damage-flash"></div>
+    <div id="game-container">
+        <div id="top-section">
+            <div id="hud">
+                <div class="hud-item">💰 Pendapatan: <span id="score">Rp 0</span></div>
+                <div class="hud-item">🎯 Target: <span id="target">Rp 100.000</span></div>
+                <div class="hud-item">⏱️ Waktu: <span id="timer">60</span>s</div>
+            </div>
 
-    <div id="hud">
-        <div class="stats-container">
-            <div style="color: white; font-weight: bold; text-shadow: 1px 1px #000;">DARAH:</div>
-            <div class="bar-wrapper" id="hp-bar"></div>
+            <div id="customer-area">
+                </div>
         </div>
-        <div id="block-info">Menginisialisasi Dunia Voxel...</div>
-        <div id="hotbar-container"></div>
-    </div>
 
-    <div id="menu-pause" class="menu-overlay">
-        <div class="menu-card">
-            <h1>MINECRAFT ENGINE ALPHA</h1>
-            <p style="color: #aaa; margin-bottom: 15px; font-size:12px;">Kontrol: WASD (Jalan), Spasi (Lompat), Klik Kiri (Pukul/Hancurkan), Klik Kanan (Pasang Blok), 1-8 (Pilih Blok)</p>
-            <button class="btn" id="btn-resume">Masuk Ke Game</button>
+        <div id="kitchen-table">
+            
+            <div class="kitchen-section">
+                <div class="section-title">Bahan Pokok</div>
+                <button class="ingredient-btn" onclick="addIngredient('Mie')"><span>🍜</span>Mie</button>
+                <button class="ingredient-btn" onclick="addIngredient('Bihun')"><span>⚪</span>Bihun</button>
+            </div>
+
+            <div class="kitchen-section">
+                <div class="section-title">Mangkok Racikan (Klik untuk Sajikan / Kosongkan)</div>
+                <div class="assembly-slot" id="slot-0" onclick="handleSlotClick(0)">
+                    <div class="bowl-content" id="content-0">Kosong</div>
+                </div>
+                <div class="assembly-slot" id="slot-1" onclick="handleSlotClick(1)">
+                    <div class="bowl-content" id="content-1">Kosong</div>
+                </div>
+                <div class="assembly-slot" id="slot-2" onclick="handleSlotClick(2)">
+                    <div class="bowl-content" id="content-2">Kosong</div>
+                </div>
+            </div>
+
+            <div class="kitchen-section">
+                <div class="section-title">Topping & Lauk</div>
+                <button class="ingredient-btn" onclick="addIngredient('Bakso')"><span>🥩</span>Bakso</button>
+                <button class="ingredient-btn" onclick="addIngredient('Pangsit')"><span>📐</span>Pangsit</button>
+                <button class="ingredient-btn" onclick="addIngredient('Sayur')"><span>🥬</span>Sayur</button>
+                <button class="ingredient-btn" onclick="addIngredient('Sambal')"><span>🌶️</span>Sambal</button>
+            </div>
+
+            <div id="banner">
+                <div class="flag"></div>
+                MASAKAN INDONESIA
+                <div class="flag"></div>
+            </div>
+        </div>
+
+        <div id="overlay">
+            <h1 id="overlay-title">GAME OVER</h1>
+            <p id="overlay-desc">Skor Akhir Anda: Rp 0</p>
+            <button onclick="restartGame()">Main Lagi</button>
         </div>
     </div>
-
-    <div id="game-over-screen" class="menu-overlay">
-        <div class="menu-card" style="border-color: #f00;">
-            <h1 style="color: #ff3333; font-size: 40px;">KAMU MATI!</h1>
-            <button class="btn" onclick="location.reload();">Respawn / Main Lagi</button>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
 
     <script>
-        // --- PROSEDURAL NOISE & HASH UTIL ---
-        const Noise = new function() {
-            this.noise2D = function(x, z) {
-                let X = Math.floor(x) & 255; let Z = Math.floor(z) & 255;
-                let xf = x - Math.floor(x); let zf = z - Math.floor(z);
-                let u = xf * xf * xf * (xf * (xf * 6 - 15) + 10);
-                let v = zf * zf * zf * (zf * (zf * 6 - 15) + 10);
-                return lerp(v, lerp(u, hash(X, Z), hash(X + 1, Z)), lerp(u, hash(X, Z + 1), hash(X + 1, Z + 1)));
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (type === 'click') {
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'success') {
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'fail') {
+                osc.frequency.setValueAtTime(250, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+    </script>
+
+    <script>
+        // State Konfigurasi Game
+        let score = 0;
+        let timeLeft = 60;
+        const targetScore = 100000;
+        let gameInterval;
+        let customerInterval;
+        let activeSlot = 0; // Mangkok yang sedang aktif dipilih untuk diisi
+
+        // Variabel Data Hidangan
+        const menuRecipes = {
+            "Bakso Biasa": ["Bihun", "Bakso", "Sayur"],
+            "Mie Ayam Pangsit": ["Mie", "Pangsit", "Sayur"],
+            "Bakso Komplit": ["Mie", "Bihun", "Bakso", "Pangsit", "Sayur"],
+            "Bakso Pedas": ["Bihun", "Bakso", "Sayur", "Sambal"]
+        };
+        const menuPrices = {
+            "Bakso Biasa": 15000,
+            "Mie Ayam Pangsit": 18000,
+            "Bakso Komplit": 25000,
+            "Bakso Pedas": 17000
+        };
+
+        // Data Slot Mangkok di Meja Racik
+        let slots = [
+            { ingredients: [], active: true },
+            { ingredients: [], active: false },
+            { ingredients: [], active: false }
+        ];
+
+        let customers = [];
+        const maxCustomers = 3;
+
+        // Inisialisasi Game
+        function startGame() {
+            score = 0;
+            timeLeft = 60;
+            slots = [
+                { ingredients: [], active: true },
+                { ingredients: [], active: false },
+                { ingredients: [], active: false }
+            ];
+            activeSlot = 0;
+            customers = [];
+            
+            document.getElementById('score').innerText = "Rp " + score.toLocaleString('id-ID');
+            document.getElementById('timer').innerText = timeLeft;
+            document.getElementById('overlay').style.display = 'none';
+            
+            updateSlotUI();
+            
+            // Core loops
+            gameInterval = setInterval(updateTimer, 1000);
+            customerInterval = setInterval(spawnCustomer, 3500);
+            
+            // Munculkan pelanggan pertama langsung
+            spawnCustomer();
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            document.getElementById('timer').innerText = timeLeft;
+            
+            if (timeLeft <= 0) {
+                endGame();
+            }
+        }
+
+        // Fungsi Memasukkan Bahan ke Mangkok Aktif
+        function addIngredient(ing) {
+            playSound('click');
+            let currentSlot = slots[activeSlot];
+            if (!currentSlot.ingredients.includes(ing)) {
+                currentSlot.ingredients.push(ing);
+                updateSlotUI();
+            }
+        }
+
+        // Update visualisasi mangkok racikan
+        function updateSlotUI() {
+            for (let i = 0; i < 3; i++) {
+                const slotEl = document.getElementById(`slot-${i}`);
+                const contentEl = document.getElementById(`content-${i}`);
+                
+                // Set kelas aktif sorotan
+                if (i === activeSlot) {
+                    slotEl.style.borderColor = '#f1c40f';
+                    slotEl.style.boxShadow = '0 0 15px #f1c40f';
+                } else {
+                    slotEl.style.borderColor = '#fff';
+                    slotEl.style.boxShadow = 'none';
+                }
+
+                if (slots[i].ingredients.length === 0) {
+                    contentEl.innerHTML = "<span style='color:#bbb;'>Kosong</span>";
+                    slotEl.classList.remove('active');
+                } else {
+                    contentEl.innerHTML = slots[i].ingredients.join("<br>");
+                    slotEl.classList.add('active');
+                }
+            }
+        }
+
+        // Klik slot untuk ganti fokus mangkok atau buang masakan jika double klik / alternatif
+        function handleSlotClick(index) {
+            if (activeSlot === index) {
+                // Jika klik mangkok yang sama dan isinya ada, kita asumsikan sedang mencocokkan pesanan pelanggan
+                checkServe(index);
+            } else {
+                activeSlot = index;
+                updateSlotUI();
+            }
+        }
+
+        // Logika Pelanggan
+        function spawnCustomer() {
+            if (customers.length >= maxCustomers) return;
+
+            const menuKeys = Object.keys(menuRecipes);
+            const randomMenu = menuKeys[Math.floor(Math.random() * menuKeys.length)];
+            const types = ['hijab', 'pria'];
+            const randomType = types[Math.floor(Math.random() * types.length)];
+            const emojis = randomType === 'hijab' ? '🧕' : '👨';
+
+            const customer = {
+                id: Date.now() + Math.random(),
+                menu: randomMenu,
+                patience: 100,
+                type: randomType,
+                emoji: emojis
             };
-            function lerp(t, a, b) { return a + t * (b - a); }
-            function hash(x, z) {
-                let n = Math.sin(x * 12.9898 + z * 78.233) * 43758.5453123;
-                return n - Math.floor(n);
-            }
-            this.getStaticRand = function(x, z) { return hash(x, z); };
-        };
 
-        // --- ENUMERASI BLOK ---
-        const BLOCKS = {
-            AIR: 0, GRASS: 1, DIRT: 2, STONE: 3, WOOD: 4, LEAVES: 5, 
-            GLASS: 6, BEDROCK: 7, ROSE: 8, DANDELION: 9
-        };
-
-        const BLOCK_DEFS = {
-            [BLOCKS.GRASS]:  { name: "Grass Block", color: "#557a2b", topColor: "#5b8731", bottomColor: "#866043", cross: false },
-            [BLOCKS.DIRT]:   { name: "Dirt", color: "#866043", cross: false },
-            [BLOCKS.STONE]:  { name: "Stone", color: "#737373", cross: false },
-            [BLOCKS.WOOD]:   { name: "Oak Wood", color: "#6a4e32", cross: false },
-            [BLOCKS.LEAVES]: { name: "Leaves", color: "#3b6e2a", transparent: true, opacity: 0.9, cross: false },
-            [BLOCKS.GLASS]:  { name: "Glass", color: "#e2f2f5", transparent: true, opacity: 0.4, cross: false },
-            [BLOCKS.ROSE]:   { name: "Mawar Merah", color: "#ff2a2a", transparent: true, cross: true },
-            [BLOCKS.DANDELION]: { name: "Bunga Kuning", color: "#ffcc00", transparent: true, cross: true }
-        };
-
-        // --- ENGINE CONFIG ---
-        const CHUNK_SIZE = 16;
-        const VIEW_DISTANCE = 3; 
-        const WORLD_HEIGHT = 24;
-
-        // --- GAME STATES & VARIABLES ---
-        let scene, camera, renderer, controls, clock, raycaster;
-        let chunks = {};
-        let modifiedBlocks = {}; 
-        let activeBlockType = BLOCKS.GRASS;
-        let hotbar = [BLOCKS.GRASS, BLOCKS.DIRT, BLOCKS.STONE, BLOCKS.WOOD, BLOCKS.LEAVES, BLOCKS.GLASS, BLOCKS.ROSE, BLOCKS.DANDELION];
-        let activeHotbarIndex = 0;
-
-        // Player Stats & Physics
-        let playerVelocity = new THREE.Vector3();
-        let isGrounded = false;
-        let playerHP = 20;
-        let maxHP = 20;
-        let isDead = false;
-        const keysPressed = {};
-
-        // Entities System (Mobs)
-        let entities = [];
-        let entityMeshMap = new Map(); // Untuk mencocokkan mesh ThreeJS ke Object Mobs saat dipukul
-        let lastDamageTime = 0;
-
-        // Particles System
-        let particleSystem;
-
-        function init() {
-            clock = new THREE.Clock();
-            raycaster = new THREE.Raycaster();
-
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x7ec0ee);
-            scene.fog = new THREE.FogExp2(0x7ec0ee, 0.03);
-
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(8, 15, 8); 
-
-            renderer = new THREE.WebGLRenderer({ antialias: false }); 
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-            controls = new THREE.PointerLockControls(camera, renderer.domElement);
-            
-            setupLighting();
-            setupUI();
-            setupInput();
-            setupParticles();
-            generateWorld();
-            spawnInitialMobs();
-
-            window.addEventListener('resize', onWindowResize);
-            animate();
+            customers.push(customer);
+            renderCustomers();
         }
 
-        // --- PROCEDURAL TEXTURE GENERATOR ---
-        function generateProceduralTexture(blockId, face) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 16; canvas.height = 16;
-            const ctx = canvas.getContext('2d');
-            let def = BLOCK_DEFS[blockId] || { color: "#ffffff" };
+        function renderCustomers() {
+            const area = document.getElementById('customer-area');
+            area.innerHTML = '';
+
+            customers.forEach(c => {
+                const custEl = document.createElement('div');
+                custEl.className = 'customer';
+                
+                custEl.innerHTML = `
+                    <div class="order-bubble"> minta:<br>🛒 ${c.menu}</div>
+                    <div class="avatar ${c.type}">${c.emoji}</div>
+                    <div class="patience-bar">
+                        <div class="patience-fill" id="patience-${c.id}" style="width: ${c.patience}%"></div>
+                    </div>
+                `;
+                area.appendChild(custEl);
+            });
+        }
+
+        // Loop untuk mengurangi kesabaran pelanggan secara real-time
+        setInterval(() => {
+            if (timeLeft <= 0) return;
             
-            let baseHex = def.color;
-            if(blockId === BLOCKS.GRASS) {
-                if(face === 'top') baseHex = def.topColor;
-                else if(face === 'bottom') baseHex = def.bottomColor;
+            let burnedCustomer = false;
+            customers.forEach(c => {
+                c.patience -= 2.5; // Mengurangi bar kesabaran
+                const fillEl = document.getElementById(`patience-${c.id}`);
+                if (fillEl) {
+                    fillEl.style.width = c.patience + '%';
+                    if (c.patience < 30) fillEl.style.backgroundColor = '#e74c3c';
+                    else if (c.patience < 60) fillEl.style.backgroundColor = '#f39c12';
+                }
+
+                if (c.patience <= 0) {
+                    burnedCustomer = true;
+                }
+            });
+
+            if (burnedCustomer) {
+                customers = customers.filter(c => c.patience > 0);
+                playSound('fail');
+                renderCustomers();
             }
+        }, 500);
 
-            ctx.fillStyle = baseHex;
-            ctx.fillRect(0, 0, 16, 16);
+        // Logika Menyajikan Makanan ke Pelanggan
+        function checkServe(slotIndex) {
+            const cookedIngredients = slots[slotIndex].ingredients;
+            if (cookedIngredients.length === 0) return;
 
-            // Noise efek pikselasi ala retro minecraft
-            for (let x = 0; x < 16; x++) {
-                for (let y = 0; y < 16; y++) {
-                    let rand = (Math.random() - 0.5) * 18;
-                    ctx.fillStyle = `rgba(${rand > 0 ? 255:0},${rand > 0 ? 255:0},${rand > 0 ? 255:0}, ${Math.abs(rand)/255})`;
-                    ctx.fillRect(x, y, 1, 1);
+            // Cari apakah ada pelanggan yang pesanannya cocok dengan racikan di mangkok
+            let matchIndex = -1;
+            for (let i = 0; i < customers.length; i++) {
+                const targetRecipe = menuRecipes[customers[i].menu];
+                
+                // Validasi kecocokan isi bahan (tanpa memandang urutan pembuatan)
+                const isMatch = targetRecipe.length === cookedIngredients.length &&
+                                targetRecipe.every(ing => cookedIngredients.includes(ing));
+
+                if (isMatch) {
+                    matchIndex = i;
+                    break;
                 }
             }
-            const texture = new THREE.CanvasTexture(canvas);
-            texture.magFilter = THREE.NearestFilter;
-            texture.minFilter = THREE.NearestFilter;
-            return texture;
-        }
 
-        // --- CACHED MATERIAL SYSTEM ---
-        const materialCache = {};
-        function getBlockMaterials(blockIdRaw) {
-            const blockId = parseInt(blockIdRaw);
-            if (materialCache[blockId]) return materialCache[blockId];
-            const def = BLOCK_DEFS[blockId];
-            
-            if (def.cross) {
-                // Logika rendering silang untuk aset vegetasi pendek (Bunga/Rumput)
-                const tex = generateProceduralTexture(blockId, 'all');
-                const mat = new THREE.MeshLambertMaterial({ map: tex, side: THREE.DoubleSide, transparent: true, alphaTest: 0.5 });
-                materialCache[blockId] = mat;
-                return mat;
-            }
-
-            const mats = [];
-            if (blockId === BLOCKS.GRASS) {
-                const sideMat = new THREE.MeshLambertMaterial({ map: generateProceduralTexture(blockId, 'side') });
-                const topMat = new THREE.MeshLambertMaterial({ map: generateProceduralTexture(blockId, 'top') });
-                const botMat = new THREE.MeshLambertMaterial({ map: generateProceduralTexture(blockId, 'bottom') });
-                mats.push(sideMat, sideMat, topMat, botMat, sideMat, sideMat);
+            if (matchIndex : text !== -1) {
+                // Berhasil menyajikan masakan yang tepat!
+                const servedMenu = customers[matchIndex].menu;
+                score += menuPrices[servedMenu];
+                document.getElementById('score').innerText = "Rp " + score.toLocaleString('id-ID');
+                
+                // Hapus pelanggan dan bersihkan mangkok
+                customers.splice(matchIndex, 1);
+                slots[slotIndex].ingredients = [];
+                
+                playSound('success');
+                renderCustomers();
+                updateSlotUI();
             } else {
-                const tex = generateProceduralTexture(blockId, 'all');
-                const mat = new THREE.MeshLambertMaterial({ map: tex, transparent: def.transparent, opacity: def.opacity || 1.0 });
-                for(let i=0; i<6; i++) mats.push(mat);
-            }
-            materialCache[blockId] = mats;
-            return mats;
-        }
-
-        function setupLighting() {
-            let ambient = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambient);
-            let sun = new THREE.DirectionalLight(0xffffff, 0.7);
-            sun.position.set(10, 30, 15);
-            scene.add(sun);
-        }
-
-        // --- ENGINE GENERATOR DENGAN LOGIKA TETANGGA (POHON & BUNGA) ---
-        function getBaseHeight(x, z) {
-            let n1 = Noise.noise2D(x * 0.03, z * 0.03) * 10;
-            let n2 = Noise.noise2D(x * 0.1, z * 0.1) * 3;
-            return Math.floor(n1 + n2) + 6;
-        }
-
-        function getVoxelTypeAt(x, y, z) {
-            let key = `${x},${y},${z}`;
-            if (modifiedBlocks[key] !== undefined) return modifiedBlocks[key];
-
-            if (y <= 0) return BLOCKS.STONE;
-
-            let h = getBaseHeight(x, z);
-
-            // Scan area 5x5 horizontal di sekeliling untuk memproyeksikan struktur pohon secara real-time
-            for (let dx = -2; dx <= 2; dx++) {
-                for (let dz = -2; dz <= 2; dz++) {
-                    let nx = x + dx;
-                    let nz = z + dz;
-                    let nh = getBaseHeight(nx, nz);
-                    
-                    // Gunakan fungsi hash deterministik untuk menentukan titik koordinat pohon
-                    let rand = Noise.getStaticRand(nx, nz);
-                    if (rand < 0.015 && nh > 4) { // 1.5% Peluang tumbuh pohon
-                        // Logika Batang Pohon
-                        if (dx === 0 && dz === 0 && y > nh && y <= nh + 5) {
-                            return BLOCKS.WOOD;
-                        }
-                        // Logika Rimbun Daun Pohon (Bentuk Kubus Kanopi)
-                        if (y > nh + 3 && y <= nh + 6) {
-                            if (Math.abs(dx) <= 2 && Math.abs(dz) <= 2) {
-                                if (dx === 0 && dz === 0 && y <= nh + 5) continue; // Jangan timpa batang
-                                return BLOCKS.LEAVES;
-                            }
-                        }
-                    }
-                    // Logika Tumbuhnya Bunga Prosedural
-                    if (dx === 0 && dz === 0 && y === nh + 1 && rand > 0.90 && rand < 0.92) return BLOCKS.ROSE;
-                    if (dx === 0 && dz === 0 && y === nh + 1 && rand > 0.92 && rand < 0.94) return BLOCKS.DANDELION;
-                }
-            }
-
-            if (y > h) return BLOCKS.AIR;
-            if (y === h) return BLOCKS.GRASS;
-            if (y >= h - 2) return BLOCKS.DIRT;
-            return BLOCKS.STONE;
-        }
-
-        function generateWorld() {
-            let pX = Math.floor(camera.position.x / CHUNK_SIZE);
-            let pZ = Math.floor(camera.position.z / CHUNK_SIZE);
-
-            for (let cx = pX - VIEW_DISTANCE; cx <= pX + VIEW_DISTANCE; cx++) {
-                for (let cz = pZ - VIEW_DISTANCE; cz <= pZ + VIEW_DISTANCE; cz++) {
-                    let chunkKey = `${cx},${cz}`;
-                    if (!chunks[chunkKey]) buildChunkMesh(cx, cz);
-                }
+                // Salah resep, reset/buang isi mangkok secara otomatis
+                slots[slotIndex].ingredients = [];
+                playSound('fail');
+                updateSlotUI();
+                alert("Waduh! Isian racikan tidak sesuai pesanan pembeli mana pun. Makanan terbuang!");
             }
         }
 
-        function buildChunkMesh(cx, cz) {
-            let chunkKey = `${cx},${cz}`;
-            let blockPositions = {};
-            let crossPositions = {}; 
-
-            for (let x = 0; x < CHUNK_SIZE; x++) {
-                for (let z = 0; z < CHUNK_SIZE; z++) {
-                    for (let y = 0; y < WORLD_HEIGHT; y++) {
-                        let wx = cx * CHUNK_SIZE + x;
-                        let wz = cz * CHUNK_SIZE + z;
-                        let type = getVoxelTypeAt(wx, y, wz);
-
-                        if (type !== BLOCKS.AIR) {
-                            if (BLOCK_DEFS[type].cross) {
-                                if (!crossPositions[type]) crossPositions[type] = [];
-                                crossPositions[type].push(new THREE.Vector3(wx, y, wz));
-                            } else {
-                                if (!isFaceExposed(wx, y, wz)) continue;
-                                if (!blockPositions[type]) blockPositions[type] = [];
-                                blockPositions[type].push(new THREE.Vector3(wx, y, wz));
-                            }
-                        }
-                    }
-                }
-            }
-
-            let chunkGroup = new THREE.Group();
-            let boxGeo = new THREE.BoxGeometry(1, 1, 1);
-
-            // Build Kubus Solid (Instanced)
-            for (let type in blockPositions) {
-                let positions = blockPositions[type];
-                let mat = getBlockMaterials(type);
-                let mesh = new THREE.InstancedMesh(boxGeo, mat, positions.length);
-                let dummy = new THREE.Object3D();
-                for (let i = 0; i < positions.length; i++) {
-                    dummy.position.copy(positions[i]);
-                    dummy.updateMatrix();
-                    mesh.setMatrixAt(i, dummy.matrix);
-                }
-                mesh.instanceMatrix.needsUpdate = true;
-                chunkGroup.add(mesh);
-            }
-
-            // Build Vegetasi Silang / Cross-Quads (Instanced)
-            let crossGeo = new THREE.PlaneGeometry(1, 1);
-            crossGeo.center();
-            for (let type in crossPositions) {
-                let positions = crossPositions[type];
-                let mat = getBlockMaterials(type);
-                // Dua plane silang per satu tanaman pendek
-                let mesh = new THREE.InstancedMesh(crossGeo, mat, positions.length * 2);
-                let dummy = new THREE.Object3D();
-                let idx = 0;
-                for (let i = 0; i < positions.length; i++) {
-                    // Sayap Silang 1
-                    dummy.position.copy(positions[i]).add(new THREE.Vector3(0,-0.2,0));
-                    dummy.rotation.y = Math.PI / 4;
-                    dummy.updateMatrix();
-                    mesh.setMatrixAt(idx++, dummy.matrix);
-                    // Sayap Silang 2
-                    dummy.rotation.y = -Math.PI / 4;
-                    dummy.updateMatrix();
-                    mesh.setMatrixAt(idx++, dummy.matrix);
-                }
-                mesh.instanceMatrix.needsUpdate = true;
-                chunkGroup.add(mesh);
-            }
-
-            scene.add(chunkGroup);
-            chunks[chunkKey] = chunkGroup;
-        }
-
-        function isFaceExposed(wx, y, wz) {
-            let neighbors = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]];
-            for (let n of neighbors) {
-                let nType = getVoxelTypeAt(wx + n[0], y + n[1], wz + n[2]);
-                if (nType === BLOCKS.AIR || BLOCK_DEFS[nType]?.transparent || BLOCK_DEFS[nType]?.cross) return true;
-            }
-            return false;
-        }
-
-        function updateNearbyChunks(wx, wz) {
-            let cx = Math.floor(wx / CHUNK_SIZE);
-            let cz = Math.floor(wz / CHUNK_SIZE);
-            let targetChunks = [[cx, cz], [cx+1, cz], [cx-1, cz], [cx, cz+1], [cx, cz-1]];
-            for (let tc of targetChunks) {
-                let key = `${tc[0]},${tc[1]}`;
-                if (chunks[key]) {
-                    scene.remove(chunks[key]);
-                    delete chunks[key];
-                    buildChunkMesh(tc[0], tc[1]);
-                }
-            }
-        }
-
-        // --- SISTEM MOB & ENTITY COMPONENT DENGAN LOGIKA AI ---
-        class Mob {
-            constructor(type, x, z) {
-                this.type = type; // 'COW' atau 'ZOMBIE'
-                this.health = type === 'ZOMBIE' ? 15 : 8;
-                this.speed = type === 'ZOMBIE' ? 0.035 : 0.02;
-                this.aiTimer = 0;
-                this.moveDir = new THREE.Vector3();
-                this.velocity = new THREE.Vector3();
-                
-                let y = getBaseHeight(Math.floor(x), Math.floor(z)) + 2;
-                this.mesh = this.buildMobMesh(type);
-                this.mesh.position.set(x, y, z);
-                scene.add(this.mesh);
-                
-                // Daftarkan komponen utama mesh ke dalam map interaksi hit
-                entityMeshMap.set(this.mesh.children[0].id, this); 
-            }
-
-            buildMobMesh(type) {
-                let group = new THREE.Group();
-                let bodyGeo = type === 'ZOMBIE' ? new THREE.BoxGeometry(0.6, 1.2, 0.4) : new THREE.BoxGeometry(0.7, 0.8, 1.0);
-                let bodyMat = new THREE.MeshLambertMaterial({ color: type === 'ZOMBIE' ? 0x2e6b3b : 0xffb6c1 }); // Hijau vs Merah Muda (Babi)
-                let body = new THREE.Mesh(bodyGeo, bodyMat);
-                body.position.y = type === 'ZOMBIE' ? 0.6 : 0.4;
-                group.add(body);
-
-                let headGeo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
-                let headMat = new THREE.MeshLambertMaterial({ color: type === 'ZOMBIE' ? 0x5a9e66 : 0xffc0cb });
-                let head = new THREE.Mesh(headGeo, headMat);
-                head.position.set(0, type === 'ZOMBIE' ? 1.4 : 0.7, type === 'ZOMBIE' ? 0 : 0.5);
-                group.add(head);
-
-                return group;
-            }
-
-            update(delta, playerPos) {
-                this.aiTimer -= delta;
-                let distToPlayer = this.mesh.position.distanceTo(playerPos);
-
-                if (this.type === 'ZOMBIE') {
-                    // Logika AI Zombie: Kejar pemain dalam radius 16 meter ke posisi koordinat pemain
-                    if (distToPlayer < 16) {
-                        let dir = new THREE.Vector3().subVectors(playerPos, this.mesh.position);
-                        dir.y = 0; dir.normalize();
-                        this.moveDir.copy(dir);
-                        
-                        // Menyerang pemain secara berkala
-                        if (distToPlayer < 1.4) {
-                            damagePlayer(2); 
-                        }
-                    } else if (this.aiTimer <= 0) {
-                        this.chooseRandomWander();
-                    }
-                } else {
-                    // Logika AI Hewan Damai: Berjalan acak tak menentu
-                    if (this.aiTimer <= 0) {
-                        this.chooseRandomWander();
-                    }
-                }
-
-                // Terapkan Gaya Fisika Gravitasi Makhluk Hidup
-                this.velocity.y -= 0.007; 
-                this.velocity.x = this.moveDir.x * this.speed;
-                this.velocity.z = this.moveDir.z * this.speed;
-
-                // Cek Tabrakan Dinding Vertikal untuk Auto-Jump
-                let nextPos = this.mesh.position.clone().add(new THREE.Vector3(this.velocity.x, 0, this.velocity.z));
-                let bx = Math.floor(nextPos.x);
-                let by = Math.floor(nextPos.y);
-                let bz = Math.floor(nextPos.z);
-                
-                if (getVoxelTypeAt(bx, by, bz) !== BLOCKS.AIR || getVoxelTypeAt(bx, by - 1, bz) !== BLOCKS.AIR) {
-                    // Jika terhalang satu blok di depannya, lompat otomatis ke atas
-                    if (getVoxelTypeAt(bx, by + 1, bz) === BLOCKS.AIR) {
-                        this.velocity.y = 0.12; 
-                    } else {
-                        this.moveDir.negate(); // Putar balik jika terperangkap tembok tinggi
-                    }
-                }
-
-                this.mesh.position.x += this.velocity.x;
-                this.mesh.position.z += this.velocity.z;
-                this.mesh.position.y += this.velocity.y;
-
-                // Batasan Ketinggian Lantai Dasar Tanah
-                let terrainH = getVoxelTypeAt(bx, Math.floor(this.mesh.position.y - 0.1), bz);
-                let currentFloor = getBaseHeight(bx, bz) + 1;
-                if (this.mesh.position.y < currentFloor) {
-                    this.mesh.position.y = currentFloor;
-                    this.velocity.y = 0;
-                }
-
-                // Rotasikan wajah entitas menghadap arah tujuannya berjalan
-                if (this.moveDir.lengthSq() > 0) {
-                    let angle = Math.atan2(this.moveDir.x, this.moveDir.z);
-                    this.mesh.rotation.y = angle;
-                }
-            }
-
-            chooseRandomWander() {
-                this.aiTimer = 2 + Math.random() * 3;
-                if (Math.random() < 0.4) {
-                    this.moveDir.set(0,0,0); // Istirahat diam di tempat
-                } else {
-                    let angle = Math.random() * Math.PI * 2;
-                    this.moveDir.set(Math.sin(angle), 0, Math.cos(angle));
-                }
-            }
-
-            takeDamage(amount, sourcePos) {
-                this.health -= amount;
-                
-                // Efek Pentalan Mundur (Knockback Force) jauh dari posisi pukulan pemain
-                let kDir = new THREE.Vector3().subVectors(this.mesh.position, sourcePos);
-                kDir.y = 0; kDir.normalize();
-                this.mesh.position.addScaledVector(kDir, 0.8);
-                this.mesh.position.y += 0.25; 
-
-                triggerBreakParticles(this.mesh.position, "#ff0000");
-
-                if (this.health <= 0) {
-                    scene.remove(this.mesh);
-                    entityMeshMap.delete(this.mesh.children[0].id);
-                    let idx = entities.indexOf(this);
-                    if (idx > -1) entities.splice(idx, 1);
-                }
-            }
-        }
-
-        function spawnInitialMobs() {
-            for (let i = 0; i < 6; i++) {
-                entities.push(new Mob('COW', Math.random()*40 - 20, Math.random()*40 - 20));
-            }
-            for (let i = 0; i < 4; i++) {
-                entities.push(new Mob('ZOMBIE', Math.random()*40 - 20, Math.random()*40 - 20));
-            }
-        }
-
-        // --- PLAYER DAMAGE COMPONENT ---
-        function damagePlayer(amount) {
-            let now = performance.now();
-            if (now - lastDamageTime < 800 || isDead) return; // Masa kebal sementara (invincibility frame)
+        // Selesai Game
+        function endGame() {
+            clearInterval(gameInterval);
+            clearInterval(customerInterval);
             
-            lastDamageTime = now;
-            playerHP -= amount;
-            if (playerHP < 0) playerHP = 0;
+            const overlay = document.getElementById('overlay');
+            const title = document.getElementById('overlay-title');
+            const desc = document.getElementById('overlay-desc');
             
-            updateUIHearts();
-
-            // Efek Flash Layar Merah Kejutan
-            let flash = document.getElementById('damage-flash');
-            flash.style.background = "rgba(255, 0, 0, 0.4)";
-            setTimeout(() => { flash.style.background = "rgba(255, 0, 0, 0)"; }, 150);
-
-            if (playerHP <= 0) {
-                isDead = true;
-                controls.unlock();
-                document.getElementById('game-over-screen').style.display = 'flex';
-            }
-        }
-
-        // --- SISTEM DETEKSI AKURASI TABRAKAN (PLAYER COLLISION) ---
-        function checkPlayerCollision(pos) {
-            let r = 0.3; let h = 1.8;
-            let minX = Math.floor(pos.x - r); let maxX = Math.floor(pos.x + r);
-            let minY = Math.floor(pos.y - h); let maxY = Math.floor(pos.y);
-            let minZ = Math.floor(pos.z - r); let maxZ = Math.floor(pos.z + r);
-
-            for (let x = minX; x <= maxX; x++) {
-                for (let y = minY; y <= maxY; y++) {
-                    for (let z = minZ; z <= maxZ; z++) {
-                        let block = getVoxelTypeAt(x, y, z);
-                        if (block !== BLOCKS.AIR && !BLOCK_DEFS[block].cross) return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        function updatePhysics() {
-            if (!controls.isLocked || isDead) return;
-
-            playerVelocity.y -= 0.007; // Tarikan Gravitasi Bumi
-
-            let nextPos = camera.position.clone();
-            nextPos.x += playerVelocity.x;
-            if (checkPlayerCollision(nextPos)) playerVelocity.x = 0;
-            else camera.position.x = nextPos.x;
-
-            nextPos = camera.position.clone();
-            nextPos.z += playerVelocity.z;
-            if (checkPlayerCollision(nextPos)) playerVelocity.z = 0;
-            else camera.position.z = nextPos.z;
-
-            nextPos = camera.position.clone();
-            nextPos.y += playerVelocity.y;
-            if (checkPlayerCollision(nextPos)) {
-                if (playerVelocity.y < 0) isGrounded = true;
-                playerVelocity.y = 0;
+            overlay.style.display = 'flex';
+            desc.innerText = "Pendapatan Warung Anda: Rp " + score.toLocaleString('id-ID');
+            
+            if (score >= targetScore) {
+                title.innerText = "SELAMAT! ANDA MENANG";
+                title.style.color = '#2ecc71';
             } else {
-                camera.position.y = nextPos.y;
-                isGrounded = false;
-            }
-
-            playerVelocity.x *= 0.7;
-            playerVelocity.z *= 0.7;
-
-            document.getElementById('block-info').innerHTML = `X: ${Math.floor(camera.position.x)} | Y: ${Math.floor(camera.position.y)} | Z: ${Math.floor(camera.position.z)}<br>Entitas Terbaca: ${entities.length} Mobs`;
-        }
-
-        // --- SISTEM INTERAKSI COMBAT & PENEMPATAN BLOK ---
-        function performRaycast(isRightClick) {
-            if (!controls.isLocked || isDead) return;
-            raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-
-            // 1. Logika Klik Kiri: Scan Tabrakan Box Terhadap Jarak Musuh Lebih Dulu (Sistem Combat)
-            if (!isRightClick) {
-                let mobMeshes = entities.map(m => m.mesh);
-                let mobIntersects = raycaster.intersectObjects(mobMeshes, true);
-                if (mobIntersects.length > 0 && mobIntersects[0].distance <= 4.0) {
-                    let hitMeshId = mobIntersects[0].object.id;
-                    let targetMob = entityMeshMap.get(hitMeshId);
-                    if (!targetMob) {
-                        // Cek jika yang terkena hit adalah bagian child mesh lainnya (head/body)
-                        targetMob = entityMeshMap.get(mobIntersects[0].object.parent.children[0].id);
-                    }
-                    if (targetMob) {
-                        targetMob.takeDamage(4, camera.position);
-                        return; // Potong eksekusi agar tidak menghancurkan blok di belakang badan musuh
-                    }
-                }
-            }
-
-            // 2. Logika Penempatan & Penghancuran Struktur Voxel Dunia
-            let activeChunksMeshes = [];
-            for (let key in chunks) activeChunksMeshes.push(...chunks[key].children);
-
-            let intersects = raycaster.intersectObjects(activeChunksMeshes);
-            if (intersects.length > 0 && intersects[0].distance <= 5.0) {
-                let hit = intersects[0];
-                let targetPos = hit.point.clone();
-                
-                if (isRightClick) targetPos.add(hit.face.normal.clone().multiplyScalar(0.5));
-                else targetPos.sub(hit.face.normal.clone().multiplyScalar(0.5));
-
-                let bx = Math.floor(targetPos.x);
-                let by = Math.floor(targetPos.y);
-                let bz = Math.floor(targetPos.z);
-
-                if (by < 0 || by >= WORLD_HEIGHT) return;
-
-                if (isRightClick) {
-                    // Hindari menumpuk masang blok tepat di dalam organ tubuh pemain
-                    let pMinX = Math.floor(camera.position.x - 0.3);
-                    let pMaxX = Math.floor(camera.position.x + 0.3);
-                    let pMinY = Math.floor(camera.position.y - 1.8);
-                    let pMaxY = Math.floor(camera.position.y);
-                    let pMinZ = Math.floor(camera.position.z - 0.3);
-                    let pMaxZ = Math.floor(camera.position.z + 0.3);
-
-                    if(bx >= pMinX && bx <= pMaxX && by >= pMinY && by <= pMaxY && bz >= pMinZ && bz <= pMaxZ) return;
-
-                    modifiedBlocks[`${bx},${by},${bz}`] = activeBlockType;
-                } else {
-                    let oldType = getVoxelTypeAt(bx, by, bz);
-                    if (oldType === BLOCKS.AIR) return;
-                    triggerBreakParticles(new THREE.Vector3(bx, by, bz), BLOCK_DEFS[oldType]?.color || "#fff");
-                    modifiedBlocks[`${bx},${by},${bz}`] = BLOCKS.AIR;
-                }
-                updateNearbyChunks(bx, bz);
+                title.innerText = "WAKTU HABIS!";
+                title.style.color = '#e74c3c';
             }
         }
 
-        // --- SISTEM PARTIKEL PECAHAN ---
-        function setupParticles() {
-            const geo = new THREE.BufferGeometry();
-            const positions = new Float32Array(20 * 3);
-            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const mat = new THREE.PointsMaterial({ size: 0.15, color: 0xffffff });
-            particleSystem = new THREE.Points(geo, mat);
-            particleSystem.visible = false;
-            scene.add(particleSystem);
-            particleSystem.userData = { vels: [], timer: 0 };
+        function restartGame() {
+            startGame();
         }
 
-        function triggerBreakParticles(pos, colorHex) {
-            particleSystem.material.color.setHex(parseInt(colorHex.replace("#", "0x")));
-            const positions = particleSystem.geometry.attributes.position.array;
-            const vels = particleSystem.userData.vels;
-            vels.length = 0;
-
-            for (let i = 0; i < 20; i++) {
-                positions[i * 3] = pos.x + (Math.random() - 0.5) * 0.5;
-                positions[i * 3 + 1] = pos.y + (Math.random() - 0.5) * 0.5;
-                positions[i * 3 + 2] = pos.z + (Math.random() - 0.5) * 0.5;
-                vels.push({ x: (Math.random()-0.5)*0.1, y: Math.random()*0.12, z: (Math.random()-0.5)*0.1 });
-            }
-            particleSystem.geometry.attributes.position.needsUpdate = true;
-            particleSystem.visible = true;
-            particleSystem.userData.timer = 0.4;
-        }
-
-        function updateParticles(delta) {
-            if(!particleSystem.visible) return;
-            particleSystem.userData.timer -= delta;
-            if(particleSystem.userData.timer <= 0) { particleSystem.visible = false; return; }
-
-            const positions = particleSystem.geometry.attributes.position.array;
-            const vels = particleSystem.userData.vels;
-            for(let i=0; i<20; i++) {
-                positions[i * 3] += vels[i].x; positions[i * 3 + 1] += vels[i].y; positions[i * 3 + 2] += vels[i].z;
-                vels[i].y -= 0.004;
-            }
-            particleSystem.geometry.attributes.position.needsUpdate = true;
-        }
-
-        // --- CONTROLS & HUD MANAGEMENTS ---
-        function setupInput() {
-            document.addEventListener('keydown', (e) => {
-                keysPressed[e.key.toLowerCase()] = true;
-                if (e.key >= '1' && e.key <= '8') selectHotbar(parseInt(e.key) - 1);
-                if (e.key === ' ' && isGrounded && !isDead) playerVelocity.y = 0.13;
-            });
-            document.addEventListener('keyup', (e) => { keysPressed[e.key.toLowerCase()] = false; });
-            document.addEventListener('mousedown', (e) => {
-                if (e.button === 0) performRaycast(false); 
-                if (e.button === 2) performRaycast(true);  
-            });
-        }
-
-        function updateMovement() {
-            if (!controls.isLocked || isDead) return;
-            let speed = 0.07;
-            if (keysPressed['w']) {
-                let dir = new THREE.Vector3(); camera.getWorldDirection(dir); dir.y = 0; dir.normalize();
-                playerVelocity.x += dir.x * speed; playerVelocity.z += dir.z * speed;
-            }
-            if (keysPressed['s']) {
-                let dir = new THREE.Vector3(); camera.getWorldDirection(dir); dir.y = 0; dir.normalize();
-                playerVelocity.x -= dir.x * speed; playerVelocity.z -= dir.z * speed;
-            }
-            if (keysPressed['a']) {
-                let dir = new THREE.Vector3(); camera.getWorldDirection(dir); dir.y = 0; dir.normalize();
-                dir.applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
-                playerVelocity.x += dir.x * speed; playerVelocity.z += dir.z * speed;
-            }
-            if (keysPressed['d']) {
-                let dir = new THREE.Vector3(); camera.getWorldDirection(dir); dir.y = 0; dir.normalize();
-                dir.applyAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
-                playerVelocity.x += dir.x * speed; playerVelocity.z += dir.z * speed;
-            }
-        }
-
-        function setupUI() {
-            updateUIHearts();
-            const hb = document.getElementById('hotbar-container');
-            hb.innerHTML = '';
-            hotbar.forEach((blockId, idx) => {
-                let slot = document.createElement('div');
-                slot.className = `hotbar-slot ${idx === activeHotbarIndex ? 'active' : ''}`;
-                let preview = document.createElement('div');
-                preview.className = 'slot-preview';
-                preview.style.backgroundColor = BLOCK_DEFS[blockId].color;
-                slot.appendChild(preview);
-                slot.onclick = () => { selectHotbar(idx); };
-                hb.appendChild(slot);
-            });
-
-            document.getElementById('btn-resume').onclick = () => { controls.lock(); };
-            controls.addEventListener('lock', () => { document.getElementById('menu-pause').style.display = 'none'; });
-            controls.addEventListener('unlock', () => { if(!isDead) document.getElementById('menu-pause').style.display = 'flex'; });
-        }
-
-        function updateUIHearts() {
-            const hpBar = document.getElementById('hp-bar');
-            hpBar.innerHTML = '';
-            // 10 Jantung, masing-masing mewakili 2 unit HP (Total 20 HP)
-            for(let i = 0; i < 10; i++) {
-                let h = document.createElement('div');
-                h.className = 'heart';
-                if (playerHP <= i * 2) {
-                    h.className = 'heart empty';
-                }
-                hpBar.appendChild(h);
-            }
-        }
-
-        function selectHotbar(index) {
-            activeHotbarIndex = index;
-            activeBlockType = hotbar[index];
-            let slots = document.getElementsByClassName('hotbar-slot');
-            for(let i=0; i<hotbar.length; i++) {
-                if(slots[i]) slots[i].className = `hotbar-slot ${i === activeHotbarIndex ? 'active' : ''}`;
-            }
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        // --- ENGINE LOOP ---
-        function animate() {
-            requestAnimationFrame(animate);
-            let delta = clock.getDelta();
-            if (delta > 0.1) delta = 0.1;
-
-            updateMovement();
-            updatePhysics();
-            updateParticles(delta);
-
-            // Update Semua Komponen AI Mob Secara Realtime
-            for (let mob of entities) {
-                mob.update(delta, camera.position);
-            }
-
-            // Pembangkitan Chunk Tambahan saat Berjalan Semakin Jauh
-            if (controls.isLocked && Math.random() < 0.02) {
-                generateWorld();
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        window.onload = init;
+        // Memulai game saat pertama kali dimuat
+        window.onload = startGame;
     </script>
 </body>
 </html>
