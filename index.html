@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Voxel Engine - Web Edition</title>
+    <title>3D Voxel Engine - Fixed Web Edition</title>
     <style>
         * {
             box-sizing: border-box;
@@ -227,7 +227,7 @@
             <h1 id="menu-title">MINECRAFT VOXEL</h1>
             <button class="btn" id="btn-resume">Mulai / Lanjutkan</button>
             <button class="btn" id="btn-save">Simpan Dunia</button>
-            <button class="btn" id="btn-load">Muat Dunia lama</button>
+            <button class="btn" id="btn-load">Muat Dunia Lama</button>
         </div>
     </div>
 
@@ -235,8 +235,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
 
     <script>
-        // --- PROSEDURAL NOISE IMPLEMENTATION (Math Approximation) ---
-        // Implementasi sederhana Perlin/Simplex Noise untuk penentuan tinggi medan voxel
+        // --- PROSEDURAL NOISE IMPLEMENTATION ---
         const Noise = new function() {
             this.pass = Math.random();
             this.noise2D = function(x, z) {
@@ -301,7 +300,7 @@
         // Animasi & Lingkungan
         let handTool, clock, raycaster;
         let particleSystem;
-        let dayTime = 0; // Siklus waktu matahari
+        let dayTime = 0; 
         const keysPressed = {};
 
         // --- INISIALISASI MESIN UTAMA ---
@@ -309,21 +308,19 @@
             clock = new THREE.Clock();
             raycaster = new THREE.Raycaster();
 
-            // Scene & Setup Kamera
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x7ec0ee);
             scene.fog = new THREE.FogExp2(0x7ec0ee, 0.025);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(8, 20, 8); // Mulai di atas permukaan tanah
+            camera.position.set(8, 20, 8); 
 
-            renderer = new THREE.WebGLRenderer({ antialias: false }); // Voxel look lebih tajam tanpa AA mendalam
+            renderer = new THREE.WebGLRenderer({ antialias: false }); 
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-            // Kontrol PointerLock (FPS standard mouse capture)
             controls = new THREE.PointerLockControls(camera, renderer.domElement);
             
             setupLighting();
@@ -333,31 +330,30 @@
             setupParticles();
             generateWorld();
 
-            // Siklus loop utama aplikasi
             window.addEventListener('resize', onWindowResize);
             animate();
         }
 
-        // --- MANAGEMENT TEKSTUR PROSEDURAL SECARA REALTIME (Mencegah Isu CORS) ---
-        // Membuat tekstur bergaya pixelated 16x16 menggunakan Canvas memory internal + Ambient Occlusion shading buatan
-        function generateProceduralTexture(blockId, face) {
+        // --- MANAGEMENT TEKSTUR PROSEDURAL SECARA REALTIME ---
+        function generateProceduralTexture(blockIdRaw, face) {
+            const blockId = parseInt(blockIdRaw);
             const canvas = document.createElement('canvas');
             canvas.width = 16;
             canvas.height = 16;
             const ctx = canvas.getContext('2d');
             
             let def = BLOCK_DEFS[blockId];
+            if (!def) def = { color: "#ffffff" };
+            
             let baseHex = def.color;
             if(blockId === BLOCKS.GRASS) {
                 if(face === 'top') baseHex = def.topColor;
                 else if(face === 'bottom') baseHex = def.bottomColor;
             }
 
-            // Isi latar belakang warna dasar dasar
             ctx.fillStyle = baseHex;
             ctx.fillRect(0, 0, 16, 16);
 
-            // Tambahkan noise pixel per-kotak (Efek Tekstur 16x16)
             for (let x = 0; x < 16; x++) {
                 for (let y = 0; y < 16; y++) {
                     let rand = (Math.random() - 0.5) * 15;
@@ -366,7 +362,6 @@
                 }
             }
 
-            // Bakar shading Ambient Occlusion palsu pada pinggiran luar tekstur blok
             ctx.fillStyle = "rgba(0,0,0,0.15)";
             ctx.fillRect(0, 0, 16, 1);
             ctx.fillRect(0, 0, 1, 16);
@@ -375,14 +370,15 @@
             ctx.fillRect(15, 0, 1, 16);
 
             const texture = new THREE.CanvasTexture(canvas);
-            texture.magFilter = THREE.NearestFilter; // Kunci element pixelation tajam asli
+            texture.magFilter = THREE.NearestFilter; 
             texture.minFilter = THREE.NearestFilter;
             return texture;
         }
 
-        // --- SISTEM MATERIAL MANAGER ---
+        // --- SISTEM MATERIAL MANAGER (FIXED INT PARSING) ---
         const materialCache = {};
-        function getBlockMaterials(blockId) {
+        function getBlockMaterials(blockIdRaw) {
+            const blockId = parseInt(blockIdRaw);
             if (materialCache[blockId]) return materialCache[blockId];
             
             const def = BLOCK_DEFS[blockId];
@@ -392,13 +388,13 @@
                 const sideMat = new THREE.MeshLambertMaterial({ map: generateProceduralTexture(blockId, 'side') });
                 const topMat = new THREE.MeshLambertMaterial({ map: generateProceduralTexture(blockId, 'top') });
                 const botMat = new THREE.MeshLambertMaterial({ map: generateProceduralTexture(blockId, 'bottom') });
-                mats.push(sideMat, sideMat, topMat, botMat, sideMat, sideMat); // Urutan standar Three.js: +X, -X, +Y, -Y, +Z, -Z
+                mats.push(sideMat, sideMat, topMat, botMat, sideMat, sideMat); 
             } else {
                 const tex = generateProceduralTexture(blockId, 'all');
                 const mat = new THREE.MeshLambertMaterial({ 
                     map: tex, 
-                    transparent: def.transparent, 
-                    opacity: def.opacity !== undefined ? def.opacity : 1.0 
+                    transparent: def ? def.transparent : false, 
+                    opacity: (def && def.opacity !== undefined) ? def.opacity : 1.0 
                 });
                 for(let i=0; i<6; i++) mats.push(mat);
             }
@@ -427,7 +423,6 @@
             sunLight.shadow.camera.bottom = -d;
             scene.add(sunLight);
 
-            // Awan volumetrik sederhana berbentuk deretan kotak voxel terbang luar
             for (let i = 0; i < 15; i++) {
                 let cloudGeo = new THREE.BoxGeometry(10 + Math.random()*15, 2, 8 + Math.random()*12);
                 let cloudMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
@@ -445,7 +440,7 @@
             sunLight.position.y = Math.sin(angle) * 60;
             
             if (sunLight.position.y < 0) {
-                sunLight.intensity = 0; // Kondisi malam hari
+                sunLight.intensity = 0; 
                 scene.background.setHex(0x0a0f24);
                 scene.fog.color.setHex(0x0a0f24);
             } else {
@@ -455,16 +450,15 @@
             }
         }
 
-        // --- TANGAN PEMAIN & ANIMASI (PICKAXE STYLE) ---
+        // --- TANGAN PEMAIN & ANIMASI ---
         function setupPlayerHand() {
             const handGroup = new THREE.Group();
             const armGeo = new THREE.BoxGeometry(0.15, 0.15, 0.5);
-            const armMat = new THREE.MeshLambertMaterial({ color: 0xdfb48c }); // Warna kulit voxel
+            const armMat = new THREE.MeshLambertMaterial({ color: 0xdfb48c }); 
             const arm = new THREE.Mesh(armGeo, armMat);
             arm.position.set(0, 0, -0.2);
             handGroup.add(arm);
 
-            // Bentuk sederhana beliung besi (Pickaxe)
             const toolGeo = new THREE.BoxGeometry(0.05, 0.4, 0.05);
             const toolMat = new THREE.MeshLambertMaterial({ color: 0x8e8e8e });
             const tool = new THREE.Mesh(toolGeo, toolMat);
@@ -488,7 +482,6 @@
 
         function animateHand(delta) {
             if (!isSwinging) {
-                // Efek pernapasan/ayunan halus alami idle saat berjalan
                 let ticks = clock.getElapsedTime() * 2;
                 let moveFactor = (keysPressed['w'] || keysPressed['s'] || keysPressed['a'] || keysPressed['d']) ? 2 : 1;
                 handTool.position.y = -0.3 + Math.sin(ticks * moveFactor) * 0.015;
@@ -506,36 +499,32 @@
         }
 
         // --- PEMBANGKITAN DUNIA DAN PENANGANAN CHUNK MESH ---
-        // Penentuan jenis bioma berdasarkan koordinat XZ dan tinggi medan
         function getVoxelTypeAt(x, y, z) {
             let key = `${x},${y},${z}`;
             if (modifiedBlocks[key] !== undefined) return modifiedBlocks[key];
 
-            if (y <= 0) return BLOCKS.STONE; // Dasar batuan keras terbawah dunia (Bedrock)
+            if (y <= 0) return BLOCKS.STONE; 
 
-            // Kombinasi Multi-octave Perlin Noise
             let n1 = Noise.noise2D(x * 0.02, z * 0.02) * 14;
             let n2 = Noise.noise2D(x * 0.08, z * 0.08) * 4;
             let height = Math.floor(n1 + n2) + 8;
             
-            // Evaluasi kedalaman Bioma
             let moisture = Noise.noise2D(x * 0.005, z * 0.005);
 
             if (y > height) {
-                // Lapisan Pengisian Fluida Air Laut universal
                 if (y <= 6) return BLOCKS.WATER;
                 return BLOCKS.AIR;
             }
 
-            if (moisture < 0.35) { // BIOMA PADANG GURUN (Desert)
+            if (moisture < 0.35) { 
                 if (y === height && y > 6) return BLOCKS.SAND;
                 if (y >= height - 2) return BLOCKS.SAND;
                 return BLOCKS.STONE;
-            } else if (moisture > 0.7) { // BIOMA SALJU / PEGUNUNGAN DINGIN
+            } else if (moisture > 0.7) { 
                 if (y === height) return BLOCKS.SNOW;
                 if (y >= height - 2) return BLOCKS.DIRT;
                 return BLOCKS.STONE;
-            } else { // BIOMA KLASIK PADANG RUMPUT & HUTAN (Grasslands)
+            } else { 
                 if (y === height) return BLOCKS.GRASS;
                 if (y >= height - 3) return BLOCKS.DIRT;
                 return BLOCKS.STONE;
@@ -546,7 +535,6 @@
             let pX = Math.floor(camera.position.x / CHUNK_SIZE);
             let pZ = Math.floor(camera.position.z / CHUNK_SIZE);
 
-            // Looping manajemen rendering jarak pandang chunk dunia pemain
             for (let cx = pX - VIEW_DISTANCE; cx <= pX + VIEW_DISTANCE; cx++) {
                 for (let cz = pZ - VIEW_DISTANCE; cz <= pZ + VIEW_DISTANCE; cz++) {
                     let chunkKey = `${cx},${cz}`;
@@ -557,12 +545,8 @@
             }
         }
 
-        // Membangun geometri gabungan untuk performa rendering optimal (60FPS)
         function buildChunkMesh(cx, cz) {
             let chunkKey = `${cx},${cz}`;
-            let instancedMeshes = {};
-            
-            // Penampampung sementara hitungan posisi instansiasi blok dalam chunk
             let blockPositions = {};
 
             for (let x = 0; x < CHUNK_SIZE; x++) {
@@ -573,7 +557,6 @@
                         let type = getVoxelTypeAt(wx, y, wz);
 
                         if (type !== BLOCKS.AIR) {
-                            // Optimasi eliminasi muka dalam (Face Culling): Hanya gambar jika bersebelahan dengan udara/air/kaca transparan
                             if (!isFaceExposed(wx, y, wz)) continue;
 
                             if (!blockPositions[type]) blockPositions[type] = [];
@@ -586,10 +569,9 @@
             let chunkGroup = new THREE.Group();
             let boxGeo = new THREE.BoxGeometry(1, 1, 1);
 
-            // Konversi posisi array menjadi gabungan Instanced Mesh per tipe elemen blok tunggal
             for (let type in blockPositions) {
                 let positions = blockPositions[type];
-                let mat = getBlockMaterials(type);
+                let mat = getBlockMaterials(type); // String key aman karena diparse ke int di dalam fungsi
                 let mesh = new THREE.InstancedMesh(boxGeo, mat, positions.length);
                 mesh.castShadow = true;
                 mesh.receiveShadow = true;
@@ -609,7 +591,6 @@
         }
 
         function isFaceExposed(wx, y, wz) {
-            // Cek 6 tetangga sisi kubik sekitar voxel
             let neighbors = [
                 [1,0,0], [-1,0,0],
                 [0,1,0], [0,-1,0],
@@ -639,16 +620,15 @@
             }
         }
 
-        // --- SISTEM AKURASI DETEKSI KOLISI DAN FISIKA KORBAN GRAVITASI ---
-        // Menggunakan konsep komputasi matematika AABB (Axis-Aligned Bounding Box)
+        // --- SISTEM AKURASI DETEKSI KOLISI ---
         function checkCollision(pos) {
             let r = playerRadius;
             let h = playerHeight;
             
             let minX = Math.floor(pos.x - r);
             let maxX = Math.floor(pos.x + r);
-            let minY = Math.floor(pos.y - h); // Kaki pemain bawah
-            let maxY = Math.floor(pos.y);     // Kepala pemain atas
+            let minY = Math.floor(pos.y - h); 
+            let maxY = Math.floor(pos.y);     
             let minZ = Math.floor(pos.z - r);
             let maxZ = Math.floor(pos.z + r);
 
@@ -657,7 +637,7 @@
                     for (let z = minZ; z <= maxZ; z++) {
                         let block = getVoxelTypeAt(x, y, z);
                         if (block !== BLOCKS.AIR && !BLOCK_DEFS[block]?.fluid) {
-                            return true; // Terjadi benturan fisik dengan padatan
+                            return true; 
                         }
                     }
                 }
@@ -671,15 +651,13 @@
             let centerVoxel = getVoxelTypeAt(Math.floor(camera.position.x), Math.floor(camera.position.y - 1), Math.floor(camera.position.z));
             isSwimming = (BLOCK_DEFS[centerVoxel]?.fluid === true);
             
-            // Penerapan percepatan gaya gravitasi / efek daya apung fluida air
             if (isSwimming) {
-                playerVelocity.y -= gravity * 0.2; // Perlambatan jatuh bebas saat berenang
+                playerVelocity.y -= gravity * 0.2; 
                 if (playerVelocity.y < -0.02) playerVelocity.y = -0.02;
             } else {
                 playerVelocity.y -= gravity;
             }
 
-            // Estimasi pergerakan arah sumbu X
             let nextPos = camera.position.clone();
             nextPos.x += playerVelocity.x;
             if (checkCollision(nextPos)) {
@@ -688,7 +666,6 @@
                 camera.position.x = nextPos.x;
             }
 
-            // Estimasi pergerakan arah sumbu Z
             nextPos = camera.position.clone();
             nextPos.z += playerVelocity.z;
             if (checkCollision(nextPos)) {
@@ -697,7 +674,6 @@
                 camera.position.z = nextPos.z;
             }
 
-            // Estimasi pergerakan arah sumbu Y vertikal (Lompat / Jatuh)
             nextPos = camera.position.clone();
             nextPos.y += playerVelocity.y;
             if (checkCollision(nextPos)) {
@@ -710,11 +686,9 @@
                 isGrounded = false;
             }
 
-            // Reduksi Friksi Kecepatan Geser Horizontal
             playerVelocity.x *= 0.7;
             playerVelocity.z *= 0.7;
 
-            // Tampilkan info HUD Bioma dinamis berdasarkan posisi berpijak
             let currentBioma = (Noise.noise2D(camera.position.x*0.005, camera.position.z*0.005) < 0.35) ? "Gurun" : "Padang Rumput";
             document.getElementById('block-info').innerHTML = `Bioma: ${currentBioma} | Posisi: XYZ (${Math.floor(camera.position.x)}, ${Math.floor(camera.position.y)}, ${Math.floor(camera.position.z)})`;
         }
@@ -756,7 +730,7 @@
             }
             particleSystem.geometry.attributes.position.needsUpdate = true;
             particleSystem.visible = true;
-            particleSystem.userData.timer = 0.5; // Durasi tampil partikel (detik)
+            particleSystem.userData.timer = 0.5; 
         }
 
         function updateParticles(delta) {
@@ -774,19 +748,17 @@
                 positions[i * 3] += vels[i].x;
                 positions[i * 3 + 1] += vels[i].y;
                 positions[i * 3 + 2] += vels[i].z;
-                vels[i].y -= 0.005; // Efek gaya gravitasi lokal partikel debu
+                vels[i].y -= 0.005; 
             }
             particleSystem.geometry.attributes.position.needsUpdate = true;
         }
 
-        // --- MEKANISME INTERAKSI RAYCASTING (Hancurkan / Pasang Blok) ---
+        // --- MEKANISME INTERAKSI RAYCASTING ---
         function performRaycast(isRightClick) {
             if (!controls.isLocked || isInventoryOpen) return;
 
-            // Lakukan tembakan garis lurus dari tengah kursor kamera sejauh 5 blok jangkauan tangan
             raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
             
-            // Dapatkan seluruh objek instanced chunk aktif di scene
             let activeChunksMeshes = [];
             for (let key in chunks) {
                 activeChunksMeshes.push(...chunks[key].children);
@@ -796,11 +768,8 @@
 
             if (intersects.length > 0 && intersects[0].distance <= 5.5) {
                 let hit = intersects[0];
-                
-                // Cari titik pusat koordinat voxel yang dikenai target tembak raycast
                 let targetPos = hit.point.clone();
                 
-                // Atasi pembulatan offset matematika arah normal muka voxel face
                 if (isRightClick) {
                     targetPos.add(hit.face.normal.clone().multiplyScalar(0.5));
                 } else {
@@ -816,7 +785,6 @@
                 swingHand();
 
                 if (isRightClick) {
-                    // Cek apakah area pemasangan berbenturan dengan tubuh pemain asli
                     let pMinX = Math.floor(camera.position.x - playerRadius);
                     let pMaxX = Math.floor(camera.position.x + playerRadius);
                     let pMinY = Math.floor(camera.position.y - playerHeight);
@@ -825,7 +793,7 @@
                     let pMaxZ = Math.floor(camera.position.z + playerRadius);
 
                     if(bx >= pMinX && bx <= pMaxX && by >= pMinY && by <= pMaxY && bz >= pMinZ && bz <= pMaxZ) {
-                        return; // Blok gagal dipasang karena menimbun diri pemain sendiri
+                        return; 
                     }
 
                     modifiedBlocks[`${bx},${by},${bz}`] = activeBlockType;
@@ -838,7 +806,6 @@
                     modifiedBlocks[`${bx},${by},${bz}`] = BLOCKS.AIR;
                 }
 
-                // Segera kalkulasi ulang render mesh lokal daerah chunk sekitar
                 updateNearbyChunks(bx, bz);
             }
         }
@@ -848,23 +815,20 @@
             document.addEventListener('keydown', (e) => {
                 keysPressed[e.key.toLowerCase()] = true;
                 
-                // Tombol Papan Angka Hotbar Cepat (1-8)
                 if (e.key >= '1' && e.key <= '8') {
                     let idx = parseInt(e.key) - 1;
                     if (idx < hotbar.length) selectHotbar(idx);
                 }
 
-                // Tombol Buka/Tutup Inventaris Kotak Grid
                 if (e.key.toLowerCase() === 'e') {
                     toggleInventory();
                 }
 
-                // Kendali Lompat / Berenang keatas
                 if (e.key === ' ' && isGrounded && !isInventoryOpen) {
                     playerVelocity.y = jumpForce;
                 }
                 if (e.key === ' ' && isSwimming && !isInventoryOpen) {
-                    playerVelocity.y = jumpForce * 0.6; // Gaya apung berenang konstan naik
+                    playerVelocity.y = jumpForce * 0.6; 
                 }
             });
 
@@ -872,7 +836,6 @@
                 keysPressed[e.key.toLowerCase()] = false;
             });
 
-            // Deteksi Roda Geser Mouse (Scroll) untuk memilih slot Hotbar
             document.addEventListener('wheel', (e) => {
                 if (!controls.isLocked) return;
                 if (e.deltaY > 0) {
@@ -882,11 +845,10 @@
                 }
             });
 
-            // Klik Mouse Interaksi Pemecah/Pemasang Blok Voxel
             document.addEventListener('mousedown', (e) => {
                 if (!controls.isLocked) return;
-                if (e.button === 0) performRaycast(false); // Klik Kiri: Hancurkan Blok
-                if (e.button === 2) performRaycast(true);  // Klik Kanan: Taruh Blok
+                if (e.button === 0) performRaycast(false); 
+                if (e.button === 2) performRaycast(true);  
             });
         }
 
@@ -894,9 +856,8 @@
             if (!controls.isLocked || isInventoryOpen) return;
 
             let speed = playerSpeed;
-            if (isSwimming) speed *= 0.5; // Hambatan gerak di dalam air berkurang setengah
+            if (isSwimming) speed *= 0.5; 
 
-            // Deteksi arah translasi orthogonal relatif terhadap sudut pandang kamera FPS
             if (keysPressed['w']) {
                 let dir = new THREE.Vector3();
                 camera.getWorldDirection(dir);
@@ -928,7 +889,6 @@
                 playerVelocity.z += dir.z * speed;
             }
             
-            // Fitur Modus Shift Turun Fleksibel / Lambat
             if (keysPressed['shift']) {
                 playerVelocity.x *= 0.3;
                 playerVelocity.z *= 0.3;
@@ -937,23 +897,22 @@
 
         // --- INTERFACE HUD & MANAJEMEN MENU UI ---
         function setupUI() {
-            // Bangun Bar Kesehatan (Ikon Hati Merah)
             const hpBar = document.getElementById('hp-bar');
+            hpBar.innerHTML = '';
             for(let i=0; i<10; i++) {
                 let h = document.createElement('div');
                 h.className = 'heart';
                 hpBar.appendChild(h);
             }
 
-            // Bangun Bar Pelindung Baju Besi (Armor Icons)
             const armorBar = document.getElementById('armor-bar');
+            armorBar.innerHTML = '';
             for(let i=0; i<10; i++) {
                 let a = document.createElement('div');
                 a.className = 'armor-icon';
                 armorBar.appendChild(a);
             }
 
-            // Bangun Hotbar Tampilan Cepat Bawah Layar
             const hb = document.getElementById('hotbar-container');
             hb.innerHTML = '';
             hotbar.forEach((blockId, idx) => {
@@ -962,14 +921,13 @@
                 
                 let preview = document.createElement('div');
                 preview.className = 'slot-preview';
-                preview.style.backgroundColor = BLOCK_DEFS[blockId].color;
+                preview.style.backgroundColor = BLOCK_DEFS[blockId] ? BLOCK_DEFS[blockId].color : '#fff';
                 slot.appendChild(preview);
                 
                 slot.onclick = () => { selectHotbar(idx); };
                 hb.appendChild(slot);
             });
 
-            // Bangun Kisi Grid Isian Menu Inventaris E
             const grid = document.getElementById('inv-grid');
             grid.innerHTML = '';
             for (let blockId in BLOCK_DEFS) {
@@ -982,7 +940,6 @@
                 item.appendChild(preview);
 
                 item.onclick = () => {
-                    // Masukkan blok terpilih ke dalam slot aktif hotbar bawah pemain
                     hotbar[activeHotbarIndex] = parseInt(blockId);
                     activeBlockType = parseInt(blockId);
                     setupUI();
@@ -991,7 +948,6 @@
                 grid.appendChild(item);
             }
 
-            // Integrasi Tombol Pause Menu utama
             document.getElementById('btn-resume').onclick = () => { controls.lock(); };
             document.getElementById('btn-save').onclick = () => { saveGameState(); };
             document.getElementById('btn-load').onclick = () => { loadGameState(); };
@@ -1030,7 +986,7 @@
             }
         }
 
-        // --- PERSISTENSI DATA LOCALSTORAGE (SAVE & LOAD ENGINE STATE) ---
+        // --- LOCALSTORAGE PERSISTENSI DATA ---
         function saveGameState() {
             let saveData = {
                 playerPosition: { x: camera.position.x, y: camera.position.y, z: camera.position.z },
@@ -1038,7 +994,7 @@
                 hotbar: hotbar
             };
             localStorage.setItem('voxel_game_save', JSON.stringify(saveData));
-            alert("Dunia dan posisi karakter berhasil disimpan ke LocalStorage browser!");
+            alert("Dunia dan posisi karakter berhasil disimpan!");
         }
 
         function loadGameState() {
@@ -1049,14 +1005,10 @@
             }
             let data = JSON.parse(rawData);
             
-            // Kembalikan Posisi Karakter Pemain
             camera.position.set(data.playerPosition.x, data.playerPosition.y, data.playerPosition.z);
-            
-            // Kembalikan Mutasi Struktur Tanah Blok Modifikasi
             modifiedBlocks = data.modifiedBlocks;
             hotbar = data.hotbar;
             
-            // Hancurkan & Regenerasi ulang sisa visual dunia lama
             for (let key in chunks) {
                 scene.remove(chunks[key]);
             }
@@ -1065,7 +1017,7 @@
             setupUI();
             
             controls.lock();
-            alert("Dunia lama berhasil dimuat sepenuhnya!");
+            alert("Dunia lama berhasil dimuat!");
         }
 
         function onWindowResize() {
@@ -1074,15 +1026,13 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        // --- ENGINE GAME ANIMATION LOOP LOOP ---
+        // --- GAME RENDERING LOOP ---
         function animate() {
             requestAnimationFrame(animate);
 
             let delta = clock.getDelta();
-            // Batasi lonjakan delta ekstrem demi stabilitas fisika agar tidak menembus dinding voxel
             if (delta > 0.1) delta = 0.1; 
 
-            // Update Siklus Rotasi Awan Volumetrik langit luar
             scene.traverse((obj) => {
                 if(obj.userData && obj.userData.speed) {
                     obj.position.x += obj.userData.speed;
@@ -1096,7 +1046,6 @@
             animateHand(delta);
             updateParticles(delta);
 
-            // Dinamis memuat segmen dunia baru seiring perpindahan langkah kaki koordinat pemain
             if(controls.isLocked && Math.random() < 0.05) { 
                 generateWorld();
             }
@@ -1104,7 +1053,6 @@
             renderer.render(scene, camera);
         }
 
-        // Jalankan seluruh fungsi inisialisasi awal saat dokumen web siap dibuka sepenuhnya
         window.onload = init;
     </script>
 </body>
