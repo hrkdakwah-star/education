@@ -1,0 +1,2411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Voxel Craft - Game Voxel 3D di Browser</title>
+
+<!-- ===================== LIBRARY EKSTERNAL VIA CDN ===================== -->
+<!-- Three.js r128 (WebGL 3D engine) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+/* ===================== GLOBAL RESET & BASE ===================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    user-select: none;
+    -webkit-user-select: none;
+}
+#gameCanvas {
+    display: block;
+    width: 100%; height: 100%;
+    cursor: pointer;
+}
+#gameCanvas.locked {
+    cursor: none;
+}
+
+/* ===================== LOADING SCREEN ===================== */
+#loadingScreen {
+    position: fixed; inset: 0;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 1000;
+    color: #fff;
+    transition: opacity 0.6s ease;
+}
+#loadingScreen.hidden { opacity: 0; pointer-events: none; }
+#loadingScreen h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 0 #000;
+    letter-spacing: 2px;
+    color: #7ed957;
+}
+#loadingBarOuter {
+    width: 300px; height: 20px;
+    border: 3px solid #fff;
+    background: #222;
+}
+#loadingBarInner {
+    width: 0%; height: 100%;
+    background: #7ed957;
+    transition: width 0.2s ease;
+}
+#loadingText {
+    margin-top: 12px;
+    font-size: 11px;
+    color: #aaa;
+}
+
+/* ===================== START / MAIN MENU ===================== */
+#mainMenu {
+    position: fixed; inset: 0;
+    background: linear-gradient(180deg, #2c3e50, #4a6741);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 900;
+    color: #fff;
+    gap: 14px;
+}
+#mainMenu.hidden { display: none; }
+#mainMenu h1 {
+    font-size: 36px;
+    color: #fff;
+    text-shadow: 4px 4px 0 #3a3a3a, -2px -2px 0 #7ed957;
+    margin-bottom: 30px;
+    letter-spacing: 3px;
+}
+.menuBtn {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 14px 30px;
+    width: 280px;
+    background: #6b6b6b;
+    border: 3px solid #2b2b2b;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: inset -2px -4px 0 rgba(0,0,0,0.3), inset 2px 2px 0 rgba(255,255,255,0.2);
+    transition: background 0.1s;
+}
+.menuBtn:hover { background: #828282; }
+.menuBtn:active { box-shadow: inset 2px 4px 0 rgba(0,0,0,0.3); }
+#seedInput {
+    width: 280px;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 12px;
+    border: 3px solid #2b2b2b;
+    background: #fff;
+    text-align: center;
+}
+
+/* ===================== HUD ===================== */
+#hud {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    display: none;
+}
+#hud.active { display: block; }
+
+/* Crosshair di tengah layar */
+#crosshair {
+    position: absolute; top: 50%; left: 50%;
+    width: 20px; height: 20px;
+    transform: translate(-50%, -50%);
+}
+#crosshair::before, #crosshair::after {
+    content: ''; position: absolute;
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 0 2px rgba(0,0,0,0.8);
+}
+#crosshair::before { width: 100%; height: 2px; top: 50%; transform: translateY(-50%); }
+#crosshair::after { width: 2px; height: 100%; left: 50%; transform: translateX(-50%); }
+
+/* Health bar (hati) kiri atas */
+#healthBar {
+    position: absolute; top: 16px; left: 16px;
+    display: flex; gap: 2px;
+}
+.heart {
+    width: 18px; height: 16px;
+    background-size: contain;
+    position: relative;
+}
+.heart svg { width: 100%; height: 100%; display: block; }
+
+/* Armor/Level bar di atas hotbar */
+#statusBar {
+    position: absolute; bottom: 78px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 2px;
+    align-items: center;
+}
+.armorIcon { width: 16px; height: 16px; }
+
+#levelDisplay {
+    position: absolute; bottom: 78px; right: calc(50% - 200px);
+    color: #7ed957;
+    font-size: 12px;
+    text-shadow: 2px 2px 0 #000;
+}
+
+/* Hotbar bawah */
+#hotbar {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    display: flex;
+    background: rgba(20,20,20,0.55);
+    border: 2px solid rgba(0,0,0,0.6);
+    padding: 3px;
+}
+.hotbarSlot {
+    width: 48px; height: 48px;
+    background: rgba(120,120,120,0.35);
+    border: 2px solid rgba(0,0,0,0.4);
+    margin: 0 1px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.08s;
+}
+.hotbarSlot canvas { width: 32px; height: 32px; image-rendering: pixelated; }
+.hotbarSlot.selected {
+    border: 2px solid #fff;
+    box-shadow: 0 0 8px rgba(255,255,255,0.8), inset 0 0 0 2px rgba(255,255,255,0.5);
+    transform: scale(1.12);
+    z-index: 2;
+}
+.hotbarSlot .slotNum {
+    position: absolute; top: 1px; left: 3px;
+    font-size: 8px; color: #fff; text-shadow: 1px 1px 0 #000;
+}
+
+/* ===================== INVENTORY (toggle dengan E) ===================== */
+#inventoryScreen {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 500;
+    pointer-events: auto;
+}
+#inventoryScreen.active { display: flex; }
+#inventoryPanel {
+    background: #c6c6c6;
+    border: 4px solid #373737;
+    box-shadow: inset -4px -4px 0 #8b8b8b, inset 4px 4px 0 #fff;
+    padding: 20px;
+    width: 420px;
+}
+#inventoryPanel h2 {
+    font-size: 14px; color: #3a3a3a; margin-bottom: 16px; text-align: center;
+}
+#inventoryGrid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 4px;
+}
+.invSlot {
+    aspect-ratio: 1;
+    background: rgba(0,0,0,0.15);
+    border: 2px solid #8b8b8b;
+    box-shadow: inset -2px -2px 0 rgba(0,0,0,0.25), inset 2px 2px 0 rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+}
+.invSlot:hover { background: rgba(255,255,255,0.2); }
+.invSlot canvas { width: 70%; height: 70%; image-rendering: pixelated; }
+#closeInventoryHint {
+    margin-top: 14px; text-align: center; font-size: 9px; color: #555;
+}
+
+/* ===================== PAUSE MENU (ESC) ===================== */
+#pauseMenu {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    z-index: 600;
+    gap: 12px;
+    pointer-events: auto;
+}
+#pauseMenu.active { display: flex; }
+#pauseMenu h2 {
+    color: #fff; font-size: 22px; margin-bottom: 20px; text-shadow: 3px 3px 0 #000;
+}
+#saveLoadStatus {
+    color: #7ed957; font-size: 10px; margin-top: 8px; min-height: 14px;
+}
+
+/* ===================== CROSSHAIR HIT INDICATOR / HOTBAR TOOLTIP ===================== */
+#blockTooltip {
+    position: absolute; bottom: 135px; left: 50%; transform: translateX(-50%);
+    color: #fff; font-size: 11px; text-shadow: 2px 2px 0 #000;
+    background: rgba(0,0,0,0.4); padding: 4px 10px;
+    opacity: 0; transition: opacity 0.2s;
+}
+#blockTooltip.show { opacity: 1; }
+
+/* ===================== HAND / TOOL VIEWMODEL ===================== */
+#handContainer {
+    position: absolute; bottom: -40px; right: 20px;
+    width: 220px; height: 220px;
+    pointer-events: none;
+    z-index: 50;
+}
+#handCanvas { width: 100%; height: 100%; }
+
+/* ===================== DEBUG INFO (F3-like, top right) ===================== */
+#debugInfo {
+    position: absolute; top: 10px; right: 10px;
+    color: #fff; font-size: 9px; text-shadow: 1px 1px 0 #000;
+    background: rgba(0,0,0,0.3); padding: 6px 10px;
+    line-height: 1.6;
+    display: none;
+}
+#debugInfo.show { display: block; }
+
+/* ===================== CROSSHAIR DAMAGE OVERLAY (low HP red vignette) ===================== */
+#damageVignette {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle, transparent 60%, rgba(180,0,0,0.45) 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 90;
+}
+#damageVignette.show { opacity: 1; }
+
+/* ===================== UNDERWATER OVERLAY ===================== */
+#waterOverlay {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background: rgba(40,110,200,0.28);
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: 80;
+}
+#waterOverlay.show { opacity: 1; }
+
+/* ===================== CRACK/BREAK PARTICLE OVERLAY ON CROSSHAIR (mining progress) ===================== */
+#miningProgress {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, 18px);
+    width: 40px; height: 5px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid #000;
+    display: none;
+}
+#miningProgress.show { display: block; }
+#miningProgressFill {
+    height: 100%; width: 0%;
+    background: #7ed957;
+}
+
+/* ===================== POINTER LOCK HINT ===================== */
+#pointerLockHint {
+    position: fixed; inset: 0;
+    display: none;
+    align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.5);
+    color: #fff; font-size: 14px;
+    z-index: 700;
+    text-align: center;
+    pointer-events: auto;
+    cursor: pointer;
+}
+#pointerLockHint.show { display: flex; }
+#pointerLockHint p { background: rgba(0,0,0,0.6); padding: 20px 30px; border: 2px solid #fff; }
+</style>
+</head>
+<body>
+<div id="loadingScreen">
+    <h1>VOXEL CRAFT</h1>
+    <div id="loadingBarOuter"><div id="loadingBarInner"></div></div>
+    <div id="loadingText">Memuat tekstur...</div>
+</div>
+
+<div id="mainMenu">
+    <h1>VOXEL CRAFT</h1>
+    <input type="text" id="seedInput" placeholder="Masukkan seed (kosongkan = acak)">
+    <button class="menuBtn" id="btnNewGame">Mulai Dunia Baru</button>
+    <button class="menuBtn" id="btnLoadGame">Lanjutkan Permainan Tersimpan</button>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<div id="pointerLockHint">
+    <p>Klik untuk mengaktifkan kontrol mouse (look around)</p>
+</div>
+
+<div id="hud">
+    <div id="crosshair"></div>
+    <div id="miningProgress"><div id="miningProgressFill"></div></div>
+    <div id="blockTooltip"></div>
+
+    <div id="healthBar"></div>
+
+    <div id="statusBar"></div>
+    <div id="levelDisplay">Lv. 1</div>
+
+    <div id="hotbar"></div>
+
+    <div id="debugInfo"></div>
+</div>
+
+<div id="handContainer">
+    <svg id="handCanvas" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- Lengan (skin tone) -->
+        <rect x="100" y="90" width="60" height="110" rx="4" fill="#d9a06b" stroke="#9c6b3f" stroke-width="3"/>
+        <!-- Lengan baju (sleeve) -->
+        <rect x="96" y="150" width="68" height="40" rx="4" fill="#2e8b57" stroke="#1f5c3a" stroke-width="3"/>
+        <!-- Gagang pickaxe -->
+        <rect x="60" y="40" width="14" height="90" rx="2" fill="#8a5a32" stroke="#5c3a1f" stroke-width="2" transform="rotate(35 67 85)"/>
+        <!-- Kepala pickaxe -->
+        <path d="M30 20 L100 45 L95 60 L25 40 Z" fill="#9a9a9a" stroke="#5b5b5b" stroke-width="2"/>
+    </svg>
+</div>
+
+<div id="damageVignette"></div>
+<div id="waterOverlay"></div>
+
+<div id="inventoryScreen">
+    <div id="inventoryPanel">
+        <h2>INVENTORY</h2>
+        <div id="inventoryGrid"></div>
+        <div id="closeInventoryHint">Tekan [E] atau [ESC] untuk menutup</div>
+    </div>
+</div>
+
+<div id="pauseMenu">
+    <h2>PERMAINAN DIPAUSE</h2>
+    <button class="menuBtn" id="btnResume">Lanjutkan Bermain</button>
+    <button class="menuBtn" id="btnSaveGame">Simpan Permainan</button>
+    <button class="menuBtn" id="btnLoadGameInPause">Muat Permainan</button>
+    <button class="menuBtn" id="btnExitToMenu">Keluar ke Menu Utama</button>
+    <div id="saveLoadStatus"></div>
+</div>
+
+<script>
+
+// ===================== SIMPLEX NOISE (2D & 3D) =====================
+// Implementasi ringan Simplex Noise berbasis algoritma Ken Perlin / Stefan Gustavson.
+// Dipakai untuk procedural terrain generation (height map, biome map, cave map).
+class SimplexNoise {
+    constructor(seed = Math.random()) {
+        this.p = new Uint8Array(256);
+        this.perm = new Uint8Array(512);
+        this.permMod12 = new Uint8Array(512);
+        this._seedRandom(seed);
+        this._buildPermutationTable();
+
+        this.grad3 = [
+            [1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
+            [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
+            [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]
+        ];
+
+        this.F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
+        this.G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
+        this.F3 = 1.0 / 3.0;
+        this.G3 = 1.0 / 6.0;
+    }
+
+    // PRNG sederhana berbasis seed (mulberry32) agar hasil noise konsisten per seed
+    _seedRandom(seed) {
+        let s = typeof seed === 'number' ? seed : 0;
+        // hash string seed jika diberikan string
+        if (typeof seed === 'string') {
+            s = 0;
+            for (let i = 0; i < seed.length; i++) {
+                s = (s * 31 + seed.charCodeAt(i)) >>> 0;
+            }
+        }
+        this._rngState = (s >>> 0) || 1;
+    }
+
+    _nextRandom() {
+        let t = this._rngState += 0x6D2B79F5;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    }
+
+    _buildPermutationTable() {
+        for (let i = 0; i < 256; i++) this.p[i] = i;
+        // Fisher-Yates shuffle menggunakan seeded RNG
+        for (let i = 255; i > 0; i--) {
+            const j = Math.floor(this._nextRandom() * (i + 1));
+            const tmp = this.p[i];
+            this.p[i] = this.p[j];
+            this.p[j] = tmp;
+        }
+        for (let i = 0; i < 512; i++) {
+            this.perm[i] = this.p[i & 255];
+            this.permMod12[i] = this.perm[i] % 12;
+        }
+    }
+
+    dot(g, x, y, z = 0) {
+        return g[0]*x + g[1]*y + (g[2] !== undefined ? g[2]*z : 0);
+    }
+
+    // 2D simplex noise, hasil kira-kira di range [-1, 1]
+    noise2D(xin, yin) {
+        const grad3 = this.grad3, perm = this.perm, permMod12 = this.permMod12;
+        const F2 = this.F2, G2 = this.G2;
+        let n0, n1, n2;
+        const s = (xin + yin) * F2;
+        const i = Math.floor(xin + s);
+        const j = Math.floor(yin + s);
+        const t = (i + j) * G2;
+        const X0 = i - t;
+        const Y0 = j - t;
+        const x0 = xin - X0;
+        const y0 = yin - Y0;
+        let i1, j1;
+        if (x0 > y0) { i1 = 1; j1 = 0; } else { i1 = 0; j1 = 1; }
+        const x1 = x0 - i1 + G2;
+        const y1 = y0 - j1 + G2;
+        const x2 = x0 - 1.0 + 2.0 * G2;
+        const y2 = y0 - 1.0 + 2.0 * G2;
+        const ii = i & 255;
+        const jj = j & 255;
+        let t0 = 0.5 - x0*x0 - y0*y0;
+        if (t0 < 0) n0 = 0.0;
+        else {
+            t0 *= t0;
+            const gi0 = permMod12[ii + perm[jj]];
+            n0 = t0 * t0 * this.dot(grad3[gi0], x0, y0);
+        }
+        let t1 = 0.5 - x1*x1 - y1*y1;
+        if (t1 < 0) n1 = 0.0;
+        else {
+            t1 *= t1;
+            const gi1 = permMod12[ii + i1 + perm[jj + j1]];
+            n1 = t1 * t1 * this.dot(grad3[gi1], x1, y1);
+        }
+        let t2 = 0.5 - x2*x2 - y2*y2;
+        if (t2 < 0) n2 = 0.0;
+        else {
+            t2 *= t2;
+            const gi2 = permMod12[ii + 1 + perm[jj + 1]];
+            n2 = t2 * t2 * this.dot(grad3[gi2], x2, y2);
+        }
+        return 70.0 * (n0 + n1 + n2);
+    }
+
+    // 3D simplex noise, dipakai untuk gua / fitur 3D
+    noise3D(xin, yin, zin) {
+        const grad3 = this.grad3, perm = this.perm, permMod12 = this.permMod12;
+        const F3 = this.F3, G3 = this.G3;
+        let n0, n1, n2, n3;
+        const s = (xin + yin + zin) * F3;
+        const i = Math.floor(xin + s);
+        const j = Math.floor(yin + s);
+        const k = Math.floor(zin + s);
+        const t = (i + j + k) * G3;
+        const X0 = i - t, Y0 = j - t, Z0 = k - t;
+        const x0 = xin - X0, y0 = yin - Y0, z0 = zin - Z0;
+        let i1, j1, k1, i2, j2, k2;
+        if (x0 >= y0) {
+            if (y0 >= z0) { i1=1;j1=0;k1=0; i2=1;j2=1;k2=0; }
+            else if (x0 >= z0) { i1=1;j1=0;k1=0; i2=1;j2=0;k2=1; }
+            else { i1=0;j1=0;k1=1; i2=1;j2=0;k2=1; }
+        } else {
+            if (y0 < z0) { i1=0;j1=0;k1=1; i2=0;j2=1;k2=1; }
+            else if (x0 < z0) { i1=0;j1=1;k1=0; i2=0;j2=1;k2=1; }
+            else { i1=0;j1=1;k1=0; i2=1;j2=1;k2=0; }
+        }
+        const x1 = x0 - i1 + G3, y1 = y0 - j1 + G3, z1 = z0 - k1 + G3;
+        const x2 = x0 - i2 + 2.0*G3, y2 = y0 - j2 + 2.0*G3, z2 = z0 - k2 + 2.0*G3;
+        const x3 = x0 - 1.0 + 3.0*G3, y3 = y0 - 1.0 + 3.0*G3, z3 = z0 - 1.0 + 3.0*G3;
+        const ii = i & 255, jj = j & 255, kk = k & 255;
+        let t0 = 0.6 - x0*x0 - y0*y0 - z0*z0;
+        if (t0 < 0) n0 = 0.0;
+        else { t0 *= t0; const gi0 = permMod12[ii+perm[jj+perm[kk]]]; n0 = t0*t0*this.dot(grad3[gi0], x0,y0,z0); }
+        let t1 = 0.6 - x1*x1 - y1*y1 - z1*z1;
+        if (t1 < 0) n1 = 0.0;
+        else { t1 *= t1; const gi1 = permMod12[ii+i1+perm[jj+j1+perm[kk+k1]]]; n1 = t1*t1*this.dot(grad3[gi1], x1,y1,z1); }
+        let t2 = 0.6 - x2*x2 - y2*y2 - z2*z2;
+        if (t2 < 0) n2 = 0.0;
+        else { t2 *= t2; const gi2 = permMod12[ii+i2+perm[jj+j2+perm[kk+k2]]]; n2 = t2*t2*this.dot(grad3[gi2], x2,y2,z2); }
+        let t3 = 0.6 - x3*x3 - y3*y3 - z3*z3;
+        if (t3 < 0) n3 = 0.0;
+        else { t3 *= t3; const gi3 = permMod12[ii+1+perm[jj+1+perm[kk+1]]]; n3 = t3*t3*this.dot(grad3[gi3], x3,y3,z3); }
+        return 32.0 * (n0 + n1 + n2 + n3);
+    }
+
+    // Octave noise (fractal Brownian motion) untuk terrain yang lebih natural
+    octaveNoise2D(x, y, octaves = 4, persistence = 0.5, scale = 1) {
+        let total = 0;
+        let frequency = scale;
+        let amplitude = 1;
+        let maxValue = 0;
+        for (let i = 0; i < octaves; i++) {
+            total += this.noise2D(x * frequency, y * frequency) * amplitude;
+            maxValue += amplitude;
+            amplitude *= persistence;
+            frequency *= 2;
+        }
+        return total / maxValue;
+    }
+}
+
+
+// ===================== BLOCK DEFINITIONS =====================
+// ID blok: 0 = udara (kosong). Setiap blok punya properti solid/transparent/dll.
+const BLOCK = {
+    AIR: 0,
+    GRASS: 1,
+    DIRT: 2,
+    STONE: 3,
+    SAND: 4,
+    WATER: 5,
+    WOOD: 6,
+    LEAVES: 7,
+    GLASS: 8,
+    SNOW: 9,
+    SNOW_GRASS: 10,
+    PLANK: 11,
+    BEDROCK: 12,
+    CACTUS: 13,
+    ICE: 14
+};
+
+// Urutan kolom texture atlas (tiap blok punya index kolom 0..N-1 di atlas 16px per-tile)
+// top, side, bottom -- jika sama semua, hanya 1 index dipakai untuk ketiganya
+const BLOCK_DATA = {
+    [BLOCK.GRASS]:      { name:'Grass',      solid:true,  transparent:false, liquid:false, atlas:{top:0, side:1, bottom:2}, hardness:1 },
+    [BLOCK.DIRT]:       { name:'Dirt',       solid:true,  transparent:false, liquid:false, atlas:{top:2, side:2, bottom:2}, hardness:1 },
+    [BLOCK.STONE]:      { name:'Stone',      solid:true,  transparent:false, liquid:false, atlas:{top:3, side:3, bottom:3}, hardness:3 },
+    [BLOCK.SAND]:       { name:'Sand',       solid:true,  transparent:false, liquid:false, atlas:{top:4, side:4, bottom:4}, hardness:1 },
+    [BLOCK.WATER]:      { name:'Water',      solid:false, transparent:true,  liquid:true,  atlas:{top:5, side:5, bottom:5}, hardness:0 },
+    [BLOCK.WOOD]:       { name:'Wood',       solid:true,  transparent:false, liquid:false, atlas:{top:6, side:7, bottom:6}, hardness:2 },
+    [BLOCK.LEAVES]:     { name:'Leaves',     solid:true,  transparent:true,  liquid:false, atlas:{top:8, side:8, bottom:8}, hardness:0.5 },
+    [BLOCK.GLASS]:      { name:'Glass',      solid:true,  transparent:true,  liquid:false, atlas:{top:9, side:9, bottom:9}, hardness:1 },
+    [BLOCK.SNOW]:       { name:'Snow',       solid:true,  transparent:false, liquid:false, atlas:{top:10, side:10, bottom:10}, hardness:1 },
+    [BLOCK.SNOW_GRASS]: { name:'Snowy Grass',solid:true,  transparent:false, liquid:false, atlas:{top:10, side:11, bottom:2}, hardness:1 },
+    [BLOCK.PLANK]:      { name:'Plank',      solid:true,  transparent:false, liquid:false, atlas:{top:12, side:12, bottom:12}, hardness:2 },
+    [BLOCK.BEDROCK]:    { name:'Bedrock',    solid:true,  transparent:false, liquid:false, atlas:{top:13, side:13, bottom:13}, hardness:100 },
+    [BLOCK.CACTUS]:     { name:'Cactus',     solid:true,  transparent:false, liquid:false, atlas:{top:14, side:15, bottom:14}, hardness:1 },
+    [BLOCK.ICE]:        { name:'Ice',        solid:true,  transparent:true,  liquid:false, atlas:{top:16, side:16, bottom:16}, hardness:1 },
+};
+
+// Total kolom unik di texture atlas
+const ATLAS_COLS = 17;
+const ATLAS_TILE_PX = 16; // ukuran tile asli (pixelated style)
+
+// Blok yang tersedia di hotbar default (sesuai permintaan: Dirt, Stone, Wood, Leaves, Glass, Water, dll)
+const HOTBAR_BLOCKS = [BLOCK.GRASS, BLOCK.DIRT, BLOCK.STONE, BLOCK.WOOD, BLOCK.PLANK, BLOCK.LEAVES, BLOCK.GLASS, BLOCK.SAND, BLOCK.WATER];
+
+// ===================== CHUNK CONSTANTS =====================
+const CHUNK_SIZE = 16;      // 16x16 horizontal
+const CHUNK_HEIGHT = 64;    // tinggi dunia per chunk (vertikal di-flatten jadi satu chunk kolom)
+const WORLD_SEA_LEVEL = 24;
+
+// Helper: index 3D ke 1D dalam array blok chunk
+function blockIndex(x, y, z) {
+    return y * CHUNK_SIZE * CHUNK_SIZE + z * CHUNK_SIZE + x;
+}
+
+
+// ===================== TEXTURE ATLAS GENERATOR =====================
+// Membuat texture atlas secara procedural menggunakan Canvas 2D API.
+// Setiap tile berukuran ATLAS_TILE_PX x ATLAS_TILE_PX (pixelated, gaya 16x16 Minecraft).
+// Hasil akhirnya satu canvas besar (atlas) yang dipakai sebagai THREE.CanvasTexture.
+
+function createTextureAtlas() {
+    const tileSize = ATLAS_TILE_PX;
+    const canvas = document.createElement('canvas');
+    canvas.width = tileSize * ATLAS_COLS;
+    canvas.height = tileSize;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+
+    // Util: random noise warna kecil per-pixel agar tekstur tidak flat & terlihat "pixel art"
+    function noisyFill(x0, y0, baseColor, variance, seedOffset = 0) {
+        const [r, g, b] = baseColor;
+        for (let py = 0; py < tileSize; py++) {
+            for (let px = 0; px < tileSize; px++) {
+                // pseudo-random berbasis posisi agar konsisten tiap render
+                const n = Math.sin((px * 12.9898 + py * 78.233 + seedOffset) * 43758.5453) % 1;
+                const v = (n - 0.5) * 2 * variance;
+                const rr = Math.max(0, Math.min(255, r + v));
+                const gg = Math.max(0, Math.min(255, g + v));
+                const bb = Math.max(0, Math.min(255, b + v));
+                ctx.fillStyle = `rgb(${rr|0},${gg|0},${bb|0})`;
+                ctx.fillRect(x0 + px, y0 + py, 1, 1);
+            }
+        }
+    }
+
+    function drawTile(col, drawFn) {
+        const x0 = col * tileSize;
+        drawFn(x0, 0);
+    }
+
+    let col = 0;
+
+    // 0: Grass top
+    drawTile(col++, (x0, y0) => noisyFill(x0, y0, [86, 168, 62], 18, 1));
+    // 1: Grass side (dirt bawah + strip hijau di atas)
+    drawTile(col++, (x0, y0) => {
+        noisyFill(x0, y0, [134, 96, 67], 14, 2);
+        for (let px = 0; px < tileSize; px++) {
+            const h = 3 + Math.floor(Math.abs(Math.sin((px+2)*1.7)) * 2);
+            for (let py = 0; py < h; py++) {
+                ctx.fillStyle = `rgb(${80+ (px%3)*6},${160+(px%4)*5},${56})`;
+                ctx.fillRect(x0+px, py, 1, 1);
+            }
+        }
+    });
+    // 2: Dirt
+    drawTile(col++, (x0, y0) => noisyFill(x0, y0, [134, 96, 67], 16, 3));
+    // 3: Stone
+    drawTile(col++, (x0, y0) => noisyFill(x0, y0, [128, 128, 130], 14, 4));
+    // 4: Sand
+    drawTile(col++, (x0, y0) => noisyFill(x0, y0, [222, 209, 150], 10, 5));
+    // 5: Water
+    drawTile(col++, (x0, y0) => noisyFill(x0, y0, [55, 120, 210], 12, 6));
+    // 6: Wood top (lingkaran cincin kayu sederhana)
+    drawTile(col++, (x0, y0) => {
+        noisyFill(x0, y0, [156, 117, 72], 8, 7);
+        ctx.strokeStyle = 'rgba(90,60,30,0.5)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(x0 + tileSize/2, tileSize/2, tileSize/3, 0, Math.PI*2);
+        ctx.stroke();
+    });
+    // 7: Wood side (garis vertikal serat kayu)
+    drawTile(col++, (x0, y0) => {
+        noisyFill(x0, y0, [120, 85, 50], 10, 8);
+        for (let px = 0; px < tileSize; px += 3) {
+            ctx.fillStyle = 'rgba(80,55,30,0.4)';
+            ctx.fillRect(x0+px, 0, 1, tileSize);
+        }
+    });
+    // 8: Leaves
+    drawTile(col++, (x0, y0) => noisyFill(x0, y0, [58, 110, 40], 22, 9));
+    // 9: Glass (semi transparan dengan border)
+    drawTile(col++, (x0, y0) => {
+        ctx.fillStyle = 'rgba(180,220,230,0.35)';
+        ctx.fillRect(x0, y0, tileSize, tileSize);
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+        ctx.strokeRect(x0+0.5, y0+0.5, tileSize-1, tileSize-1);
+    });
+    // 10: Snow
+    drawTile(col++, (x0, y0) => noisyFill(x0, y0, [240, 245, 250], 6, 10));
+    // 11: Snowy grass side
+    drawTile(col++, (x0, y0) => {
+        noisyFill(x0, y0, [134, 96, 67], 14, 11);
+        for (let px = 0; px < tileSize; px++) {
+            const h = 2 + Math.floor(Math.abs(Math.sin((px+5)*1.3)) * 2);
+            for (let py = 0; py < h; py++) {
+                ctx.fillStyle = 'rgb(235,240,245)';
+                ctx.fillRect(x0+px, py, 1, 1);
+            }
+        }
+    });
+    // 12: Plank
+    drawTile(col++, (x0, y0) => {
+        noisyFill(x0, y0, [186, 140, 90], 8, 12);
+        for (let py = 0; py < tileSize; py += 4) {
+            ctx.fillStyle = 'rgba(120,85,50,0.5)';
+            ctx.fillRect(x0, py, tileSize, 1);
+        }
+    });
+    // 13: Bedrock
+    drawTile(col++, (x0, y0) => noisyFill(x0, y0, [40, 40, 42], 20, 13));
+    // 14: Cactus top
+    drawTile(col++, (x0, y0) => noisyFill(x0, y0, [60, 130, 70], 10, 14));
+    // 15: Cactus side (dengan garis spike)
+    drawTile(col++, (x0, y0) => {
+        noisyFill(x0, y0, [50, 120, 60], 10, 15);
+        for (let py = 0; py < tileSize; py += 5) {
+            ctx.fillStyle = 'rgba(220,220,200,0.6)';
+            ctx.fillRect(x0+2, py, 1, 2);
+            ctx.fillRect(x0+tileSize-3, py+2, 1, 2);
+        }
+    });
+    // 16: Ice
+    drawTile(col++, (x0, y0) => {
+        ctx.fillStyle = 'rgba(170,210,230,0.55)';
+        ctx.fillRect(x0, y0, tileSize, tileSize);
+        ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+        ctx.beginPath();
+        ctx.moveTo(x0+2, y0+2); ctx.lineTo(x0+tileSize-2, y0+tileSize-2);
+        ctx.stroke();
+    });
+
+    return canvas;
+}
+
+// Hitung koordinat UV (0..1) untuk kolom tertentu di atlas
+function atlasUV(colIndex) {
+    const u0 = colIndex / ATLAS_COLS;
+    const u1 = (colIndex + 1) / ATLAS_COLS;
+    return { u0, u1, v0: 0, v1: 1 };
+}
+
+
+// ===================== CHUNK CLASS =====================
+// Setiap Chunk menyimpan voxel data 16x64x16 dan bertugas membangun mesh Three.js
+// nya sendiri. Hanya face blok yang exposed (bertetangga dengan udara/transparan)
+// yang dirender -- teknik "culled meshing" agar jumlah triangle jauh lebih sedikit
+// dibanding render semua kubus penuh.
+class Chunk {
+    constructor(world, cx, cz) {
+        this.world = world;
+        this.cx = cx; // koordinat chunk (bukan koordinat blok dunia)
+        this.cz = cz;
+        // voxel data: Uint8Array ukuran 16 * 64 * 16
+        this.blocks = new Uint8Array(CHUNK_SIZE * CHUNK_HEIGHT * CHUNK_SIZE);
+        this.mesh = null;       // mesh blok solid/opaque
+        this.waterMesh = null;  // mesh khusus air (transparan, material berbeda)
+        this.leavesMesh = null; // mesh khusus daun/glass (transparan tapi tidak liquid)
+        this.isGenerated = false;
+        this.isDirty = true; // perlu rebuild mesh
+        this.needsSave = false;
+    }
+
+    // Koordinat dunia (world space) asal chunk ini
+    get worldX() { return this.cx * CHUNK_SIZE; }
+    get worldZ() { return this.cz * CHUNK_SIZE; }
+
+    getBlock(x, y, z) {
+        if (x < 0 || x >= CHUNK_SIZE || y < 0 || y >= CHUNK_HEIGHT || z < 0 || z >= CHUNK_SIZE) {
+            // delegasikan ke world untuk cross-chunk lookup (tetangga chunk)
+            return this.world.getBlock(this.worldX + x, y, this.worldZ + z);
+        }
+        return this.blocks[blockIndex(x, y, z)];
+    }
+
+    setBlock(x, y, z, type) {
+        if (x < 0 || x >= CHUNK_SIZE || y < 0 || y >= CHUNK_HEIGHT || z < 0 || z >= CHUNK_SIZE) {
+            this.world.setBlock(this.worldX + x, y, this.worldZ + z, type);
+            return;
+        }
+        this.blocks[blockIndex(x, y, z)] = type;
+        this.isDirty = true;
+        this.needsSave = true;
+        // Tandai chunk tetangga dirty juga jika blok ada di edge (agar face boundary update)
+        if (x === 0) this.world.markNeighborDirty(this.cx - 1, this.cz);
+        if (x === CHUNK_SIZE - 1) this.world.markNeighborDirty(this.cx + 1, this.cz);
+        if (z === 0) this.world.markNeighborDirty(this.cx, this.cz - 1);
+        if (z === CHUNK_SIZE - 1) this.world.markNeighborDirty(this.cx, this.cz + 1);
+    }
+
+    // ===================== TERRAIN GENERATION =====================
+    // Mengisi voxel data chunk ini menggunakan noise procedural dari world.
+    generate() {
+        const world = this.world;
+        const wx0 = this.worldX, wz0 = this.worldZ;
+
+        for (let x = 0; x < CHUNK_SIZE; x++) {
+            for (let z = 0; z < CHUNK_SIZE; z++) {
+                const worldX = wx0 + x;
+                const worldZ = wz0 + z;
+
+                // Biome value menentukan jenis biome (gurun, padang rumput, salju)
+                const biomeVal = world.noise.octaveNoise2D(worldX * 0.004, worldZ * 0.004, 3, 0.5, 1);
+                // Height map utama
+                const heightNoise = world.noise.octaveNoise2D(worldX * 0.02, worldZ * 0.02, 4, 0.5, 1);
+                const mountainNoise = world.noise.octaveNoise2D(worldX * 0.008, worldZ * 0.008, 2, 0.5, 1);
+
+                let biome = 'plains';
+                if (biomeVal > 0.35) biome = 'desert';
+                else if (biomeVal < -0.35) biome = 'snow';
+
+                // Tinggi dasar terrain
+                let height = WORLD_SEA_LEVEL + Math.floor(heightNoise * 8 + mountainNoise * 10);
+                if (biome === 'desert') height = WORLD_SEA_LEVEL + Math.floor(heightNoise * 4 + 2);
+                if (biome === 'snow') height = WORLD_SEA_LEVEL + Math.floor(heightNoise * 6 + mountainNoise * 12) + 2;
+                height = Math.max(4, Math.min(CHUNK_HEIGHT - 4, height));
+
+                for (let y = 0; y < CHUNK_HEIGHT; y++) {
+                    let type = BLOCK.AIR;
+
+                    if (y === 0) {
+                        type = BLOCK.BEDROCK;
+                    } else if (y < height - 4) {
+                        type = BLOCK.STONE;
+                        // Gua sederhana menggunakan 3D noise
+                        const caveVal = world.noise.noise3D(worldX * 0.07, y * 0.07, worldZ * 0.07);
+                        if (caveVal > 0.62 && y > 2 && y < height - 6) {
+                            type = BLOCK.AIR;
+                        }
+                    } else if (y < height) {
+                        if (biome === 'desert') type = BLOCK.SAND;
+                        else if (biome === 'snow') type = BLOCK.STONE;
+                        else type = BLOCK.DIRT;
+                    } else if (y === height) {
+                        if (biome === 'desert') type = BLOCK.SAND;
+                        else if (biome === 'snow') type = BLOCK.SNOW_GRASS;
+                        else type = BLOCK.GRASS;
+                    } else if (y <= WORLD_SEA_LEVEL && y > height) {
+                        // Area di bawah sea level tapi di atas height daratan -> air (laut)
+                        type = BLOCK.WATER;
+                    }
+
+                    if (type !== BLOCK.AIR) {
+                        this.blocks[blockIndex(x, y, z)] = type;
+                    }
+                }
+
+                // Dekorasi: pohon di plains, kaktus di desert, salju ekstra sudah lewat SNOW_GRASS
+                if (height < CHUNK_HEIGHT - 6 && height > WORLD_SEA_LEVEL) {
+                    const decoRand = world.noise.noise2D(worldX * 0.5 + 0.123, worldZ * 0.5 + 0.456);
+                    if (biome === 'plains' && decoRand > 0.78) {
+                        this._placeTree(x, height + 1, z);
+                    } else if (biome === 'desert' && decoRand > 0.85) {
+                        this._placeCactus(x, height + 1, z);
+                    }
+                }
+            }
+        }
+        this.isGenerated = true;
+        this.isDirty = true;
+    }
+
+    // Menempatkan pohon sederhana (batang + daun) -- bisa menembus batas chunk
+    // jadi pakai this.setBlock yang otomatis delegasi ke world jika perlu.
+    _placeTree(x, y, z) {
+        const trunkHeight = 4 + (Math.abs(x * 7 + z * 13) % 2);
+        for (let i = 0; i < trunkHeight; i++) {
+            this._setLocalOrWorld(x, y + i, z, BLOCK.WOOD);
+        }
+        // Kanopi daun sederhana berbentuk bulat
+        const topY = y + trunkHeight;
+        for (let dx = -2; dx <= 2; dx++) {
+            for (let dz = -2; dz <= 2; dz++) {
+                for (let dy = -2; dy <= 1; dy++) {
+                    const dist = Math.sqrt(dx*dx + dy*dy*1.4 + dz*dz);
+                    if (dist <= 2.3) {
+                        this._setLocalOrWorld(x + dx, topY + dy, z + dz, BLOCK.LEAVES, true);
+                    }
+                }
+            }
+        }
+    }
+
+    _placeCactus(x, y, z) {
+        const h = 2 + (Math.abs(x * 3 + z * 5) % 2);
+        for (let i = 0; i < h; i++) {
+            this._setLocalOrWorld(x, y + i, z, BLOCK.CACTUS);
+        }
+    }
+
+    // Set block lokal ke chunk ini langsung ke array (tanpa overhead delegasi penuh)
+    // jika koordinat di dalam range chunk ini; jika di luar, delegasikan ke world.
+    // onlyIfEmpty: true -> jangan timpa blok yang sudah ada (misal jangan timpa batang pohon dengan daun)
+    _setLocalOrWorld(x, y, z, type, onlyIfEmpty = false) {
+        if (y < 0 || y >= CHUNK_HEIGHT) return;
+        if (x >= 0 && x < CHUNK_SIZE && z >= 0 && z < CHUNK_SIZE) {
+            const idx = blockIndex(x, y, z);
+            if (onlyIfEmpty && this.blocks[idx] !== BLOCK.AIR) return;
+            this.blocks[idx] = type;
+        } else {
+            // Cross-chunk: ambil/buat chunk tetangga via world
+            const worldX = this.worldX + x;
+            const worldZ = this.worldZ + z;
+            if (onlyIfEmpty) {
+                const existing = this.world.getBlock(worldX, y, worldZ);
+                if (existing !== BLOCK.AIR) return;
+            }
+            this.world.setBlockDuringGen(worldX, y, worldZ, type);
+        }
+    }
+
+    // ===================== MESH BUILDING (Greedy/Culled meshing) =====================
+    // Membangun 3 mesh terpisah: solid (opaque), water (transparan liquid), foliage (transparan non-liquid: leaves/glass/ice)
+    buildMesh(scene) {
+        if (!this.isGenerated) return;
+
+        // Hapus mesh lama dari scene jika ada
+        this._disposeMesh(scene);
+
+        const solidGeo = { positions: [], normals: [], uvs: [], colors: [], indices: [] };
+        const waterGeo = { positions: [], normals: [], uvs: [], colors: [], indices: [] };
+        const foliageGeo = { positions: [], normals: [], uvs: [], colors: [], indices: [] };
+
+        // 6 arah normal: +X, -X, +Y, -Y, +Z, -Z
+        const directions = [
+            { dir:[1,0,0],  corners:[[1,0,0],[1,1,0],[1,1,1],[1,0,1]], ao_axis:'x' },
+            { dir:[-1,0,0], corners:[[0,0,1],[0,1,1],[0,1,0],[0,0,0]], ao_axis:'x' },
+            { dir:[0,1,0],  corners:[[0,1,1],[1,1,1],[1,1,0],[0,1,0]], ao_axis:'y' },
+            { dir:[0,-1,0], corners:[[0,0,0],[1,0,0],[1,0,1],[0,0,1]], ao_axis:'y' },
+            { dir:[0,0,1],  corners:[[1,0,1],[1,1,1],[0,1,1],[0,0,1]], ao_axis:'z' },
+            { dir:[0,0,-1], corners:[[0,0,0],[0,1,0],[1,1,0],[1,0,0]], ao_axis:'z' },
+        ];
+
+        for (let x = 0; x < CHUNK_SIZE; x++) {
+            for (let y = 0; y < CHUNK_HEIGHT; y++) {
+                for (let z = 0; z < CHUNK_SIZE; z++) {
+                    const type = this.blocks[blockIndex(x, y, z)];
+                    if (type === BLOCK.AIR) continue;
+
+                    const data = BLOCK_DATA[type];
+                    if (!data) continue;
+
+                    const isWater = data.liquid;
+                    const isFoliage = data.transparent && !data.liquid;
+                    const target = isWater ? waterGeo : (isFoliage ? foliageGeo : solidGeo);
+
+                    for (const face of directions) {
+                        const [dx, dy, dz] = face.dir;
+                        const nx = x + dx, ny = y + dy, nz = z + dz;
+                        const neighborType = this.getBlock(nx, ny, nz);
+                        const neighborData = BLOCK_DATA[neighborType] || null;
+
+                        // Tentukan apakah face ini perlu digambar:
+                        // - Jika neighbor adalah AIR -> selalu gambar
+                        // - Jika blok ini solid dan neighbor transparan (glass/leaves/water) -> gambar
+                        // - Jika blok ini water dan neighbor adalah AIR -> gambar (permukaan air)
+                        // - Jika blok ini sama jenis liquid dengan neighbor -> jangan gambar (air-ke-air)
+                        let shouldDraw = false;
+                        if (neighborType === BLOCK.AIR) {
+                            shouldDraw = true;
+                        } else if (isWater) {
+                            shouldDraw = neighborType !== type && !(neighborData && neighborData.liquid);
+                        } else if (neighborData) {
+                            if (!neighborData.solid) shouldDraw = true; // neighbor transparan/liquid -> tetap gambar sisi blok solid ini
+                            else shouldDraw = false;
+                        } else {
+                            shouldDraw = true;
+                        }
+
+                        if (!shouldDraw) continue;
+
+                        // Tentukan kolom atlas berdasarkan arah face
+                        let atlasCol;
+                        if (dy === 1) atlasCol = data.atlas.top;
+                        else if (dy === -1) atlasCol = data.atlas.bottom;
+                        else atlasCol = data.atlas.side;
+
+                        const { u0, u1, v0, v1 } = atlasUV(atlasCol);
+
+                        // Ambient Occlusion sederhana: cek blok di sekitar vertex untuk shading lembut
+                        // Hitung faktor cahaya berbeda untuk tiap face berdasarkan arah (simulasi sun lighting)
+                        let faceShade = 1.0;
+                        if (dy === 1) faceShade = 1.0;        // atas paling terang
+                        else if (dy === -1) faceShade = 0.55; // bawah paling gelap
+                        else if (dz === 1) faceShade = 0.85;
+                        else if (dz === -1) faceShade = 0.7;
+                        else if (dx === 1) faceShade = 0.8;
+                        else if (dx === -1) faceShade = 0.75;
+
+                        // AO tambahan: makin banyak blok solid di sekitar face, makin gelap sedikit
+                        const aoSample = this._sampleAO(x, y, z, dx, dy, dz);
+
+                        const baseIndex = target.positions.length / 3;
+                        const corners = face.corners;
+                        const uvCoords = [[u1,v1],[u1,v0],[u0,v0],[u0,v1]];
+
+                        for (let c = 0; c < 4; c++) {
+                            const corner = corners[c];
+                            target.positions.push(x + corner[0], y + corner[1], z + corner[2]);
+                            target.normals.push(dx, dy, dz);
+                            target.uvs.push(uvCoords[c][0], uvCoords[c][1]);
+                            const shade = faceShade * aoSample[c];
+                            target.colors.push(shade, shade, shade);
+                        }
+
+                        target.indices.push(baseIndex, baseIndex+1, baseIndex+2, baseIndex, baseIndex+2, baseIndex+3);
+                    }
+                }
+            }
+        }
+
+        this.mesh = this._geoToMesh(solidGeo, this.world.materials.solid);
+        this.waterMesh = this._geoToMesh(waterGeo, this.world.materials.water);
+        this.leavesMesh = this._geoToMesh(foliageGeo, this.world.materials.foliage);
+
+        if (this.mesh) { this.mesh.position.set(this.worldX, 0, this.worldZ); scene.add(this.mesh); }
+        if (this.waterMesh) { this.waterMesh.position.set(this.worldX, 0, this.worldZ); scene.add(this.waterMesh); }
+        if (this.leavesMesh) { this.leavesMesh.position.set(this.worldX, 0, this.worldZ); scene.add(this.leavesMesh); }
+
+        this.isDirty = false;
+    }
+
+    // Sample sederhana untuk ambient occlusion per-vertex (4 vertex per face)
+    // Mengembalikan array 4 nilai shade tambahan (0.6 - 1.0) berdasarkan kepadatan blok sekitar.
+    _sampleAO(x, y, z, dx, dy, dz) {
+        // Untuk simplifikasi & performa, gunakan 1 nilai AO per face (bukan per-vertex penuh)
+        // berdasarkan jumlah blok solid bertetangga di sekitar face tersebut.
+        let occlusion = 0;
+        const checks = [];
+        if (dy !== 0) {
+            checks.push([1,dy,0],[-1,dy,0],[0,dy,1],[0,dy,-1]);
+        } else if (dx !== 0) {
+            checks.push([dx,1,0],[dx,-1,0],[dx,0,1],[dx,0,-1]);
+        } else {
+            checks.push([1,0,dz],[-1,0,dz],[0,1,dz],[0,-1,dz]);
+        }
+        for (const c of checks) {
+            const t = this.getBlock(x+c[0], y+c[1], z+c[2]);
+            const d = BLOCK_DATA[t];
+            if (d && d.solid) occlusion++;
+        }
+        const shade = Math.max(0.65, 1.0 - occlusion * 0.08);
+        return [shade, shade, shade, shade];
+    }
+
+    _geoToMesh(geo, material) {
+        if (geo.positions.length === 0) return null;
+        const bufferGeo = new THREE.BufferGeometry();
+        bufferGeo.setAttribute('position', new THREE.Float32BufferAttribute(geo.positions, 3));
+        bufferGeo.setAttribute('normal', new THREE.Float32BufferAttribute(geo.normals, 3));
+        bufferGeo.setAttribute('uv', new THREE.Float32BufferAttribute(geo.uvs, 2));
+        bufferGeo.setAttribute('color', new THREE.Float32BufferAttribute(geo.colors, 3));
+        bufferGeo.setIndex(geo.indices);
+        bufferGeo.computeBoundingBox();
+        const mesh = new THREE.Mesh(bufferGeo, material);
+        mesh.castShadow = false;
+        mesh.receiveShadow = false;
+        return mesh;
+    }
+
+    _disposeMesh(scene) {
+        for (const m of [this.mesh, this.waterMesh, this.leavesMesh]) {
+            if (m) {
+                scene.remove(m);
+                m.geometry.dispose();
+            }
+        }
+        this.mesh = null;
+        this.waterMesh = null;
+        this.leavesMesh = null;
+    }
+
+    dispose(scene) {
+        this._disposeMesh(scene);
+    }
+
+    // Serialisasi sederhana untuk save (RLE-encode agar localStorage tidak terlalu besar)
+    serialize() {
+        // Run-length encoding: [value, count, value, count, ...]
+        const out = [];
+        let prev = this.blocks[0];
+        let count = 1;
+        for (let i = 1; i < this.blocks.length; i++) {
+            if (this.blocks[i] === prev) {
+                count++;
+            } else {
+                out.push(prev, count);
+                prev = this.blocks[i];
+                count = 1;
+            }
+        }
+        out.push(prev, count);
+        return out;
+    }
+
+    deserialize(rle) {
+        let i = 0;
+        let idx = 0;
+        while (i < rle.length) {
+            const value = rle[i];
+            const count = rle[i+1];
+            for (let c = 0; c < count; c++) {
+                this.blocks[idx++] = value;
+            }
+            i += 2;
+        }
+        this.isGenerated = true;
+        this.isDirty = true;
+    }
+}
+
+
+// ===================== WORLD CLASS =====================
+// Mengelola seluruh chunk yang aktif, loading/unloading berdasarkan jarak ke pemain
+// (render distance), serta menyediakan akses blok lintas-chunk untuk physics & raycasting.
+class World {
+    constructor(scene, seed, renderDistance = 4) {
+        this.scene = scene;
+        this.seed = seed;
+        this.noise = new SimplexNoise(seed);
+        this.chunks = new Map(); // key "cx,cz" -> Chunk
+        this.renderDistance = renderDistance;
+        this.materials = this._createMaterials();
+        this.chunkLoadQueue = [];
+        this.maxChunksPerFrame = 1; // batasi generate+mesh per frame agar tidak nge-freeze
+    }
+
+    _key(cx, cz) { return cx + ',' + cz; }
+
+    _createMaterials() {
+        const atlasCanvas = createTextureAtlas();
+        const texture = new THREE.CanvasTexture(atlasCanvas);
+        texture.magFilter = THREE.NearestFilter; // pixelated, gaya voxel asli
+        texture.minFilter = THREE.NearestFilter;
+        texture.wrapS = THREE.ClampToEdgeWrapping;
+        texture.wrapT = THREE.ClampToEdgeWrapping;
+        texture.needsUpdate = true;
+
+        const solid = new THREE.MeshLambertMaterial({
+            map: texture,
+            vertexColors: true,
+            side: THREE.FrontSide
+        });
+
+        const water = new THREE.MeshLambertMaterial({
+            map: texture,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.75,
+            side: THREE.DoubleSide,
+            depthWrite: true
+        });
+
+        const foliage = new THREE.MeshLambertMaterial({
+            map: texture,
+            vertexColors: true,
+            transparent: true,
+            alphaTest: 0.1,
+            side: THREE.DoubleSide
+        });
+
+        return { solid, water, foliage, atlasTexture: texture };
+    }
+
+    getChunk(cx, cz) {
+        return this.chunks.get(this._key(cx, cz));
+    }
+
+    getOrCreateChunk(cx, cz) {
+        const k = this._key(cx, cz);
+        let chunk = this.chunks.get(k);
+        if (!chunk) {
+            chunk = new Chunk(this, cx, cz);
+            this.chunks.set(k, chunk);
+        }
+        return chunk;
+    }
+
+    worldToChunkCoord(wx, wz) {
+        return { cx: Math.floor(wx / CHUNK_SIZE), cz: Math.floor(wz / CHUNK_SIZE) };
+    }
+
+    getBlock(wx, y, wz) {
+        if (y < 0 || y >= CHUNK_HEIGHT) return BLOCK.AIR;
+        const { cx, cz } = this.worldToChunkCoord(wx, wz);
+        const chunk = this.getChunk(cx, cz);
+        if (!chunk || !chunk.isGenerated) return BLOCK.AIR;
+        const lx = wx - chunk.worldX;
+        const lz = wz - chunk.worldZ;
+        return chunk.blocks[blockIndex(lx, y, lz)];
+    }
+
+    setBlock(wx, y, wz, type) {
+        if (y < 0 || y >= CHUNK_HEIGHT) return;
+        const { cx, cz } = this.worldToChunkCoord(wx, wz);
+        const chunk = this.getOrCreateChunk(cx, cz);
+        // Jika chunk belum pernah di-generate (misal player menaruh blok di chunk yang
+        // belum dimuat sama sekali -- kasus langka tapi mungkin terjadi via load save game),
+        // generate dulu agar data dasarnya konsisten sebelum kita override satu blok ini.
+        if (!chunk.isGenerated) chunk.generate();
+        const lx = wx - chunk.worldX;
+        const lz = wz - chunk.worldZ;
+        chunk.blocks[blockIndex(lx, y, lz)] = type;
+        chunk.isDirty = true;
+        chunk.needsSave = true;
+        // Tandai chunk tetangga dirty jika di edge
+        if (lx === 0) this.markNeighborDirty(cx - 1, cz);
+        if (lx === CHUNK_SIZE - 1) this.markNeighborDirty(cx + 1, cz);
+        if (lz === 0) this.markNeighborDirty(cx, cz - 1);
+        if (lz === CHUNK_SIZE - 1) this.markNeighborDirty(cx, cz + 1);
+    }
+
+    // Dipakai khusus saat proses generate (decorasi pohon dsb) supaya tidak memicu
+    // efek samping isDirty/needsSave yang tidak perlu, dan tetap aman lintas-chunk.
+    setBlockDuringGen(wx, y, wz, type) {
+        if (y < 0 || y >= CHUNK_HEIGHT) return;
+        const { cx, cz } = this.worldToChunkCoord(wx, wz);
+        const chunk = this.getOrCreateChunk(cx, cz);
+        const lx = wx - chunk.worldX;
+        const lz = wz - chunk.worldZ;
+        chunk.blocks[blockIndex(lx, y, lz)] = type;
+    }
+
+    markNeighborDirty(cx, cz) {
+        const chunk = this.getChunk(cx, cz);
+        if (chunk && chunk.isGenerated) chunk.isDirty = true;
+    }
+
+    // Dipanggil setiap frame: pastikan chunk di sekitar player ter-generate & ter-render,
+    // dan unload chunk yang sudah terlalu jauh agar memori/perf tetap terjaga.
+    update(playerX, playerZ) {
+        const { cx: pcx, cz: pcz } = this.worldToChunkCoord(playerX, playerZ);
+        const rd = this.renderDistance;
+
+        // Susun ulang antrian chunk yang perlu di-load, urut berdasarkan jarak terdekat
+        const needed = [];
+        for (let dx = -rd; dx <= rd; dx++) {
+            for (let dz = -rd; dz <= rd; dz++) {
+                const cx = pcx + dx, cz = pcz + dz;
+                const dist = dx*dx + dz*dz;
+                if (dist > rd*rd) continue; // bentuk lingkaran, bukan kotak penuh
+                const chunk = this.getChunk(cx, cz);
+                if (!chunk || !chunk.isGenerated) {
+                    needed.push({ cx, cz, dist });
+                }
+            }
+        }
+        needed.sort((a, b) => a.dist - b.dist);
+
+        // Generate beberapa chunk per frame saja (throttle)
+        let budget = this.maxChunksPerFrame;
+        for (const item of needed) {
+            if (budget <= 0) break;
+            const chunk = this.getOrCreateChunk(item.cx, item.cz);
+            if (!chunk.isGenerated) {
+                chunk.generate();
+                budget--;
+            }
+        }
+
+        // Build/rebuild mesh untuk chunk yang dirty dan dalam render distance,
+        // serta pastikan tetangganya sudah generated agar tidak ada seam salah (false face)
+        let meshBudget = this.maxChunksPerFrame;
+        for (let dx = -rd; dx <= rd; dx++) {
+            for (let dz = -rd; dz <= rd; dz++) {
+                if (meshBudget <= 0) break;
+                const cx = pcx + dx, cz = pcz + dz;
+                const dist = dx*dx + dz*dz;
+                if (dist > rd*rd) continue;
+                const chunk = this.getChunk(cx, cz);
+                if (chunk && chunk.isGenerated && chunk.isDirty) {
+                    chunk.buildMesh(this.scene);
+                    meshBudget--;
+                }
+            }
+        }
+
+        // Unload chunk yang terlalu jauh (di luar render distance + buffer)
+        const unloadDist = (rd + 2) * (rd + 2);
+        for (const [key, chunk] of this.chunks) {
+            const dx = chunk.cx - pcx, dz = chunk.cz - pcz;
+            if (dx*dx + dz*dz > unloadDist) {
+                chunk.dispose(this.scene);
+                this.chunks.delete(key);
+            }
+        }
+    }
+
+    // ===================== RAYCASTING UTILITAS (DDA voxel traversal) =====================
+    // Menelusuri ray dari origin ke arah tertentu, mencari blok solid pertama yang terkena.
+    // Mengembalikan { blockPos, normal, prevPos } atau null jika tidak ada yang terkena dalam maxDist.
+    raycast(origin, direction, maxDist = 6) {
+        // Algoritma voxel traversal sederhana step-by-step kecil (cukup presisi untuk ukuran blok 1 unit)
+        const step = 0.05;
+        let x = origin.x, y = origin.y, z = origin.z;
+        const dx = direction.x * step, dy = direction.y * step, dz = direction.z * step;
+        let prevBlockX = Math.floor(x), prevBlockY = Math.floor(y), prevBlockZ = Math.floor(z);
+
+        for (let traveled = 0; traveled < maxDist; traveled += step) {
+            x += dx; y += dy; z += dz;
+            const bx = Math.floor(x), by = Math.floor(y), bz = Math.floor(z);
+            const type = this.getBlock(bx, by, bz);
+            const data = BLOCK_DATA[type];
+            if (data && data.solid) {
+                // Tentukan normal berdasarkan dari sisi mana blok sebelumnya berbeda
+                let normal = { x: 0, y: 0, z: 0 };
+                if (bx !== prevBlockX) normal.x = prevBlockX < bx ? -1 : 1;
+                else if (by !== prevBlockY) normal.y = prevBlockY < by ? -1 : 1;
+                else if (bz !== prevBlockZ) normal.z = prevBlockZ < bz ? -1 : 1;
+                return {
+                    blockPos: { x: bx, y: by, z: bz },
+                    placePos: { x: prevBlockX, y: prevBlockY, z: prevBlockZ },
+                    normal
+                };
+            }
+            prevBlockX = bx; prevBlockY = by; prevBlockZ = bz;
+        }
+        return null;
+    }
+
+    // ===================== SAVE / LOAD =====================
+    serializeWorld() {
+        const data = {};
+        for (const [key, chunk] of this.chunks) {
+            if (chunk.isGenerated) {
+                data[key] = chunk.serialize();
+            }
+        }
+        return data;
+    }
+
+    loadWorldData(data) {
+        for (const key in data) {
+            const [cx, cz] = key.split(',').map(Number);
+            const chunk = this.getOrCreateChunk(cx, cz);
+            chunk.deserialize(data[key]);
+        }
+    }
+}
+
+
+// ===================== PLAYER CLASS =====================
+// Mengelola posisi, kecepatan, physics (gravitasi & collision AABB vs voxel),
+// serta mode survival (berjalan dengan gravitasi) dan mode terbang (creative-like).
+class Player {
+    constructor(world, camera) {
+        this.world = world;
+        this.camera = camera;
+
+        // Posisi merepresentasikan titik KAKI pemain (bukan tengah badan)
+        this.position = { x: 0, y: 40, z: 0 };
+        this.velocity = { x: 0, y: 0, z: 0 };
+
+        // Ukuran hitbox pemain (lebar x tinggi x lebar), gaya Minecraft: 0.6 x 1.8
+        this.width = 0.6;
+        this.height = 1.8;
+        this.eyeHeight = 1.62;
+
+        this.yaw = 0;   // rotasi horizontal (radian)
+        this.pitch = 0; // rotasi vertikal (radian), dibatasi -PI/2..PI/2
+
+        this.onGround = false;
+        this.isFlying = false;
+        this.isInWater = false;
+
+        this.speed = 5.0;        // satuan/detik berjalan
+        this.flySpeed = 9.0;
+        this.sprintMultiplier = 1.6;
+        this.jumpVelocity = 8.0;
+        this.gravity = -22.0;
+        this.swimUpSpeed = 4.0;
+
+        this.health = 20; // 10 hati x 2 (gaya Minecraft half-heart)
+        this.maxHealth = 20;
+        this.fallStartY = null; // untuk deteksi fall damage
+    }
+
+    // AABB pemain pada posisi tertentu (default posisi sekarang)
+    getAABB(pos = this.position) {
+        const hw = this.width / 2;
+        return {
+            minX: pos.x - hw, maxX: pos.x + hw,
+            minY: pos.y,       maxY: pos.y + this.height,
+            minZ: pos.z - hw, maxZ: pos.z + hw,
+        };
+    }
+
+    // Cek apakah AABB tertentu bertabrakan dengan blok solid manapun di world
+    isColliding(aabb) {
+        const minX = Math.floor(aabb.minX), maxX = Math.floor(aabb.maxX);
+        const minY = Math.floor(aabb.minY), maxY = Math.floor(aabb.maxY);
+        const minZ = Math.floor(aabb.minZ), maxZ = Math.floor(aabb.maxZ);
+        for (let x = minX; x <= maxX; x++) {
+            for (let y = minY; y <= maxY; y++) {
+                for (let z = minZ; z <= maxZ; z++) {
+                    const type = this.world.getBlock(x, y, z);
+                    const data = BLOCK_DATA[type];
+                    if (data && data.solid) {
+                        // Cek overlap AABB-AABB sesungguhnya (blok dianggap kubus 1x1x1 di [x,x+1])
+                        if (aabb.minX < x+1 && aabb.maxX > x &&
+                            aabb.minY < y+1 && aabb.maxY > y &&
+                            aabb.minZ < z+1 && aabb.maxZ > z) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    // Update physics: dipanggil tiap frame dengan delta time (detik) dan input state
+    update(dt, input) {
+        dt = Math.min(dt, 0.05); // clamp dt agar tidak ada lonjakan fisika saat lag/tab tidak aktif
+
+        // Cek apakah kepala/badan pemain sedang di dalam air (mempengaruhi gravitasi & gerak)
+        const headBlock = this.world.getBlock(
+            Math.floor(this.position.x),
+            Math.floor(this.position.y + this.height * 0.5),
+            Math.floor(this.position.z)
+        );
+        this.isInWater = BLOCK_DATA[headBlock] && BLOCK_DATA[headBlock].liquid;
+
+        // ===== Hitung arah gerak horizontal berdasarkan input & yaw kamera =====
+        const forward = { x: -Math.sin(this.yaw), z: -Math.cos(this.yaw) };
+        const right = { x: Math.cos(this.yaw), z: -Math.sin(this.yaw) };
+
+        let moveX = 0, moveZ = 0;
+        if (input.forward) { moveX += forward.x; moveZ += forward.z; }
+        if (input.backward) { moveX -= forward.x; moveZ -= forward.z; }
+        if (input.left) { moveX -= right.x; moveZ -= right.z; }
+        if (input.right) { moveX += right.x; moveZ += right.z; }
+
+        const len = Math.hypot(moveX, moveZ);
+        if (len > 0) { moveX /= len; moveZ /= len; }
+
+        const currentSpeed = (this.isFlying ? this.flySpeed : this.speed) * (input.sprint ? this.sprintMultiplier : 1);
+
+        if (this.isFlying) {
+            // Mode terbang: kontrol langsung tanpa gravitasi
+            this.velocity.x = moveX * currentSpeed;
+            this.velocity.z = moveZ * currentSpeed;
+            if (input.jump) this.velocity.y = currentSpeed;
+            else if (input.descend) this.velocity.y = -currentSpeed;
+            else this.velocity.y = 0;
+        } else if (this.isInWater) {
+            // Mode berenang: gravitasi diperlemah, bisa naik dengan jump
+            this.velocity.x = moveX * currentSpeed * 0.6;
+            this.velocity.z = moveZ * currentSpeed * 0.6;
+            this.velocity.y += this.gravity * 0.15 * dt; // gravitasi lemah di air
+            if (input.jump) this.velocity.y = this.swimUpSpeed;
+            this.velocity.y = Math.max(-this.swimUpSpeed, Math.min(this.swimUpSpeed, this.velocity.y));
+        } else {
+            // Mode berjalan normal dengan gravitasi
+            this.velocity.x = moveX * currentSpeed;
+            this.velocity.z = moveZ * currentSpeed;
+            this.velocity.y += this.gravity * dt;
+
+            if (input.jump && this.onGround) {
+                this.velocity.y = this.jumpVelocity;
+                this.onGround = false;
+            }
+        }
+
+        // ===== Terapkan gerak per-axis dengan collision resolution =====
+        this._moveAxis('x', this.velocity.x * dt);
+        this._moveAxis('z', this.velocity.z * dt);
+        this._moveAxis('y', this.velocity.y * dt);
+
+        // ===== Fall damage sederhana =====
+        if (!this.onGround && this.velocity.y < 0 && this.fallStartY === null) {
+            this.fallStartY = this.position.y;
+        }
+        if (this.onGround && this.fallStartY !== null) {
+            const fallDist = this.fallStartY - this.position.y;
+            if (fallDist > 3.5) {
+                const damage = Math.floor((fallDist - 3.5) * 2);
+                this.takeDamage(damage);
+            }
+            this.fallStartY = null;
+        }
+
+        // Update posisi kamera mengikuti posisi mata pemain
+        this.camera.position.set(
+            this.position.x,
+            this.position.y + this.eyeHeight,
+            this.position.z
+        );
+        this.camera.rotation.order = 'YXZ';
+        this.camera.rotation.y = this.yaw;
+        this.camera.rotation.x = this.pitch;
+    }
+
+    // Gerak satu axis dengan resolusi collision (slide along surface, bukan stop total)
+    _moveAxis(axis, delta) {
+        if (delta === 0) return;
+        const newPos = { ...this.position };
+        newPos[axis] += delta;
+        const aabb = this.getAABB(newPos);
+
+        if (!this.isColliding(aabb)) {
+            this.position[axis] = newPos[axis];
+            if (axis === 'y') this.onGround = false;
+            return;
+        }
+
+        // Jika kolisi terjadi, mundur ke batas terdekat blok (snap) alih-alih diam total,
+        // sehingga gerakan tetap halus menempel permukaan (gaya Minecraft).
+        if (axis === 'y') {
+            if (delta < 0) {
+                // Jatuh ke bawah -> snap ke atas blok
+                this.position.y = Math.floor(newPos.y) + 1;
+                this.onGround = true;
+                this.velocity.y = 0;
+            } else {
+                // Naik ke atas (lompat) -> snap ke bawah blok yang menghalangi
+                this.position.y = Math.floor(newPos.y + this.height) - this.height;
+                this.velocity.y = 0;
+            }
+        } else {
+            // Collision horizontal: cukup batalkan gerak axis ini (tidak menembus dinding)
+            this.velocity[axis] = 0;
+        }
+    }
+
+    takeDamage(amount) {
+        if (amount <= 0) return;
+        this.health = Math.max(0, this.health - amount);
+    }
+
+    heal(amount) {
+        this.health = Math.min(this.maxHealth, this.health + amount);
+    }
+
+    respawn(spawnPos) {
+        this.position = { ...spawnPos };
+        this.velocity = { x: 0, y: 0, z: 0 };
+        this.health = this.maxHealth;
+    }
+}
+
+
+// ===================== ENVIRONMENT: SKY, SUN/MOON, DAY-NIGHT CYCLE, CLOUDS =====================
+// Mengelola siklus siang-malam dengan mengubah posisi&warna directional light (matahari),
+// warna langit (background scene), fog, serta awan volumetrik sederhana (cluster box semi-transparan).
+class Environment {
+    constructor(scene) {
+        this.scene = scene;
+        this.dayLength = 240; // detik untuk 1 siklus penuh siang-malam (sengaja dipersingkat agar terlihat dinamis)
+        this.time = 0.25 * this.dayLength; // mulai di pagi hari
+
+        // Directional light merepresentasikan matahari/bulan
+        this.sunLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        this.sunLight.position.set(50, 100, 50);
+        this.scene.add(this.sunLight);
+
+        this.ambientLight = new THREE.AmbientLight(0x8899bb, 0.5);
+        this.scene.add(this.ambientLight);
+
+        this.hemiLight = new THREE.HemisphereLight(0x87ceeb, 0x55462a, 0.6);
+        this.scene.add(this.hemiLight);
+
+        // Fog agar chunk yang baru dimuat tidak "pop-in" terlihat jelas & memberi kedalaman
+        this.scene.fog = new THREE.Fog(0x87ceeb, 40, 140);
+
+        this.clouds = [];
+        this._createClouds();
+    }
+
+    // Awan sederhana: kumpulan box putih semi-transparan yang melayang & bergerak perlahan
+    _createClouds() {
+        const cloudMat = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.75,
+            depthWrite: false
+        });
+        const cloudGeo = new THREE.BoxGeometry(1, 1, 1);
+
+        for (let i = 0; i < 24; i++) {
+            const group = new THREE.Group();
+            const blockCount = 3 + Math.floor(Math.random() * 5);
+            for (let b = 0; b < blockCount; b++) {
+                const mesh = new THREE.Mesh(cloudGeo, cloudMat);
+                mesh.scale.set(8 + Math.random()*6, 2.5, 8 + Math.random()*6);
+                mesh.position.set((Math.random()-0.5)*20, (Math.random()-0.5)*2, (Math.random()-0.5)*20);
+                group.add(mesh);
+            }
+            group.position.set(
+                (Math.random() - 0.5) * 400,
+                85 + Math.random() * 15,
+                (Math.random() - 0.5) * 400
+            );
+            this.scene.add(group);
+            this.clouds.push({ group, speed: 0.6 + Math.random() * 0.6 });
+        }
+    }
+
+    update(dt, playerPos) {
+        this.time = (this.time + dt) % this.dayLength;
+        const t = this.time / this.dayLength; // 0..1 representasi waktu hari (0=tengah malam start offset)
+
+        // Sudut matahari: t=0.5 -> tengah hari (matahari di puncak), t=0 / t=1 -> tengah malam
+        // (offset -0.25 dipakai agar saat time=0.25*dayLength yaitu kondisi awal start game, posisi matahari sudah condong naik / pagi hari)
+        const sunAngle = (t - 0.25) * Math.PI * 2;
+        const sunHeight = Math.sin(sunAngle);
+        const sunX = Math.cos(sunAngle) * 100;
+
+        this.sunLight.position.set(sunX, Math.max(sunHeight, -0.2) * 100 + 20, 30);
+
+        // Intensitas & warna cahaya berubah dari siang (putih terang) ke malam (biru gelap)
+        const dayFactor = Math.max(0, sunHeight); // 0 saat malam, 1 saat siang penuh
+        this.sunLight.intensity = 0.15 + dayFactor * 0.9;
+
+        // Warna langit: interpolasi antara warna malam dan siang
+        const dayColor = new THREE.Color(0x87ceeb);
+        const sunsetColor = new THREE.Color(0xff9a5c);
+        const nightColor = new THREE.Color(0x0a0e2e);
+
+        let skyColor;
+        if (sunHeight > 0.15) {
+            skyColor = dayColor;
+        } else if (sunHeight > -0.15) {
+            // Transisi sunset/sunrise
+            const blend = (sunHeight + 0.15) / 0.3;
+            skyColor = nightColor.clone().lerp(sunsetColor, Math.min(1, blend * 1.5)).lerp(dayColor, Math.max(0, blend - 0.3));
+        } else {
+            skyColor = nightColor;
+        }
+
+        this.scene.background = skyColor;
+        this.scene.fog.color = skyColor;
+        this.ambientLight.intensity = 0.25 + dayFactor * 0.35;
+        this.hemiLight.intensity = 0.3 + dayFactor * 0.4;
+
+        // Update posisi awan (bergerak perlahan mengikuti angin + reposisi infinite mengikuti player)
+        for (const cloud of this.clouds) {
+            cloud.group.position.x += cloud.speed * dt;
+            // Jika awan terlalu jauh dari player, geser ke sisi lain (infinite loop effect)
+            if (playerPos) {
+                if (cloud.group.position.x - playerPos.x > 250) cloud.group.position.x -= 500;
+                if (cloud.group.position.x - playerPos.x < -250) cloud.group.position.x += 500;
+            }
+        }
+
+        return { dayFactor, sunHeight };
+    }
+
+    isNight() {
+        const t = this.time / this.dayLength;
+        const sunAngle = (t - 0.25) * Math.PI * 2;
+        return Math.sin(sunAngle) < -0.1;
+    }
+}
+
+
+// ===================== PARTICLE SYSTEM =====================
+// Partikel debu/pecahan blok sederhana menggunakan THREE.Points, dengan physics
+// gravitasi ringan dan fade-out otomatis. Dipakai saat blok dihancurkan.
+class ParticleSystem {
+    constructor(scene) {
+        this.scene = scene;
+        this.particles = []; // { mesh, velocity, life, maxLife }
+        this.maxParticles = 300; // batas agar tidak membebani performa
+    }
+
+    // Membuat particle burst kecil di posisi blok yang dihancurkan, berwarna mendekati warna blok
+    spawnBreakParticles(x, y, z, blockType) {
+        const data = BLOCK_DATA[blockType];
+        if (!data) return;
+
+        // Tentukan warna kasar berdasarkan jenis blok (approximasi visual, tidak perlu sampling texture asli)
+        const colorMap = {
+            [BLOCK.GRASS]: 0x5a9a3e, [BLOCK.DIRT]: 0x86603f, [BLOCK.STONE]: 0x808082,
+            [BLOCK.SAND]: 0xded196, [BLOCK.WOOD]: 0x9c7548, [BLOCK.LEAVES]: 0x3a6e28,
+            [BLOCK.GLASS]: 0xb4dce6, [BLOCK.SNOW]: 0xf0f5fa, [BLOCK.SNOW_GRASS]: 0xeaf0f5,
+            [BLOCK.PLANK]: 0xba8c5a, [BLOCK.CACTUS]: 0x3c8246,
+            [BLOCK.ICE]: 0xaad2e6, [BLOCK.WATER]: 0x3778d2
+        };
+        const color = colorMap[blockType] || 0x999999;
+
+        const count = 8;
+        for (let i = 0; i < count; i++) {
+            if (this.particles.length >= this.maxParticles) {
+                // Buang partikel tertua jika sudah penuh (mencegah memory/perf bloat)
+                const oldest = this.particles.shift();
+                this.scene.remove(oldest.mesh);
+                oldest.mesh.geometry.dispose();
+                oldest.mesh.material.dispose();
+            }
+
+            const size = 0.08 + Math.random() * 0.08;
+            const geo = new THREE.BoxGeometry(size, size, size);
+            const mat = new THREE.MeshBasicMaterial({ color });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(
+                x + 0.5 + (Math.random() - 0.5) * 0.6,
+                y + 0.5 + (Math.random() - 0.5) * 0.6,
+                z + 0.5 + (Math.random() - 0.5) * 0.6
+            );
+            this.scene.add(mesh);
+
+            this.particles.push({
+                mesh,
+                velocity: {
+                    x: (Math.random() - 0.5) * 2.5,
+                    y: Math.random() * 3 + 1,
+                    z: (Math.random() - 0.5) * 2.5
+                },
+                life: 0,
+                maxLife: 0.5 + Math.random() * 0.4
+            });
+        }
+    }
+
+    update(dt) {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+            p.life += dt;
+            if (p.life >= p.maxLife) {
+                this.scene.remove(p.mesh);
+                p.mesh.geometry.dispose();
+                p.mesh.material.dispose();
+                this.particles.splice(i, 1);
+                continue;
+            }
+            p.velocity.y -= 9.8 * dt; // gravitasi partikel
+            p.mesh.position.x += p.velocity.x * dt;
+            p.mesh.position.y += p.velocity.y * dt;
+            p.mesh.position.z += p.velocity.z * dt;
+
+            // Fade out di akhir hidupnya
+            const fadeStart = p.maxLife * 0.6;
+            if (p.life > fadeStart) {
+                const fadeT = (p.life - fadeStart) / (p.maxLife - fadeStart);
+                p.mesh.material.opacity = 1 - fadeT;
+                p.mesh.material.transparent = true;
+            }
+        }
+    }
+}
+
+
+// ===================== MAIN GAME CONTROLLER =====================
+// Menggabungkan semua sistem (World, Player, Environment, ParticleSystem) menjadi
+// satu game loop utuh, plus menangani input, UI (hotbar/inventory/pause), dan save/load.
+
+const SAVE_KEY = 'voxelcraft_save_v1';
+
+class Game {
+    constructor() {
+        this.canvas = document.getElementById('gameCanvas');
+        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        this.clock = new THREE.Clock();
+
+        this.world = null;
+        this.player = null;
+        this.environment = null;
+        this.particles = null;
+
+        // Hotbar & inventory state
+        this.hotbarSlots = HOTBAR_BLOCKS.slice(0, 9); // 9 slot hotbar
+        this.selectedSlot = 0;
+
+        // Inventory grid berisi semua jenis blok yang tersedia untuk diambil (creative-style)
+        this.inventoryBlocks = Object.keys(BLOCK_DATA).map(Number);
+
+        // Input state
+        this.input = { forward:false, backward:false, left:false, right:false, jump:false, descend:false, sprint:false };
+        this.keysDown = new Set();
+
+        this.isPaused = false;
+        this.isInventoryOpen = false;
+        this.pointerLocked = false;
+
+        // Mining state (progress breaking block)
+        this.mining = null; // { blockPos, startTime, blockType }
+        this.miningDuration = 0.4; // detik dasar untuk menghancurkan blok hardness=1
+
+        // Hand viewmodel swing animation
+        this.handSwing = 0; // 0..1 progress animasi ayunan tangan
+        this.handSwinging = false;
+
+        this._setupEventListeners();
+        this._buildHotbarUI();
+        this._buildHealthUI();
+        this._buildStatusBarUI();
+        this._buildInventoryUI();
+
+        window.addEventListener('resize', () => this._onResize());
+    }
+
+    // ===================== INISIALISASI DUNIA BARU =====================
+    startNewWorld(seed) {
+        this._teardownWorld();
+        this.scene = new THREE.Scene();
+        this.world = new World(this.scene, seed, 4);
+        this.environment = new Environment(this.scene);
+        this.particles = new ParticleSystem(this.scene);
+        this.player = new Player(this.world, this.camera);
+
+        // Cari titik spawn yang aman (permukaan tanah, bukan di tengah air/gua)
+        const spawnY = this._findSpawnHeight(0, 0);
+        this.player.position = { x: 0.5, y: spawnY, z: 0.5 };
+
+        this._showHUD(true);
+    }
+
+    _findSpawnHeight(x, z) {
+        // Generate chunk spawn dulu secara langsung supaya kita tahu tinggi permukaannya
+        const { cx, cz } = this.world.worldToChunkCoord(x, z);
+        const chunk = this.world.getOrCreateChunk(cx, cz);
+        if (!chunk.isGenerated) chunk.generate();
+        for (let y = CHUNK_HEIGHT - 1; y > 0; y--) {
+            const type = this.world.getBlock(x, y, z);
+            if (type !== BLOCK.AIR && BLOCK_DATA[type] && BLOCK_DATA[type].solid) {
+                return y + 1;
+            }
+        }
+        return WORLD_SEA_LEVEL + 5; // fallback
+    }
+
+    _teardownWorld() {
+        if (this.world) {
+            for (const [, chunk] of this.world.chunks) chunk.dispose(this.scene);
+        }
+    }
+
+    // ===================== EVENT LISTENERS (KEYBOARD, MOUSE) =====================
+    _setupEventListeners() {
+        document.addEventListener('keydown', (e) => this._onKeyDown(e));
+        document.addEventListener('keyup', (e) => this._onKeyUp(e));
+
+        this.canvas.addEventListener('click', () => {
+            if (!this.pointerLocked && !this.isPaused && !this.isInventoryOpen) {
+                this.canvas.requestPointerLock();
+            }
+        });
+
+        document.addEventListener('pointerlockchange', () => {
+            this.pointerLocked = document.pointerLockElement === this.canvas;
+            this.canvas.classList.toggle('locked', this.pointerLocked);
+            document.getElementById('pointerLockHint').classList.toggle('show', !this.pointerLocked && !this.isPaused && !this.isInventoryOpen && this.world !== null);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!this.pointerLocked) return;
+            const sensitivity = 0.0022;
+            this.player.yaw -= e.movementX * sensitivity;
+            this.player.pitch -= e.movementY * sensitivity;
+            this.player.pitch = Math.max(-Math.PI/2 + 0.01, Math.min(Math.PI/2 - 0.01, this.player.pitch));
+        });
+
+        this.canvas.addEventListener('mousedown', (e) => {
+            if (!this.pointerLocked) return;
+            if (e.button === 0) this._startMining();      // klik kiri = hancurkan blok
+            else if (e.button === 2) this._placeBlock();   // klik kanan = pasang blok
+        });
+        this.canvas.addEventListener('mouseup', (e) => {
+            if (e.button === 0) this._stopMining();
+        });
+        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Scroll untuk ganti slot hotbar
+        this.canvas.addEventListener('wheel', (e) => {
+            if (!this.pointerLocked) return;
+            const dir = e.deltaY > 0 ? 1 : -1;
+            this.selectedSlot = (this.selectedSlot + dir + 9) % 9;
+            this._updateHotbarHighlight();
+        });
+
+        // ---- Menu utama ----
+        document.getElementById('btnNewGame').addEventListener('click', () => {
+            const seedVal = document.getElementById('seedInput').value.trim();
+            const seed = seedVal.length > 0 ? seedVal : Math.random().toString(36).substring(2, 10);
+            this.startNewWorld(seed);
+            document.getElementById('mainMenu').classList.add('hidden');
+        });
+        document.getElementById('btnLoadGame').addEventListener('click', () => {
+            if (this.loadGame()) {
+                document.getElementById('mainMenu').classList.add('hidden');
+            } else {
+                alert('Tidak ada permainan tersimpan ditemukan.');
+            }
+        });
+
+        // ---- Pause menu ----
+        document.getElementById('btnResume').addEventListener('click', () => this._togglePause());
+        document.getElementById('btnSaveGame').addEventListener('click', () => {
+            const ok = this.saveGame();
+            const status = document.getElementById('saveLoadStatus');
+            status.textContent = ok ? 'Permainan berhasil disimpan!' : 'Gagal menyimpan permainan.';
+            setTimeout(() => { status.textContent = ''; }, 2500);
+        });
+        document.getElementById('btnLoadGameInPause').addEventListener('click', () => {
+            const ok = this.loadGame();
+            const status = document.getElementById('saveLoadStatus');
+            status.textContent = ok ? 'Permainan berhasil dimuat!' : 'Tidak ada data tersimpan.';
+            if (ok) { this._togglePause(); }
+            setTimeout(() => { status.textContent = ''; }, 2500);
+        });
+        document.getElementById('btnExitToMenu').addEventListener('click', () => {
+            this.isPaused = false;
+            document.getElementById('pauseMenu').classList.remove('active');
+            this._showHUD(false);
+            document.getElementById('mainMenu').classList.remove('hidden');
+        });
+
+        // Klik di luar panel inventory untuk menutup (klik area gelap di belakang)
+        document.getElementById('inventoryScreen').addEventListener('click', (e) => {
+            if (e.target.id === 'inventoryScreen') this._toggleInventory();
+        });
+
+        // Klik hint pointer lock untuk re-lock
+        document.getElementById('pointerLockHint').addEventListener('click', () => {
+            if (!this.isPaused && !this.isInventoryOpen) this.canvas.requestPointerLock();
+        });
+    }
+
+    _onKeyDown(e) {
+        this.keysDown.add(e.code);
+        switch (e.code) {
+            case 'KeyW': this.input.forward = true; break;
+            case 'KeyS': this.input.backward = true; break;
+            case 'KeyA': this.input.left = true; break;
+            case 'KeyD': this.input.right = true; break;
+            case 'Space': this.input.jump = true; break;
+            case 'ShiftLeft': case 'ShiftRight':
+                this.input.descend = true;
+                this.input.sprint = true;
+                break;
+            case 'KeyF': // toggle flying
+                if (this.player) this.player.isFlying = !this.player.isFlying;
+                break;
+            case 'F3':
+                document.getElementById('debugInfo').classList.toggle('show');
+                break;
+            case 'KeyE':
+                this._toggleInventory();
+                break;
+            case 'Escape':
+                if (this.isInventoryOpen) this._toggleInventory();
+                else this._togglePause();
+                break;
+            case 'Digit1': case 'Digit2': case 'Digit3': case 'Digit4': case 'Digit5':
+            case 'Digit6': case 'Digit7': case 'Digit8': case 'Digit9': {
+                const num = parseInt(e.code.replace('Digit', ''), 10);
+                this.selectedSlot = num - 1;
+                this._updateHotbarHighlight();
+                break;
+            }
+        }
+    }
+
+    _onKeyUp(e) {
+        this.keysDown.delete(e.code);
+        switch (e.code) {
+            case 'KeyW': this.input.forward = false; break;
+            case 'KeyS': this.input.backward = false; break;
+            case 'KeyA': this.input.left = false; break;
+            case 'KeyD': this.input.right = false; break;
+            case 'Space': this.input.jump = false; break;
+            case 'ShiftLeft': case 'ShiftRight':
+                this.input.descend = false;
+                this.input.sprint = false;
+                break;
+        }
+    }
+
+    _onResize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // ===================== INTERAKSI BLOK (RAYCAST BREAK/PLACE) =====================
+    _getLookDirection() {
+        const dir = new THREE.Vector3(0, 0, -1);
+        dir.applyEuler(this.camera.rotation);
+        return dir;
+    }
+
+    _startMining() {
+        const origin = this.camera.position;
+        const dir = this._getLookDirection();
+        const hit = this.world.raycast(origin, dir, 6);
+        if (!hit) { this.mining = null; return; }
+        const blockType = this.world.getBlock(hit.blockPos.x, hit.blockPos.y, hit.blockPos.z);
+        if (blockType === BLOCK.AIR || blockType === BLOCK.BEDROCK) { this.mining = null; return; }
+        this.mining = { blockPos: hit.blockPos, startTime: this.clock.getElapsedTime(), blockType };
+        this.handSwinging = true;
+        this.handSwing = 0;
+    }
+
+    _stopMining() {
+        this.mining = null;
+        document.getElementById('miningProgress').classList.remove('show');
+    }
+
+    _updateMining() {
+        if (!this.mining) return;
+        // Re-raycast tiap frame untuk pastikan player masih menghadap blok yang sama (gaya Minecraft)
+        const origin = this.camera.position;
+        const dir = this._getLookDirection();
+        const hit = this.world.raycast(origin, dir, 6);
+        if (!hit || hit.blockPos.x !== this.mining.blockPos.x || hit.blockPos.y !== this.mining.blockPos.y || hit.blockPos.z !== this.mining.blockPos.z) {
+            this._stopMining();
+            return;
+        }
+
+        const data = BLOCK_DATA[this.mining.blockType];
+        const duration = this.miningDuration * Math.max(0.3, data.hardness);
+        const elapsed = this.clock.getElapsedTime() - this.mining.startTime;
+        const progress = Math.min(1, elapsed / duration);
+
+        const progressBar = document.getElementById('miningProgress');
+        progressBar.classList.add('show');
+        document.getElementById('miningProgressFill').style.width = (progress * 100) + '%';
+
+        if (progress >= 1) {
+            const { x, y, z } = this.mining.blockPos;
+            this.world.setBlock(x, y, z, BLOCK.AIR);
+            this.particles.spawnBreakParticles(x, y, z, this.mining.blockType);
+            this._stopMining();
+        }
+    }
+
+    _placeBlock() {
+        const origin = this.camera.position;
+        const dir = this._getLookDirection();
+        const hit = this.world.raycast(origin, dir, 6);
+        if (!hit) return;
+
+        const placePos = hit.placePos;
+        // Pastikan tidak menempatkan blok di posisi yang overlap dengan player sendiri
+        const playerAABB = this.player.getAABB();
+        if (placePos.x + 1 > playerAABB.minX && placePos.x < playerAABB.maxX &&
+            placePos.y + 1 > playerAABB.minY && placePos.y < playerAABB.maxY &&
+            placePos.z + 1 > playerAABB.minZ && placePos.z < playerAABB.maxZ) {
+            return;
+        }
+
+        const blockType = this.hotbarSlots[this.selectedSlot];
+        if (blockType === undefined) return;
+        this.world.setBlock(placePos.x, placePos.y, placePos.z, blockType);
+        this.handSwinging = true;
+        this.handSwing = 0;
+    }
+
+    // ===================== UI: HOTBAR =====================
+    _buildHotbarUI() {
+        const hotbar = document.getElementById('hotbar');
+        hotbar.innerHTML = '';
+        this.hotbarSlots.forEach((blockType, i) => {
+            const slot = document.createElement('div');
+            slot.className = 'hotbarSlot';
+            slot.dataset.index = i;
+            const numLabel = document.createElement('div');
+            numLabel.className = 'slotNum';
+            numLabel.textContent = (i + 1) % 10;
+            slot.appendChild(numLabel);
+            const icon = this._createBlockIcon(blockType);
+            if (icon) slot.appendChild(icon);
+            slot.addEventListener('click', () => {
+                this.selectedSlot = i;
+                this._updateHotbarHighlight();
+            });
+            hotbar.appendChild(slot);
+        });
+        this._updateHotbarHighlight();
+    }
+
+    _updateHotbarHighlight() {
+        const slots = document.querySelectorAll('.hotbarSlot');
+        slots.forEach((slot, i) => {
+            slot.classList.toggle('selected', i === this.selectedSlot);
+        });
+        const tooltip = document.getElementById('blockTooltip');
+        const type = this.hotbarSlots[this.selectedSlot];
+        const data = BLOCK_DATA[type];
+        if (data) {
+            tooltip.textContent = data.name;
+            tooltip.classList.add('show');
+            clearTimeout(this._tooltipTimeout);
+            this._tooltipTimeout = setTimeout(() => tooltip.classList.remove('show'), 1200);
+        }
+    }
+
+    // Membuat icon kecil 2D (canvas) merepresentasikan warna dasar blok, untuk slot UI
+    _createBlockIcon(blockType) {
+        const data = BLOCK_DATA[blockType];
+        if (!data) return null;
+        const canvas = document.createElement('canvas');
+        canvas.width = 32; canvas.height = 32;
+        const ctx = canvas.getContext('2d');
+        // Sumber warna disamakan dengan colorMap particle agar konsisten secara visual
+        const colorMap = {
+            [BLOCK.GRASS]: '#5a9a3e', [BLOCK.DIRT]: '#86603f', [BLOCK.STONE]: '#808082',
+            [BLOCK.SAND]: '#ded196', [BLOCK.WOOD]: '#9c7548', [BLOCK.LEAVES]: '#3a6e28',
+            [BLOCK.GLASS]: '#b4dce6', [BLOCK.SNOW]: '#f0f5fa', [BLOCK.SNOW_GRASS]: '#eaf0f5',
+            [BLOCK.PLANK]: '#ba8c5a', [BLOCK.BEDROCK]: '#282828', [BLOCK.CACTUS]: '#3c8246',
+            [BLOCK.ICE]: '#aad2e6', [BLOCK.WATER]: '#3778d2'
+        };
+        ctx.fillStyle = colorMap[blockType] || '#999999';
+        ctx.fillRect(2, 2, 28, 28);
+        ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+        ctx.strokeRect(2, 2, 28, 28);
+        return canvas;
+    }
+
+    // ===================== UI: HEALTH (HEARTS) =====================
+    _buildHealthUI() {
+        const container = document.getElementById('healthBar');
+        container.innerHTML = '';
+        for (let i = 0; i < 10; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.dataset.index = i;
+            heart.innerHTML = this._heartSVG(true);
+            container.appendChild(heart);
+        }
+    }
+
+    _heartSVG(full) {
+        const color = full ? '#e0302d' : '#3a3a3a';
+        return `<svg viewBox="0 0 16 16"><path fill="${color}" stroke="#000" stroke-width="0.8" d="M8 14 1 7.5C-1 5 1 1.5 4 1.5c1.8 0 3 1 4 2.5 1-1.5 2.2-2.5 4-2.5 3 0 5 3.5 3 6L8 14z"/></svg>`;
+    }
+
+    // Armor bar sederhana di atas hotbar (gaya Minecraft: ikon perisai/armor).
+    // Karena permainan ini tidak punya sistem armor crafting penuh, nilai armor
+    // ditampilkan statis sebagai representasi visual sesuai permintaan UI.
+    _buildStatusBarUI() {
+        const container = document.getElementById('statusBar');
+        container.innerHTML = '';
+        const armorLevel = 10; // representasi visual statis (10 ikon penuh)
+        for (let i = 0; i < 10; i++) {
+            const icon = document.createElement('div');
+            icon.className = 'armorIcon';
+            const full = i < armorLevel;
+            const color = full ? '#b8b8b8' : '#3a3a3a';
+            icon.innerHTML = `<svg viewBox="0 0 16 16"><path fill="${color}" stroke="#000" stroke-width="0.8" d="M8 1 13 3v5c0 4-2.5 6.5-5 7-2.5-0.5-5-3-5-7V3z"/></svg>`;
+            container.appendChild(icon);
+        }
+    }
+
+    _updateHealthUI() {
+        const hearts = document.querySelectorAll('.heart');
+        const healthPerHeart = 2;
+        hearts.forEach((heart, i) => {
+            const heartValue = (i + 1) * healthPerHeart;
+            heart.innerHTML = this._heartSVG(this.player.health >= heartValue);
+        });
+
+        // Vignette merah saat HP rendah
+        const vignette = document.getElementById('damageVignette');
+        vignette.classList.toggle('show', this.player.health <= 6);
+    }
+
+    // ===================== UI: INVENTORY =====================
+    _buildInventoryUI() {
+        const grid = document.getElementById('inventoryGrid');
+        grid.innerHTML = '';
+        this.inventoryBlocks.forEach((blockType) => {
+            const data = BLOCK_DATA[blockType];
+            if (!data) return;
+            const slot = document.createElement('div');
+            slot.className = 'invSlot';
+            slot.title = data.name;
+            const icon = this._createBlockIcon(blockType);
+            if (icon) slot.appendChild(icon);
+            slot.addEventListener('click', () => {
+                // Klik item di inventory -> taruh ke slot hotbar yang sedang aktif
+                this.hotbarSlots[this.selectedSlot] = blockType;
+                this._buildHotbarUI();
+            });
+            grid.appendChild(slot);
+        });
+    }
+
+    _toggleInventory() {
+        this.isInventoryOpen = !this.isInventoryOpen;
+        document.getElementById('inventoryScreen').classList.toggle('active', this.isInventoryOpen);
+        if (this.isInventoryOpen) {
+            document.exitPointerLock();
+        }
+    }
+
+    _togglePause() {
+        if (!this.world) return;
+        this.isPaused = !this.isPaused;
+        document.getElementById('pauseMenu').classList.toggle('active', this.isPaused);
+        if (this.isPaused) {
+            document.exitPointerLock();
+        }
+    }
+
+    _showHUD(show) {
+        document.getElementById('hud').classList.toggle('active', show);
+    }
+
+    // ===================== SAVE / LOAD (localStorage) =====================
+    saveGame() {
+        if (!this.world || !this.player) return false;
+        try {
+            const saveData = {
+                seed: this.world.seed,
+                playerPos: this.player.position,
+                playerYaw: this.player.yaw,
+                playerPitch: this.player.pitch,
+                playerHealth: this.player.health,
+                hotbarSlots: this.hotbarSlots,
+                chunks: this.world.serializeWorld(),
+                timeOfDay: this.environment.time,
+                savedAt: Date.now()
+            };
+            localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+            return true;
+        } catch (err) {
+            console.error('Gagal menyimpan game:', err);
+            return false;
+        }
+    }
+
+    loadGame() {
+        try {
+            const raw = localStorage.getItem(SAVE_KEY);
+            if (!raw) return false;
+            const saveData = JSON.parse(raw);
+
+            this._teardownWorld();
+            this.scene = new THREE.Scene();
+            this.world = new World(this.scene, saveData.seed, 4);
+            this.environment = new Environment(this.scene);
+            this.particles = new ParticleSystem(this.scene);
+            this.player = new Player(this.world, this.camera);
+
+            this.world.loadWorldData(saveData.chunks);
+            this.player.position = saveData.playerPos;
+            this.player.yaw = saveData.playerYaw || 0;
+            this.player.pitch = saveData.playerPitch || 0;
+            this.player.health = saveData.playerHealth !== undefined ? saveData.playerHealth : 20;
+            this.hotbarSlots = saveData.hotbarSlots || HOTBAR_BLOCKS.slice(0, 9);
+            this.environment.time = saveData.timeOfDay || 0;
+
+            this._buildHotbarUI();
+            this._showHUD(true);
+            return true;
+        } catch (err) {
+            console.error('Gagal memuat game:', err);
+            return false;
+        }
+    }
+
+    static hasSaveGame() {
+        return localStorage.getItem(SAVE_KEY) !== null;
+    }
+
+    // ===================== HAND / TOOL VIEWMODEL ANIMATION =====================
+    _updateHandSwing(dt) {
+        if (this.handSwinging) {
+            this.handSwing += dt * 6; // kecepatan animasi ayunan
+            if (this.handSwing >= 1) {
+                this.handSwing = 0;
+                this.handSwinging = false;
+            }
+        }
+        const handEl = document.getElementById('handContainer');
+        if (handEl) {
+            // Animasi ayunan sederhana: rotasi & translasi berbasis sin curve
+            const swingAngle = Math.sin(this.handSwing * Math.PI) * 35;
+            const swingOffset = Math.sin(this.handSwing * Math.PI) * 20;
+            handEl.style.transform = `rotate(${-swingAngle}deg) translate(${swingOffset * 0.3}px, ${-swingOffset}px)`;
+        }
+    }
+
+    // ===================== DEBUG INFO =====================
+    _updateDebugInfo() {
+        const el = document.getElementById('debugInfo');
+        if (!el || !this.player) return;
+        const p = this.player.position;
+        el.innerHTML = `
+            XYZ: ${p.x.toFixed(1)}, ${p.y.toFixed(1)}, ${p.z.toFixed(1)}<br>
+            Chunks loaded: ${this.world.chunks.size}<br>
+            Flying: ${this.player.isFlying} | In Water: ${this.player.isInWater}<br>
+            FPS: ${this.currentFPS || 0}
+        `;
+    }
+
+    // ===================== GAME LOOP UTAMA =====================
+    start() {
+        this.clock.start();
+        this._lastFrameTime = performance.now();
+        this._fpsAccumTime = 0;
+        this._fpsAccumFrames = 0;
+        this.currentFPS = 60;
+        this._loop();
+    }
+
+    _loop() {
+        requestAnimationFrame(() => this._loop());
+        const dt = this.clock.getDelta();
+
+        // Hitung FPS sederhana untuk debug info
+        this._fpsAccumTime += dt;
+        this._fpsAccumFrames++;
+        if (this._fpsAccumTime >= 0.5) {
+            this.currentFPS = Math.round(this._fpsAccumFrames / this._fpsAccumTime);
+            this._fpsAccumTime = 0;
+            this._fpsAccumFrames = 0;
+        }
+
+        if (!this.world || !this.player) {
+            this.renderer.render(this.scene, this.camera);
+            return;
+        }
+
+        if (!this.isPaused && !this.isInventoryOpen) {
+            this.player.update(dt, this.input);
+            this.world.update(this.player.position.x, this.player.position.z);
+            this.environment.update(dt, this.player.position);
+            this.particles.update(dt);
+            this._updateMining();
+        }
+
+        this._updateHandSwing(dt);
+        this._updateHealthUI();
+        this._updateDebugInfo();
+
+        // Overlay underwater
+        document.getElementById('waterOverlay').classList.toggle('show', this.player.isInWater);
+
+        this.renderer.render(this.scene, this.camera);
+    }
+}
+
+
+// ===================== BOOTSTRAP / ENTRY POINT =====================
+// Menjalankan inisialisasi awal: loading screen, lalu menampilkan main menu.
+// Game instance dibuat sekali, dunia baru/load dibuat saat user menekan tombol di main menu.
+
+let game = null;
+
+function simulateLoadingProgress(onDone) {
+    const bar = document.getElementById('loadingBarInner');
+    const text = document.getElementById('loadingText');
+    const steps = [
+        { pct: 25, msg: 'Memuat Three.js engine...' },
+        { pct: 50, msg: 'Membangun texture atlas...' },
+        { pct: 75, msg: 'Menyiapkan dunia...' },
+        { pct: 100, msg: 'Selesai!' }
+    ];
+    let i = 0;
+    function next() {
+        if (i >= steps.length) { onDone(); return; }
+        const step = steps[i++];
+        bar.style.width = step.pct + '%';
+        text.textContent = step.msg;
+        setTimeout(next, 220);
+    }
+    next();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Buat instance Game di awal (constructor-nya hanya inisialisasi renderer/listener, belum bikin dunia)
+    try {
+        game = new Game();
+    } catch (err) {
+        console.error('Gagal inisialisasi game:', err);
+        document.getElementById('loadingText').textContent = 'Error: Browser Anda mungkin tidak mendukung WebGL.';
+        return;
+    }
+
+    simulateLoadingProgress(() => {
+        document.getElementById('loadingScreen').classList.add('hidden');
+
+        // Tampilkan tombol "Lanjutkan Permainan Tersimpan" hanya jika ada save data
+        const loadBtn = document.getElementById('btnLoadGame');
+        if (!Game.hasSaveGame()) {
+            loadBtn.style.opacity = '0.5';
+            loadBtn.style.cursor = 'not-allowed';
+            loadBtn.title = 'Belum ada permainan tersimpan';
+        }
+
+        game.start(); // mulai game loop (render terus berjalan meski masih di main menu, menampilkan scene kosong)
+    });
+});
+
+// Mencegah klik kanan menampilkan context menu browser di seluruh halaman (agar interaksi "klik kanan = pasang blok" mulus)
+window.addEventListener('contextmenu', (e) => {
+    if (game && game.world) e.preventDefault();
+});
+
+</script>
+</body>
+</html>
