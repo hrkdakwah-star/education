@@ -1421,6 +1421,79 @@ function updatePlayheadPosition(){
 
 renderTimeline();
 
+// ---------- TIMELINE: DRAG PLAYHEAD & DRAG-SCROLL ----------
+const timelineScroll = document.getElementById('timeline-scroll');
+const timelineInner = document.getElementById('timeline-inner');
+const rulerEl = document.getElementById('ruler');
+
+let isDraggingPlayhead = false;
+let isDraggingScroll = false;
+let scrollDragStartX = 0;
+let scrollDragStartLeft = 0;
+
+function seekFromClientX(clientX){
+  const rect = timelineInner.getBoundingClientRect();
+  const x = clientX - rect.left;
+  const sec = Math.max(0, x / state.pxPerSec);
+  seekTo(Math.min(state.duration || sec, sec));
+}
+
+// klik/drag di ruler → langsung mindahin playhead (kayak nge-scrub)
+rulerEl.addEventListener('mousedown', (e)=>{
+  isDraggingPlayhead = true;
+  seekFromClientX(e.clientX);
+  e.preventDefault();
+});
+
+// klik/drag di track (bukan di atas clip) juga bisa mindahin playhead
+// pakai event delegation di timeline-inner (elemen stabil), supaya tetap jalan walau track-clips di-render ulang
+timelineInner.addEventListener('mousedown', (e)=>{
+  if(e.target.closest('.clip')) return; // biar klik clip tetap milih clip, bukan drag playhead
+  if(!e.target.closest('.track-clips') && !e.target.closest('#ruler')) return;
+  if(e.target.closest('#ruler')) return; // sudah ditangani listener ruler di atas
+  isDraggingPlayhead = true;
+  seekFromClientX(e.clientX);
+  e.preventDefault();
+});
+
+// drag-scroll: klik-tahan di area kosong timeline (pegang "tangan") buat geser kiri-kanan
+timelineScroll.addEventListener('mousedown', (e)=>{
+  // kalau lagi drag playhead (kena ruler/track), jangan drag-scroll bareng
+  if(isDraggingPlayhead) return;
+  isDraggingScroll = true;
+  scrollDragStartX = e.clientX;
+  scrollDragStartLeft = timelineScroll.scrollLeft;
+  timelineScroll.style.cursor = 'grabbing';
+});
+
+document.addEventListener('mousemove', (e)=>{
+  if(isDraggingPlayhead){
+    seekFromClientX(e.clientX);
+  } else if(isDraggingScroll){
+    const dx = e.clientX - scrollDragStartX;
+    timelineScroll.scrollLeft = scrollDragStartLeft - dx;
+  }
+});
+
+document.addEventListener('mouseup', ()=>{
+  isDraggingPlayhead = false;
+  if(isDraggingScroll){
+    isDraggingScroll = false;
+    timelineScroll.style.cursor = 'grab';
+  }
+});
+
+timelineScroll.style.cursor = 'grab';
+
+// support scroll horizontal pakai mouse wheel juga (shift+scroll atau trackpad)
+timelineScroll.addEventListener('wheel', (e)=>{
+  if(Math.abs(e.deltaX) > 0){ return; } // biarkan native horizontal scroll trackpad jalan
+  if(e.shiftKey){
+    e.preventDefault();
+    timelineScroll.scrollLeft += e.deltaY;
+  }
+}, { passive:false });
+
 // ---------- TEXT TOOL ----------
 document.getElementById('btn-add-text').addEventListener('click', ()=>{
   const text = document.getElementById('text-input').value.trim();
