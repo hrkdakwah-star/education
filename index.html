@@ -150,36 +150,36 @@
       radial-gradient(circle at 12% -20%, rgba(200,151,63,.14), transparent 42%),
       linear-gradient(160deg, var(--pine-900), var(--pine-950));
     color:#f3ede0;
-    padding:18px 18px 14px;
+    padding:11px 16px 9px;
     box-shadow:0 4px 22px rgba(12,31,22,.30);
     border-bottom:1px solid rgba(243,237,224,.06);
     overflow-x:hidden;
   }
-  .brandrow{display:flex; align-items:flex-start; justify-content:space-between; gap:8px; flex-wrap:wrap;}
-  .brandLeft{display:flex; align-items:center; gap:11px; min-width:0;}
+  .brandrow{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;}
+  .brandLeft{display:flex; align-items:center; gap:9px; min-width:0;}
   .leafBadge{
-    width:38px; height:38px; border-radius:11px; flex:0 0 auto;
+    width:30px; height:30px; border-radius:9px; flex:0 0 auto;
     background:linear-gradient(160deg, var(--pine-700), var(--pine-800));
     border:1px solid rgba(243,237,224,.14);
     display:flex; align-items:center; justify-content:center;
   }
-  .leafBadge svg{width:20px;height:20px;}
-  .brandLeft h1{font-family:"Fraunces",serif; font-size:17px; margin:0; font-weight:600; letter-spacing:.2px; line-height:1.25;}
-  .brandLeft .sub{font-size:11px; color:rgba(243,237,224,.55); margin-top:2px; letter-spacing:.3px;}
+  .leafBadge svg{width:16px;height:16px;}
+  .brandLeft h1{font-family:"Fraunces",serif; font-size:14.5px; margin:0; font-weight:600; letter-spacing:.2px; line-height:1.25;}
+  .brandLeft .sub{font-size:10px; color:rgba(243,237,224,.55); margin-top:1px; letter-spacing:.3px;}
 
-  .headRight{display:flex; flex-direction:column; align-items:flex-end; gap:7px; flex:0 0 auto;}
-  .headBtns{display:flex; align-items:center; gap:7px; overflow-x:auto; max-width:100%; scrollbar-width:none; padding-bottom:1px;}
+  .headRight{display:flex; flex-direction:column; align-items:flex-end; gap:5px; flex:0 0 auto; margin-left:auto;}
+  .headBtns{display:flex; align-items:center; gap:6px; overflow-x:auto; max-width:100%; scrollbar-width:none; padding-bottom:1px;}
   .headBtns::-webkit-scrollbar{display:none;}
   .iconBtn{
     background:rgba(243,237,224,.07); border:1px solid rgba(243,237,224,.14); color:#f3ede0;
-    border-radius:10px; width:34px; height:34px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; cursor:pointer;
+    border-radius:9px; width:29px; height:29px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; cursor:pointer;
     transition:background .15s; position:relative;
   }
   .iconBtn:active{background:rgba(243,237,224,.16);}
-  .iconBtn svg{width:17px;height:17px;}
+  .iconBtn svg{width:15px;height:15px;}
   .iconBtn .notifDot{
-    position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:999px;
-    background:var(--merah); color:#fff; font-size:9.5px; font-weight:800; line-height:16px; text-align:center;
+    position:absolute; top:-4px; right:-4px; min-width:15px; height:15px; padding:0 3px; border-radius:999px;
+    background:var(--merah); color:#fff; font-size:9px; font-weight:800; line-height:15px; text-align:center;
     border:1.5px solid var(--pine-950); display:none;
   }
   .iconBtn .notifDot.show{display:block;}
@@ -189,7 +189,7 @@
   .notifPanelOverlay.show{display:block;}
   .notifPanelBackdrop{position:absolute; inset:0; background:rgba(12,20,15,.5);}
   .notifPanel{
-    position:absolute; top:64px; right:14px; width:min(340px, calc(100vw - 28px)); max-height:min(480px, calc(100vh - 100px));
+    position:absolute; top:52px; right:14px; width:min(340px, calc(100vw - 28px)); max-height:min(480px, calc(100vh - 100px));
     background:var(--card); border-radius:16px; border:1px solid var(--line-soft); box-shadow:var(--shadow-float);
     display:flex; flex-direction:column; overflow:hidden;
   }
@@ -216,10 +216,11 @@
   .menuDropdownOverlay{position:fixed; inset:0; z-index:65; display:none;}
   .menuDropdownOverlay.show{display:block;}
   .menuDropdown{
-    position:absolute; top:78px; right:18px; z-index:66; width:220px;
+    position:absolute; top:64px; right:18px; z-index:66; width:220px;
     background:var(--card); border:1px solid var(--line-soft); border-radius:16px;
     box-shadow:var(--shadow-float); padding:8px; display:flex; flex-direction:column; gap:2px;
     animation:menuDropIn .16s cubic-bezier(.2,.8,.3,1);
+    max-height:calc(100vh - 84px); overflow-y:auto; overscroll-behavior:contain;
   }
   @keyframes menuDropIn{from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:translateY(0);}}
   .menuDropItem{
@@ -231,12 +232,40 @@
   .menuDropItem svg{width:17px; height:17px; flex:0 0 auto; color:var(--pine-700);}
   .menuDropItem-danger{color:var(--merah);}
   .menuDropItem-danger svg{color:var(--merah);}
+
+  /* ============ DROPDOWN AKSI PER AKUN (Kelola Akun) ============ */
+  .akAksiOverlay{position:fixed; inset:0; z-index:67; display:none;}
+  .akAksiOverlay.show{display:block;}
+  .akAksiSheet{
+    position:absolute; background:var(--card); border-radius:14px; padding:6px;
+    box-shadow:var(--shadow-float); border:1px solid var(--line-soft); min-width:196px;
+    display:flex; flex-direction:column; gap:2px;
+  }
+  .akAksiItem{
+    display:flex; align-items:center; gap:10px; width:100%; padding:11px 12px; border-radius:10px;
+    border:none; background:none; font-size:13.5px; font-weight:600; color:var(--ink); cursor:pointer; text-align:left;
+    font-family:inherit;
+  }
+  .akAksiItem:active{background:var(--pine-50);}
+  .akAksiItem svg{width:16px; height:16px; flex:0 0 auto; color:var(--pine-700);}
+  .akAksiItem-awasi svg{color:var(--gold-dark);}
+  .akAksiItem-berhenti svg{color:var(--muted);}
+
+  /* ============ STRIP "SEDANG DIAWASI" DI TOPBAR ============ */
+  .awasiStrip{
+    display:none; align-items:center; justify-content:center; gap:6px;
+    background:linear-gradient(160deg, var(--gold-dark), #8a5f20); color:#fff8e8;
+    font-size:11px; font-weight:700; letter-spacing:.25px;
+    padding:6px 10px; border-radius:10px; margin-top:8px;
+  }
+  .awasiStrip.show{display:flex;}
+  .awasiStrip svg{width:13px; height:13px; flex:0 0 auto;}
   .menuDropDivider{height:1px; background:var(--line-soft); margin:5px 4px;}
 
   .clockBox{text-align:right;}
-  .clock{font-size:13px; font-weight:600; font-variant-numeric:tabular-nums; letter-spacing:.3px;}
-  .dateSmall{font-size:9.5px; color:rgba(243,237,224,.5); text-transform:uppercase; letter-spacing:.5px; margin-top:1px;}
-  .userChip{font-size:9.5px; color:rgba(243,237,224,.6); margin-top:1px; letter-spacing:.2px;}
+  .clock{font-size:11.5px; font-weight:600; font-variant-numeric:tabular-nums; letter-spacing:.3px;}
+  .dateSmall{font-size:8.5px; color:rgba(243,237,224,.5); text-transform:uppercase; letter-spacing:.5px; margin-top:1px;}
+  .userChip{font-size:8.5px; color:rgba(243,237,224,.6); margin-top:1px; letter-spacing:.2px;}
 
   .searchWrap{padding:15px 0 0; position:relative;}
   .searchWrap svg.sIcon{position:absolute; left:13px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:rgba(243,237,224,.45); pointer-events:none;}
@@ -339,7 +368,7 @@
 
   .varOption{
     display:flex; align-items:center; justify-content:space-between; padding:14px 15px; border:1px solid var(--line-soft);
-    background:var(--card); border-radius:13px; margin-bottom:9px; cursor:pointer; transition:.13s; box-shadow:var(--shadow-card);
+    background:var(--card); border-radius:13px; margin-bottom:9px; cursor:pointer; transition:transform var(--ios-fast, .16s) var(--ios-spring, cubic-bezier(.34,1.32,.64,1)); box-shadow:var(--shadow-card);
   }
   .varOption:active{transform:scale(.98);}
   .varOption.habis{opacity:.5; cursor:not-allowed;}
@@ -430,14 +459,178 @@
 
   /* ============ TOAST ============ */
   .toast{
-    position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-74px);
+    position:fixed; top:16px; left:50%; transform:translateX(-50%) scale(.96); opacity:0; pointer-events:none;
     background:var(--pine-950); color:#f3ede0; padding:13px 22px; border-radius:13px; font-size:13.5px; font-weight:550;
-    z-index:80; transition:transform .3s cubic-bezier(.2,.8,.3,1); box-shadow:0 10px 28px rgba(12,31,22,.35);
+    z-index:80; transition:transform .28s cubic-bezier(.2,.8,.3,1), opacity .28s ease; box-shadow:0 10px 28px rgba(12,31,22,.35);
     max-width:88%; text-align:center; display:flex; align-items:center; gap:9px; border:1px solid rgba(243,237,224,.1); cursor:pointer;
   }
-  .toast.show{transform:translateX(-50%) translateY(0);}
+  .toast.show{transform:translateX(-50%) scale(1); opacity:1; pointer-events:auto;}
   .toast svg{width:16px;height:16px;flex:0 0 auto; color:var(--gold);}
   .toast.err svg{color:#e2897a;}
+
+  /* ============ ANIMASI SUKSES / GAGAL (SVG+CSS, BUATAN SENDIRI, TANPA VIDEO) ============ */
+  .animSuksesOverlay{
+    position:fixed; inset:0; z-index:250; display:none; align-items:center; justify-content:center;
+    background:rgba(12,20,15,.5); backdrop-filter:blur(4px); opacity:0; transition:opacity .25s ease;
+    padding:22px;
+  }
+  .animSuksesOverlay.show{display:flex; opacity:1;}
+  .animSuksesBox{
+    position:relative; width:min(272px, 78vw); border-radius:26px; overflow:hidden;
+    background:var(--card); box-shadow:0 20px 60px rgba(12,20,15,.35), 0 2px 8px rgba(12,20,15,.1);
+    border:1px solid var(--line-soft);
+    padding:40px 24px 28px; display:flex; flex-direction:column; align-items:center; text-align:center;
+    transform:scale(.75) translateY(14px); transition:transform .5s cubic-bezier(.16,1,.3,1);
+  }
+  .animSuksesOverlay.show .animSuksesBox{transform:scale(1) translateY(0);}
+  .animSuksesCloseBtn{
+    position:absolute; top:12px; right:12px; width:26px; height:26px; border-radius:50%; border:none;
+    background:rgba(34,31,25,.07); color:var(--muted); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; padding:0; z-index:3; transition:background .15s;
+  }
+  .animSuksesCloseBtn:hover{background:rgba(34,31,25,.14);}
+  .animSuksesCloseBtn svg{width:13px;height:13px;}
+
+  /* --- panggung ikon --- */
+  .animStage{position:relative; width:96px; height:96px; margin-bottom:18px; flex:0 0 auto;}
+
+  /* glow lembut di belakang badge */
+  .animGlow{
+    position:absolute; inset:-14px; border-radius:50%;
+    background:radial-gradient(circle, rgba(58,107,71,.35) 0%, rgba(58,107,71,0) 70%);
+    opacity:0; transform:scale(.4);
+  }
+  .animSuksesOverlay.show .animGlow{animation:animGlowIn .9s cubic-bezier(.16,1,.3,1) forwards;}
+  .animSuksesOverlay.show.gagal .animGlow{background:radial-gradient(circle, rgba(168,69,47,.32) 0%, rgba(168,69,47,0) 70%);}
+  @keyframes animGlowIn{
+    0%{opacity:0; transform:scale(.4);}
+    40%{opacity:1;}
+    100%{opacity:.8; transform:scale(1.15);}
+  }
+
+  /* dua ring gelombang, susul menyusul */
+  .animRing{
+    position:absolute; inset:0; border-radius:50%; border:2px solid var(--pine-600);
+    opacity:0; transform:scale(.55);
+  }
+  .animRing.r2{border-width:1.5px;}
+  .animSuksesOverlay.show .animRing.r1{animation:animRingPop .85s cubic-bezier(.16,1,.3,1) .06s forwards;}
+  .animSuksesOverlay.show .animRing.r2{animation:animRingPop .95s cubic-bezier(.16,1,.3,1) .22s forwards;}
+  .animSuksesOverlay.show.gagal .animRing{border-color:var(--merah);}
+  @keyframes animRingPop{
+    0%{opacity:.6; transform:scale(.55);}
+    65%{opacity:.16;}
+    100%{opacity:0; transform:scale(1.7);}
+  }
+
+  /* badge lingkaran dengan micro squash & bounce dua tahap */
+  .animBadge{
+    position:absolute; inset:6px; border-radius:50%;
+    background:linear-gradient(155deg, var(--pine-500), var(--pine-800));
+    box-shadow:0 10px 24px rgba(27,56,38,.4), inset 0 1px 1px rgba(255,255,255,.18);
+    display:flex; align-items:center; justify-content:center;
+    transform:scale(0);
+  }
+  .animSuksesOverlay.show .animBadge{animation:animBadgePop .62s cubic-bezier(.34,1.56,.64,1) .1s forwards;}
+  .animSuksesOverlay.show.gagal .animBadge{
+    background:linear-gradient(155deg, #c25b3f, var(--merah));
+    box-shadow:0 10px 24px rgba(124,53,33,.4), inset 0 1px 1px rgba(255,255,255,.18);
+    animation-name:animBadgePopGagal;
+  }
+  @keyframes animBadgePop{
+    0%{transform:scale(0) rotate(-10deg);}
+    50%{transform:scale(1.12) rotate(3deg);}
+    72%{transform:scale(.94) rotate(-1deg);}
+    100%{transform:scale(1) rotate(0);}
+  }
+  /* shake halus khusus utk gagal, nempel di badge yg sama */
+  @keyframes animBadgePopGagal{
+    0%{transform:scale(0) rotate(-10deg);}
+    45%{transform:scale(1.1) rotate(3deg);}
+    60%{transform:scale(.96) rotate(-6deg);}
+    72%{transform:scale(1.03) rotate(5deg);}
+    84%{transform:scale(.99) rotate(-2deg);}
+    100%{transform:scale(1) rotate(0);}
+  }
+
+  .animBadge svg{width:46px; height:46px; overflow:visible;}
+  .animBadge path{
+    fill:none; stroke:#f8f4e8; stroke-width:3.6; stroke-linecap:round; stroke-linejoin:round;
+  }
+  /* centang: satu path, digambar progresif */
+  .animBadge path.pCheck{stroke-dasharray:26; stroke-dashoffset:26;}
+  .animSuksesOverlay.show .pCheck{animation:animDraw .38s cubic-bezier(.2,.7,.2,1) .42s forwards;}
+  /* silang: dua garis independen, digambar berurutan biar berasa "ditulis" beneran */
+  .animBadge path.pX1, .animBadge path.pX2{stroke-dasharray:17; stroke-dashoffset:17;}
+  .animSuksesOverlay.show .pX1{animation:animDraw .22s ease-out .42s forwards;}
+  .animSuksesOverlay.show .pX2{animation:animDraw .22s ease-out .60s forwards;}
+  @keyframes animDraw{to{stroke-dashoffset:0;}}
+
+  /* highlight kecil "kilau" yang lewat di atas badge setelah selesai muncul (khusus sukses) */
+  .animShine{
+    position:absolute; inset:6px; border-radius:50%; overflow:hidden; pointer-events:none;
+  }
+  .animShine::after{
+    content:''; position:absolute; top:-40%; left:-60%; width:40%; height:180%;
+    background:linear-gradient(75deg, transparent, rgba(255,255,255,.55), transparent);
+    transform:rotate(20deg) translateX(-40px); opacity:0;
+  }
+  .animSuksesOverlay.show:not(.gagal) .animShine::after{animation:animShineSweep .7s ease .68s forwards;}
+  @keyframes animShineSweep{
+    0%{transform:rotate(20deg) translateX(-60px); opacity:0;}
+    15%{opacity:.9;}
+    100%{transform:rotate(20deg) translateX(160px); opacity:0;}
+  }
+
+  /* partikel: lebih banyak, ukuran variatif, sedikit rotasi & fade lebih hidup */
+  .animBurst{position:absolute; inset:0; pointer-events:none;}
+  .animBurst i{
+    position:absolute; top:50%; left:50%; width:5px; height:5px; border-radius:50%;
+    background:var(--gold); opacity:0; transform:translate(-50%,-50%);
+  }
+  .animSuksesOverlay.show.gagal .animBurst i{background:var(--merah);}
+  .animSuksesOverlay.show .animBurst i{animation:animParticle .75s cubic-bezier(.16,.8,.3,1) .28s forwards;}
+  .animBurst i:nth-child(1){--tx:40px; --ty:-10px; --rz:70deg; background:var(--gold-dark); width:6px; height:6px;}
+  .animBurst i:nth-child(2){--tx:-36px; --ty:-22px; --rz:-40deg;}
+  .animBurst i:nth-child(3){--tx:30px; --ty:32px; --rz:120deg; background:var(--pine-500);}
+  .animBurst i:nth-child(4){--tx:-38px; --ty:14px; --rz:-90deg; background:var(--gold-dark); width:4px; height:4px;}
+  .animBurst i:nth-child(5){--tx:8px; --ty:-42px; --rz:30deg;}
+  .animBurst i:nth-child(6){--tx:-10px; --ty:40px; --rz:-60deg; background:var(--pine-500); width:6px; height:6px;}
+  .animBurst i:nth-child(7){--tx:24px; --ty:-34px; --rz:100deg; width:4px; height:4px;}
+  .animBurst i:nth-child(8){--tx:-28px; --ty:-6px; --rz:-20deg; background:var(--pine-500);}
+  .animSuksesOverlay.show.gagal .animBurst i:nth-child(2),
+  .animSuksesOverlay.show.gagal .animBurst i:nth-child(5),
+  .animSuksesOverlay.show.gagal .animBurst i:nth-child(7){background:#d9836a;}
+  .animSuksesOverlay.show.gagal .animBurst i:nth-child(3),
+  .animSuksesOverlay.show.gagal .animBurst i:nth-child(6),
+  .animSuksesOverlay.show.gagal .animBurst i:nth-child(8){background:#7c3521;}
+  @keyframes animParticle{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(.3) rotate(0);}
+    30%{opacity:1;}
+    100%{opacity:0; transform:translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1) rotate(var(--rz));}
+  }
+
+  .animTitle{
+    font-family:"Fraunces",serif; font-size:18px; font-weight:600; color:var(--ink); margin:0 0 5px;
+    opacity:0; transform:translateY(8px); animation:animTextIn .4s cubic-bezier(.16,1,.3,1) .5s forwards;
+  }
+  .animMsg{
+    font-size:12.5px; color:var(--muted); margin:0; line-height:1.55; max-width:210px;
+    opacity:0; transform:translateY(8px); animation:animTextIn .4s cubic-bezier(.16,1,.3,1) .58s forwards;
+  }
+  @keyframes animTextIn{to{opacity:1; transform:translateY(0);}}
+
+  /* progress bar tipis di bawah, ngasih rasa "auto akan tertutup" ala toast brand besar */
+  .animProgress{
+    width:100%; height:3px; background:rgba(34,31,25,.08); border-radius:2px; overflow:hidden; margin-top:18px;
+  }
+  .animProgress i{
+    display:block; height:100%; width:100%; background:var(--pine-600); border-radius:2px;
+    transform:translateX(-100%); transform-origin:left;
+  }
+  .animSuksesOverlay.show.gagal .animProgress i{background:var(--merah);}
+  .animSuksesOverlay.show .animProgress i{animation:animProgressFill linear forwards;}
+  @keyframes animProgressFill{from{transform:translateX(-100%);} to{transform:translateX(0);}}
 
   /* ============ MOTIVASI NOTIFIKASI ============ */
   .motivToastWrap{position:fixed; top:12px; left:0; right:0; z-index:70; display:flex; justify-content:center; pointer-events:none; padding:0 14px;}
@@ -902,6 +1095,16 @@
                background var(--ios-fast) var(--ios-ease),
                opacity var(--ios-fast) var(--ios-ease);
   }
+  /* Efek tekan default utk SEMUA tombol yang belum punya :active sendiri --
+     scale-down halus ala iOS. Aturan :active lebih spesifik yang sudah ada
+     di atas (mis. .iconBtn:active, .item:active, dst) tetap menang krn lebih
+     spesifik, jadi ini aman dipasang sebagai fallback global. */
+  button:active{
+    transform:scale(.95);
+  }
+  button:disabled:active{
+    transform:none;
+  }
 
   /* Sheet/modal (bottom sheet) -- ganti easing jadi spring iOS + sedikit lebih lambat
      supaya berasa "meluncur", bukan "muncul tiba-tiba". Override durasi lama (.22s ease
@@ -1124,7 +1327,7 @@
       </div>
       <div class="headBtns" style="position:relative;">
         <button class="iconBtn" id="notifBtn" aria-label="Permintaan Izin Stok Cup" title="Permintaan Izin Stok Cup" style="display:none;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l-1.5 15a2 2 0 01-2 1.8H9.5a2 2 0 01-2-1.8L6 3z"/><path d="M6 8h12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l-1.5 15a2 2 0 01-2 1.8H9.5a2 2 0 01-2-1.8L6 3z"/><path d="M6 8h12"/><path d="M14 1v4" stroke-width="1.8"/></svg>
           <span class="notifDot" id="notifDot">0</span>
         </button>
         <button class="iconBtn" id="notifRejectOwnerBtn" aria-label="Permintaan Reject Transaksi" title="Permintaan Reject Transaksi" style="display:none;">
@@ -1132,15 +1335,15 @@
           <span class="notifDot" id="notifRejectOwnerDot">0</span>
         </button>
         <button class="iconBtn" id="notifKaryawanBtn" aria-label="Status Izin Stok Cup" title="Status Izin Stok Cup" style="display:none;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l-1.5 15a2 2 0 01-2 1.8H9.5a2 2 0 01-2-1.8L6 3z"/><path d="M6 8h12"/><path d="M9 21h6" stroke-width="1.6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l-1.5 15a2 2 0 01-2 1.8H9.5a2 2 0 01-2-1.8L6 3z"/><path d="M6 8h12"/><path d="M14 1v4" stroke-width="1.8"/><circle cx="18.5" cy="18.5" r="4.2" fill="var(--pine-950)" stroke-width="1.6"/><path d="M17 18.5l1 1 2-2" stroke-width="1.6"/></svg>
           <span class="notifDot" id="notifKaryawanDot">0</span>
         </button>
         <button class="iconBtn" id="notifTehBtn" aria-label="Permintaan Izin Stok Teh" title="Permintaan Izin Stok Teh" style="display:none;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 3h16l-1.4 15.6A2.4 2.4 0 0116.2 21H7.8a2.4 2.4 0 01-2.4-2.4L4 3z"/><path d="M4 3h16"/><path d="M8 10c1 1.4 3 1.4 4 0s3-1.4 4 0" stroke-width="1.6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8s2-5 7-5 4 3 8 3c1.5 0 2.5-.5 3-1" stroke-width="1.7"/><path d="M4 12c3 3 6-3 9 0s6 3 9 0" stroke-width="1.7"/><path d="M4 17c3 3 6-3 9 0s6 3 9 0" stroke-width="1.7"/></svg>
           <span class="notifDot" id="notifTehDot">0</span>
         </button>
         <button class="iconBtn" id="notifKaryawanTehBtn" aria-label="Status Izin Stok Teh" title="Status Izin Stok Teh" style="display:none;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 3h16l-1.4 15.6A2.4 2.4 0 0116.2 21H7.8a2.4 2.4 0 01-2.4-2.4L4 3z"/><path d="M4 3h16"/><path d="M9 21h6" stroke-width="1.6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8s2-5 7-5 4 3 8 3c1.5 0 2.5-.5 3-1" stroke-width="1.7"/><path d="M4 13c3 3 6-3 9 0s6 3 9 0" stroke-width="1.7"/><circle cx="18.5" cy="18.5" r="4.2" fill="var(--pine-950)" stroke-width="1.6"/><path d="M17 18.5l1 1 2-2" stroke-width="1.6"/></svg>
           <span class="notifDot" id="notifKaryawanTehDot">0</span>
         </button>
         <button class="iconBtn" id="menuBtn" aria-label="Menu" title="Menu">
@@ -1148,6 +1351,11 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <div class="awasiStrip" id="awasiStrip">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+    <span>Anda sedang dalam pengawasan</span>
   </div>
 
   <div class="menuDropdownOverlay" id="menuDropdownOverlay">
@@ -1191,6 +1399,10 @@
       <button class="menuDropItem" id="akunBtn" style="display:none;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
         <span>Kelola Akun</span>
+      </button>
+      <button class="menuDropItem" id="outletBtn" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M10 21v-6h4v6"/></svg>
+        <span>Kelola Outlet</span>
       </button>
       <button class="menuDropItem" id="pengaturanBtn" style="display:none;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1.08-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1.08 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -1282,6 +1494,32 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="animSuksesOverlay" id="animSuksesOverlay">
+  <div class="animSuksesBox">
+    <button class="animSuksesCloseBtn" id="animSuksesCloseBtn" aria-label="Tutup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="animStage">
+      <div class="animGlow"></div>
+      <div class="animRing r1"></div>
+      <div class="animRing r2"></div>
+      <div class="animBadge" id="animBadgeIcon">
+        <svg viewBox="0 0 24 24" id="animBadgeSvg">
+          <path class="pCheck" id="pCheck" d="M5 13l4.5 4.5L19 7" style="display:none"/>
+          <path class="pX1" id="pX1" d="M6 6l12 12" style="display:none"/>
+          <path class="pX2" id="pX2" d="M18 6L6 18" style="display:none"/>
+        </svg>
+      </div>
+      <div class="animShine"></div>
+      <div class="animBurst">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+    <h3 class="animTitle" id="animSuksesTitle">Berhasil</h3>
+    <p class="animMsg" id="animSuksesMsg">Transaksi telah diproses.</p>
+    <div class="animProgress"><i id="animProgressFill"></i></div>
+  </div>
+</div>
 
 <div class="motivToastWrap" id="motivToastWrap">
   <div class="motivToast" id="motivToast">
@@ -1365,6 +1603,33 @@
   <div class="adminSheet">
     <div class="adminHead"><h2>Kelola Akun</h2><button id="akunClose">✕</button></div>
     <div class="adminBody" id="akunBody"></div>
+  </div>
+</div>
+
+<div class="akAksiOverlay" id="akAksiOverlay">
+  <div class="akAksiSheet" id="akAksiSheet">
+    <button class="akAksiItem" id="akAksiEditBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg>
+      <span>Edit Akun</span>
+    </button>
+    <button class="akAksiItem akAksiItem-awasi" id="akAksiAwasiBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>Awasi Akun Ini</span>
+    </button>
+  </div>
+</div>
+
+<div class="cartOverlay" id="outletOverlay">
+  <div class="adminSheet">
+    <div class="adminHead"><h2>Kelola Outlet</h2><button id="outletClose">✕</button></div>
+    <div class="adminBody" id="outletBody"></div>
+  </div>
+</div>
+
+<div class="cartOverlay" id="outletHapusOverlay">
+  <div class="adminSheet">
+    <div class="adminHead"><h2>Hapus Outlet</h2><button id="outletHapusClose">✕</button></div>
+    <div class="adminBody" id="outletHapusBody"></div>
   </div>
 </div>
 
@@ -1472,6 +1737,15 @@
     <div class="popupStokIcon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
     <div class="popupStokTitle" id="popupStokTitle">Stok Menipis</div>
     <div class="popupStokList" id="popupStokList"></div>
+  </div>
+</div>
+
+<div class="popupStokOverlay habis" id="popupTehKurangOverlay">
+  <div class="popupStokBox">
+    <div class="popupStokIcon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+    <div class="popupStokTitle">Stok Teh Tidak Cukup</div>
+    <div class="popupStokList" id="popupTehKurangList"></div>
+    <button id="popupTehKurangOkBtn" class="checkoutBtn" style="margin-top:14px; width:100%;">Oke, Sesuaikan Jumlah</button>
   </div>
 </div>
 
@@ -1632,6 +1906,31 @@ function mlTehUntukItem(kategori, namaMenu){
   return ML_TEH_DEFAULT;
 }
 
+// KALKULATOR TAKARAN TEH -- bukan lagi angka batch tetap, karena Owner
+// meracik dengan takaran air yang BERBEDA-BEDA tiap kali (kadang 500ml,
+// kadang 800ml, dst). Rumus tetapnya:
+//   X   = ml AIR yang dituang = ml TEH yang dipakai (air dan teh SELALU sama banyak)
+//   Gula = 0.8 x X
+//   Total ml teh jadi = X (air) + X (teh) + 0.8*X (gula) = 2.8 x X
+// Owner/karyawan cukup isi X (takaran air/teh), sistem otomatis hitung
+// totalnya -- TIDAK memengaruhi stok bahan mentah, cuma bantu hitung
+// berapa ml TEH JADI yang harus masuk ke stok_teh.
+const RESEP_TEH_FAKTOR_GULA = 0.8; // gula = 0.8 x takaran air/teh
+const RESEP_TEH_PENGALI_TOTAL = 2 + RESEP_TEH_FAKTOR_GULA; // 2.8 -- total = pengali x X
+function hitungTotalMlTehDariTakaran(x){
+  x = Number(x) || 0;
+  const gula = x * RESEP_TEH_FAKTOR_GULA;
+  const total = x + x + gula; // air + teh + gula
+  return { air: x, teh: x, gula, total };
+}
+// Dulu menampilkan rincian racikan (Air/Teh/Gula) di panel permintaan & riwayat.
+// SEKARANG SENGAJA DIKOSONGKAN -- takaran air/teh/gula tidak boleh ditampilkan
+// ke jabatan manapun (termasuk Owner), cukup total ml saja yang tampil.
+function keteranganTakaranTeh(r){
+  return '';
+}
+
+
 // URL Web App Google Apps Script -- dipakai HANYA untuk mencatat riwayat
 // permintaan izin akses Stok Cup ke sheet "Riwayat Izin Stok Cup" sebagai LOG
 // cadangan (Firestore tetap sumber data utama & realtime, ini sekadar salinan
@@ -1669,8 +1968,8 @@ const BULAN = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov'
 function ambilPrefNotifikasi(){
   try{
     const raw = JSON.parse(localStorage.getItem('etd_prefNotif') || '{}');
-    return { suaraCheckout: raw.suaraCheckout !== false, motivasiAktif: raw.motivasiAktif !== false };
-  }catch(e){ return { suaraCheckout: true, motivasiAktif: true }; }
+    return { suaraCheckout: raw.suaraCheckout !== false, motivasiAktif: raw.motivasiAktif !== false, animasiSuksesAktif: raw.animasiSuksesAktif !== false };
+  }catch(e){ return { suaraCheckout: true, motivasiAktif: true, animasiSuksesAktif: true }; }
 }
 function simpanPrefNotifikasi(pref){
   try{ localStorage.setItem('etd_prefNotif', JSON.stringify(pref)); }catch(e){}
@@ -1727,7 +2026,50 @@ function showToast(msg, ok=true){
   toastHideTimer = setTimeout(()=>{
     if(tiketSaatIni === toastPanggilanId){ t.classList.remove('show'); toastHideTimer = null; }
   }, 2800);
+  tampilkanAnimasiSukses(ok, msg);
 }
+
+/* ============ ANIMASI SUKSES / GAGAL v2 (SVG + CSS, TANPA VIDEO) ============ */
+// Ikon berhasil: centang (1 path). Ikon gagal: silang (2 path independen, digambar
+// berurutan). Ring ganda + glow + shine + partikel + progress bar, ala brand besar
+// (Gojek/GoFood) -- lihat blok CSS ".animSuksesOverlay" utk detail animasinya.
+let animSuksesHideTimer = null;
+function tampilkanAnimasiSukses(ok=true, pesan=''){
+  if(!ambilPrefNotifikasi().animasiSuksesAktif) return; // toggle di Pengaturan mati -- skip
+  const ov = el('animSuksesOverlay');
+  const titleEl = el('animSuksesTitle');
+  const msgEl = el('animSuksesMsg');
+  const pCheck = el('pCheck'), pX1 = el('pX1'), pX2 = el('pX2');
+  const progFill = el('animProgressFill');
+  if(!ov || !pCheck) return;
+  if(animSuksesHideTimer){ clearTimeout(animSuksesHideTimer); animSuksesHideTimer = null; }
+
+  ov.classList.toggle('gagal', !ok);
+  pCheck.style.display = ok ? '' : 'none';
+  pX1.style.display = ok ? 'none' : '';
+  pX2.style.display = ok ? 'none' : '';
+  if(titleEl) titleEl.textContent = ok ? 'Berhasil' : 'Gagal';
+  if(msgEl) msgEl.textContent = pesan || (ok ? 'Transaksi telah diproses.' : 'Transaksi tidak dapat diproses.');
+
+  const durasi = ok ? 1900 : 2400; // durasi tampil animasi berhasil/gagal sebelum auto-tutup
+  if(progFill) progFill.style.animationDuration = durasi + 'ms';
+
+  // Reset supaya semua animasi CSS (ring, glow, badge, stroke draw, partikel, progress) selalu mulai ulang dari awal.
+  ov.classList.remove('show');
+  void ov.offsetWidth; // paksa reflow
+  ov.style.display = 'flex';
+  requestAnimationFrame(()=> ov.classList.add('show'));
+
+  animSuksesHideTimer = setTimeout(()=>{ sembunyikanAnimasiSukses(); }, durasi);
+}
+function sembunyikanAnimasiSukses(){
+  const ov = el('animSuksesOverlay');
+  if(!ov) return;
+  if(animSuksesHideTimer){ clearTimeout(animSuksesHideTimer); animSuksesHideTimer = null; }
+  ov.classList.remove('show');
+  setTimeout(()=>{ ov.style.display = 'none'; ov.classList.remove('gagal'); }, 220);
+}
+el('animSuksesCloseBtn').addEventListener('click', ()=>{ sembunyikanAnimasiSukses(); });
 // Jaring pengaman terakhir: kalau karena sebab apapun toast masih kelihatan padahal
 // harusnya sudah lewat waktunya, pencet toast-nya langsung menutup manual.
 el('toast').addEventListener('click', ()=>{ el('toast').classList.remove('show'); if(toastHideTimer){ clearTimeout(toastHideTimer); toastHideTimer = null; } });
@@ -1824,7 +2166,8 @@ async function prosesLogin(){
     SESI = {
       akunId: akun.id, username: akun.username, jabatan: akun.jabatan,
       namaTampilan: akun.namaTampilan || akun.username, outlet: akun.outlet || '',
-      mulaiJam: akun.mulaiJam || '', sampaiJam: akun.sampaiJam || '', temaWarna: akun.temaWarna || null
+      mulaiJam: akun.mulaiJam || '', sampaiJam: akun.sampaiJam || '', temaWarna: akun.temaWarna || null,
+      diawasi: !!akun.diawasi
     };
     simpanSesiLokal(SESI);
     terapkanTemaWarna(SESI.temaWarna);
@@ -1898,9 +2241,10 @@ function mulaiPengecekanSesiBerkala(){
         tampilkanPopupPecat();
         return;
       }
-      // Selalu sinkron ulang jabatan/outlet/jadwal terbaru dari database.
+      // Selalu sinkron ulang jabatan/outlet/jadwal/status pengawasan terbaru dari database.
       SESI.jabatan = akun.jabatan; SESI.outlet = akun.outlet || '';
       SESI.mulaiJam = akun.mulaiJam || ''; SESI.sampaiJam = akun.sampaiJam || '';
+      SESI.diawasi = !!akun.diawasi;
       simpanSesiLokal(SESI);
       terapkanTampilanJabatan();
       const cekShift = dalamJadwalShift(akun);
@@ -1989,6 +2333,7 @@ function terapkanTampilanJabatan(){
   // menu ini khusus untuk melihat RIWAYAT reject semua outlet.
   el('rejectTrxBtn').style.display = (SESI && (isOwner || SESI.outlet)) ? 'flex' : 'none';
   el('akunBtn').style.display = isOwner ? 'flex' : 'none';
+  el('outletBtn').style.display = isOwner ? 'flex' : 'none';
   el('pengaturanBtn').style.display = SESI ? 'flex' : 'none';
   el('notifBtn').style.display = isOwner ? 'flex' : 'none';
   el('notifTehBtn').style.display = isOwner ? 'flex' : 'none';
@@ -1997,14 +2342,16 @@ function terapkanTampilanJabatan(){
   // Tombol status izin milik karyawan sendiri -- Owner tidak butuh ini karena
   // sudah punya lonceng notifikasi + panel approve/tolak lewat notifBtn di atas.
   el('notifKaryawanBtn').style.display = (SESI && !isOwner && SESI.outlet) ? 'flex' : 'none';
-  el('notifKaryawanTehBtn').style.display = (SESI && !isOwner && SESI.outlet) ? 'flex' : 'none';
-  if(SESI && !isOwner && SESI.outlet) { mulaiPantauNotifKaryawanStokCup(); mulaiPantauNotifKaryawanStokTeh(); } else { hentikanPantauNotifKaryawanStokCup(); hentikanPantauNotifKaryawanStokTeh(); }
+  el('notifKaryawanTehBtn').style.display = 'none';
+  if(SESI && !isOwner && SESI.outlet) { mulaiPantauNotifKaryawanStokCup(); } else { hentikanPantauNotifKaryawanStokCup(); }
+  hentikanPantauNotifKaryawanStokTeh();
   // Popup sukses (5 detik) untuk keputusan izin (stok cup & reject transaksi)
   // -- dipantau SEMUA akun yang punya outlet (Owner maupun karyawan), supaya
   // siapapun yang sedang login di outlet yang sama ikut lihat popupnya.
   if(SESI && SESI.outlet) mulaiPantauPopupSuksesUntukSaya(); else hentikanPantauPopupSuksesUntukSaya();
   el('userChip').textContent = SESI ? (SESI.namaTampilan + ' \u00b7 ' + SESI.jabatan + (SESI.outlet ? ' \u00b7 ' + SESI.outlet : '')) : '';
   el('karyawanTampil').textContent = SESI ? SESI.namaTampilan : '-';
+  el('awasiStrip').classList.toggle('show', !!(SESI && SESI.diawasi));
 }
 
 let UNDO_STACK = [];
@@ -2097,7 +2444,8 @@ async function cobaAutoLogin(){
     SESI = {
       akunId: akun.id, username: akun.username, jabatan: akun.jabatan,
       namaTampilan: akun.namaTampilan || akun.username, outlet: akun.outlet || '',
-      mulaiJam: akun.mulaiJam || '', sampaiJam: akun.sampaiJam || '', temaWarna: akun.temaWarna || null
+      mulaiJam: akun.mulaiJam || '', sampaiJam: akun.sampaiJam || '', temaWarna: akun.temaWarna || null,
+      diawasi: !!akun.diawasi
     };
     simpanSesiLokal(SESI);
     terapkanTemaWarna(SESI.temaWarna);
@@ -2234,7 +2582,7 @@ function mulaiPengecekanStokMenipis(){
    ===================================================================== */
 el('menuBtn').onclick = (e)=>{ e.stopPropagation(); el('menuDropdownOverlay').classList.add('show'); };
 el('menuDropdownOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'menuDropdownOverlay') tutupOverlaySmooth(el('menuDropdownOverlay')); });
-['calcBtn','laporanBtn','grafikBtn','adminBtn','modeEditMenuBtn','stokBtn','stokCupBtn','rejectTrxBtn','akunBtn','pengaturanBtn','logoutBtn'].forEach(id=>{
+['calcBtn','laporanBtn','grafikBtn','adminBtn','modeEditMenuBtn','stokBtn','stokCupBtn','rejectTrxBtn','akunBtn','outletBtn','pengaturanBtn','logoutBtn'].forEach(id=>{
   el(id).addEventListener('click', ()=> tutupOverlaySmooth(el('menuDropdownOverlay')));
 });
 
@@ -2398,12 +2746,19 @@ el('motivClose').onclick = ()=>{ if(motivHideTimer){ clearTimeout(motivHideTimer
    ===================================================================== */
 let MENU_MENTAH = [];       // data mentah dari collection "menu" (belum digabung stok)
 let STOK_MAP_AKTIF = {};    // "kategori|nama|ukuran" -> jumlah stok, khusus outlet SESI aktif
-let unsubStokMenu = null, unsubStokCupMenu = null;
+let unsubStokMenu = null, unsubStokCupMenu = null, unsubStokTehMenu = null;
+// Stok teh (ml) khusus untuk outlet SESI yang sedang login di layar kasir -- BEDA
+// dari STOKTEH_ML_AKTIF yang dipakai di panel "Kelola Stok Teh" (itu bisa outlet
+// lain kalau Owner sedang lihat outlet lain). Dipakai supaya kategori "Es Teh
+// Manis" otomatis kekunci/habis di layar kasir begitu stok ml-nya 0, TANPA perlu
+// buka panel Kelola Stok Teh dulu.
+let STOKTEH_ML_KASIR_AKTIF = null; // null = belum termuat (jangan anggap habis dulu)
 
 function loadMenuRealtime(){
   if(unsubMenu) unsubMenu();
   if(unsubStokMenu) unsubStokMenu();
   if(unsubStokCupMenu) unsubStokCupMenu();
+  if(unsubStokTehMenu) unsubStokTehMenu();
 
   unsubMenu = onSnapshot(collection(db, "menu"), (snap)=>{
     MENU_MENTAH = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -2428,9 +2783,16 @@ function loadMenuRealtime(){
       STOK_CUP_UKURAN_MAP_AKTIF = map;
       gabungkanMenuDanStok();
     }, (err)=> console.error('Gagal memantau stok cup:', err));
+
+    const tehRefKasir = doc(db, "stok_teh", stokTehDocId(SESI.outlet));
+    unsubStokTehMenu = onSnapshot(tehRefKasir, (snap)=>{
+      STOKTEH_ML_KASIR_AKTIF = snap.exists() ? (Number(snap.data().ml)||0) : 0;
+      gabungkanMenuDanStok();
+    }, (err)=> console.error('Gagal memantau stok teh (kasir):', err));
   } else {
     STOK_MAP_AKTIF = {};
     STOK_CUP_UKURAN_MAP_AKTIF = {};
+    STOKTEH_ML_KASIR_AKTIF = null;
   }
 }
 
@@ -2450,7 +2812,7 @@ function gabungkanMenuDanStok(){
     const nama = r.nama || '';
     if(!nama) return;
     if(!catMap[kategori]){ catMap[kategori] = {}; catOrder.push(kategori); }
-    if(!catMap[kategori][nama]) catMap[kategori][nama] = { id: r.id, nama, varian: [] };
+    if(!catMap[kategori][nama]) catMap[kategori][nama] = { id: r.id, nama, pakaiSaset: r.pakaiSaset !== false, varian: [] };
     (r.varian || []).forEach(v=>{
       let habis = !!v.habis;
       let stokSisa = null;
@@ -2462,6 +2824,10 @@ function gabungkanMenuDanStok(){
       // dan stoknya 0, varian ukuran ini ditandai habis TERLEPAS dari stok menu di atas.
       const ukuranNormal = normalisasiUkuran(v.ukuran, nama);
       if(ukuranNormal in cupUkuranMap && cupUkuranMap[ukuranNormal] <= 0) habis = true;
+      // Cek stok teh (ml, total per outlet, bukan per menu/ukuran): kalau kategorinya
+      // "Es Teh Manis" dan stok teh cair sudah 0, SEMUA varian di kategori ini otomatis
+      // ditandai habis juga -- terlepas dari status habis manual atau stok menu lainnya.
+      if(kategori === KATEGORI_PAKAI_TEH && STOKTEH_ML_KASIR_AKTIF !== null && STOKTEH_ML_KASIR_AKTIF <= 0) habis = true;
       catMap[kategori][nama].varian.push({ nama: v.ukuran, harga: v.harga||0, tambahan: v.tambahan||'', habis, stok: stokSisa });
     });
   });
@@ -2607,12 +2973,70 @@ el('payTabs').querySelectorAll('button').forEach(b=>{
 });
 
 /* =====================================================================
+   BATASI QTY TEH SESUAI SISA STOK -- kalau total ml teh yang dibutuhkan
+   keranjang (gabungan SEMUA item kategori "Es Teh Manis") melebihi sisa
+   stok teh outlet ini, potong qty item-item teh itu (mulai dari yang
+   PALING TERAKHIR ditambahkan ke keranjang) sampai totalnya pas atau di
+   bawah sisa stok. Dipanggil sebelum checkout benar-benar diproses.
+   Return true kalau ada koreksi (dan popup ditampilkan), false kalau aman.
+   ===================================================================== */
+function cekDanKoreksiQtyTehDiKeranjang(){
+  if(STOKTEH_ML_KASIR_AKTIF === null) return false; // belum termuat, jangan asal koreksi
+  const keys = Object.keys(cart);
+  // Kumpulkan key item kategori Es Teh Manis, urutan sesuai insertion Object.keys
+  // (JS menjaga urutan key string sesuai kapan pertama kali di-set) -- ambil
+  // dari BELAKANG dulu supaya yang paling terakhir ditambahkan dipotong duluan.
+  const keyTeh = keys.filter(k => cart[k].kategori === KATEGORI_PAKAI_TEH);
+  if(keyTeh.length === 0) return false;
+
+  let totalMl = 0;
+  keyTeh.forEach(k=>{ totalMl += mlTehUntukItem(cart[k].kategori, cart[k].nama) * cart[k].qty; });
+  if(totalMl <= STOKTEH_ML_KASIR_AKTIF) return false; // cukup, tidak perlu koreksi
+
+  const sisaBolehDipakai = Math.max(0, STOKTEH_ML_KASIR_AKTIF);
+  let sisaMl = sisaBolehDipakai;
+  const perubahan = []; // {nama, varian, qtyLama, qtyBaru}
+  // Proses dari belakang (item terakhir ditambahkan) ke depan.
+  for(let i = keyTeh.length - 1; i >= 0; i--){
+    const k = keyTeh[i];
+    const c = cart[k];
+    const mlPerCup = mlTehUntukItem(c.kategori, c.nama) || 1; // hindari div 0
+    const maxQtyBisaDibuat = Math.floor(sisaMl / mlPerCup);
+    if(maxQtyBisaDibuat < c.qty){
+      perubahan.push({ nama: c.nama, varian: c.varian, qtyLama: c.qty, qtyBaru: maxQtyBisaDibuat });
+      if(maxQtyBisaDibuat <= 0) delete cart[k];
+      else cart[k].qty = maxQtyBisaDibuat;
+    }
+    sisaMl -= (cart[k] ? cart[k].qty : 0) * mlPerCup;
+  }
+
+  if(perubahan.length > 0){
+    const list = el('popupTehKurangList');
+    if(list){
+      list.innerHTML = `<div>Sisa stok teh outlet ini cuma cukup untuk ${sisaBolehDipakai.toLocaleString('id-ID')} ml, jadi beberapa jumlah pesanan otomatis dikurangi:</div>` +
+        perubahan.map(p=>{
+          const label = p.varian && p.varian !== 'Reguler' ? `${p.nama} (${p.varian})` : p.nama;
+          return p.qtyBaru > 0
+            ? `<div>${label}: ${p.qtyLama} \u2192 ${p.qtyBaru} pcs</div>`
+            : `<div>${label}: ${p.qtyLama} pcs \u2192 dihapus (stok tidak cukup)</div>`;
+        }).join('');
+    }
+    el('popupTehKurangOverlay').classList.add('show');
+    renderCartBody(); renderMenu(); updateFab();
+    return true;
+  }
+  return false;
+}
+el('popupTehKurangOkBtn').onclick = ()=> el('popupTehKurangOverlay').classList.remove('show');
+
+/* =====================================================================
    CHECKOUT — transaksi + kurangi stok, pakai Firestore transaction
    ===================================================================== */
 el('checkoutBtn').onclick = async ()=>{
   if(!SESI){ showToast("Sesi tidak valid, silakan login ulang", false); return; }
   const keys = Object.keys(cart);
   if(keys.length===0) return;
+  if(cekDanKoreksiQtyTehDiKeranjang()) return; // qty sudah dikoreksi & popup ditampilkan, batalkan checkout kali ini
   const btn = el('checkoutBtn'); btn.disabled = true; btn.textContent = "Mengirim...";
   try{
     const waktu = new Date();
@@ -2633,67 +3057,78 @@ el('checkoutBtn').onclick = async ()=>{
       items: items
     });
 
-    // Kurangi stok per item (kalau outlet-nya kelola stok untuk varian itu).
+    // Kurangi stok (barang per varian, cup per ukuran, dan teh ml) -- SEMUA
+    // paralel via Promise.allSettled (bukan berurutan) supaya checkout tidak
+    // lambat menunggu satu-satu, terutama saat Firestore lagi bermasalah
+    // (kuota habis/koneksi jelek) -- kalau satu gagal, yang lain tetap jalan
+    // dan tidak saling menunggu. Kegagalan di sini TIDAK membatalkan transaksi
+    // (pesanan sudah tersimpan di atas), tapi dilaporkan jelas ke pengguna.
+    let gagalStokBarang = false, gagalStokCup = false, gagalStokTeh = false;
     if(SESI.outlet){
-      for(const it of items){
-        const stokDocId = (SESI.outlet+'_'+it.kategori+'_'+it.nama+'_'+it.varian).replace(/[^a-zA-Z0-9]/g,'_');
-        const stokRef = doc(db, "stok", stokDocId);
-        try{
-          await runTransaction(db, async (tx)=>{
-            const snap = await tx.get(stokRef);
-            if(!snap.exists()) return; // outlet ini belum kelola stok utk varian ini, lewati
-            const skrg = Number(snap.data().jumlah)||0;
-            const baru = Math.max(0, skrg - it.qty);
-            tx.update(stokRef, { jumlah: baru });
-          });
-        }catch(e){ /* gagal kurangi stok utk 1 item, jangan batalkan seluruh transaksi */ }
-      }
-    }
+      const tugasStokBarang = items.map(async (it)=>{
+        // Stok saset PER NAMA MENU (gabungan semua ukuran), bukan per varian --
+        // 1 saset yang sama dipakai untuk ukuran cup berapapun.
+        const stokDocIdLokal = stokDocId(SESI.outlet, it.kategori, it.nama);
+        const stokRef = doc(db, "stok", stokDocIdLokal);
+        const snap = await getDoc(stokRef);
+        if(!snap.exists()) return; // outlet ini belum kelola stok utk menu ini, lewati
+        const skrg = Number(snap.data().jumlah)||0;
+        const baru = Math.max(0, skrg - it.qty);
+        await setDoc(stokRef, { jumlah: baru }, { merge: true });
+      });
 
-    // Kurangi STOK CUP PER UKURAN (independen dari menu) -- setiap item yang terjual
-    // mengurangi stok cup fisik sesuai ukurannya, apapun menunya.
-    if(SESI.outlet){
-      for(const it of items){
+      const tugasStokCup = items.map(async (it)=>{
         const ukuranNormal = normalisasiUkuran(it.varian, it.nama);
         const cupDocId = (SESI.outlet+'_'+ukuranNormal).replace(/[^a-zA-Z0-9]/g,'_');
         const cupRef = doc(db, "stok_cup_ukuran", cupDocId);
-        try{
-          await runTransaction(db, async (tx)=>{
-            const snap = await tx.get(cupRef);
-            if(!snap.exists()) return; // ukuran ini belum dikelola stok cup-nya, lewati
-            const skrg = Number(snap.data().jumlah)||0;
-            const baru = Math.max(0, skrg - it.qty);
-            tx.update(cupRef, { jumlah: baru });
-          });
-        }catch(e){ /* gagal kurangi stok cup utk 1 item, jangan batalkan seluruh transaksi */ }
-      }
-    }
+        const snap = await getDoc(cupRef);
+        if(!snap.exists()) return; // ukuran ini belum dikelola stok cup-nya, lewati
+        const skrg = Number(snap.data().jumlah)||0;
+        const baru = Math.max(0, skrg - it.qty);
+        await setDoc(cupRef, { jumlah: baru }, { merge: true });
+      });
 
-    // Kurangi STOK TEH (ml, satu angka per outlet) -- hanya utk item kategori
-    // "Es Teh Manis" (lihat mlTehUntukItem). Nutrisari/Good Day/dst dilewati
-    // karena tidak memakai teh sama sekali.
-    if(SESI.outlet){
       let totalMlTehDipakai = 0;
       for(const it of items){
         const mlPerCup = mlTehUntukItem(it.kategori, it.nama);
         if(mlPerCup > 0) totalMlTehDipakai += mlPerCup * it.qty;
       }
-      if(totalMlTehDipakai > 0){
+      const tugasStokTeh = totalMlTehDipakai > 0 ? (async ()=>{
         const tehRef = doc(db, "stok_teh", stokTehDocId(SESI.outlet));
-        try{
-          await runTransaction(db, async (tx)=>{
-            const snap = await tx.get(tehRef);
-            if(!snap.exists()) return; // outlet ini belum kelola stok teh, lewati
-            const skrg = Number(snap.data().ml)||0;
-            const baru = Math.max(0, skrg - totalMlTehDipakai);
-            tx.update(tehRef, { ml: baru });
-          });
-        }catch(e){ /* gagal kurangi stok teh, jangan batalkan seluruh transaksi */ }
+        const snap = await getDoc(tehRef);
+        if(!snap.exists()) return; // outlet ini belum kelola stok teh, lewati
+        const skrg = Number(snap.data().ml)||0;
+        const baru = Math.max(0, skrg - totalMlTehDipakai);
+        await setDoc(tehRef, { ml: baru }, { merge: true });
+      })() : Promise.resolve();
+
+      const [hasilBarang, hasilCup, hasilTeh] = await Promise.allSettled([
+        Promise.allSettled(tugasStokBarang),
+        Promise.allSettled(tugasStokCup),
+        tugasStokTeh
+      ]);
+      // hasilBarang & hasilCup itu sendiri array hasil per-item (dari Promise.allSettled bertingkat) --
+      // tandai gagal kalau ADA SATU SAJA item yang gagal, supaya user tahu ada yang perlu dikoreksi manual.
+      if(hasilBarang.status === 'fulfilled' && hasilBarang.value.some(r=>r.status==='rejected')) gagalStokBarang = true;
+      if(hasilBarang.status === 'rejected') gagalStokBarang = true;
+      if(hasilCup.status === 'fulfilled' && hasilCup.value.some(r=>r.status==='rejected')) gagalStokCup = true;
+      if(hasilCup.status === 'rejected') gagalStokCup = true;
+      if(hasilTeh.status === 'rejected') gagalStokTeh = true;
+      if(gagalStokBarang || gagalStokCup || gagalStokTeh){
+        console.error('Gagal mengurangi sebagian stok (transaksi tetap tersimpan):', { gagalStokBarang, gagalStokCup, gagalStokTeh });
       }
     }
 
     mainkanSuaraCheckout();
-    showToast("Pesanan terkirim \u2014 " + rupiah(total));
+    if(gagalStokBarang || gagalStokCup || gagalStokTeh){
+      const bagianGagal = [];
+      if(gagalStokBarang) bagianGagal.push('stok barang');
+      if(gagalStokCup) bagianGagal.push('stok cup');
+      if(gagalStokTeh) bagianGagal.push('stok teh');
+      showToast("Pesanan terkirim \u2014 " + rupiah(total) + ". " + bagianGagal.join(', ') + " belum terpotong (koneksi/kuota bermasalah), cek & koreksi manual.", false);
+    } else {
+      showToast("Pesanan terkirim \u2014 " + rupiah(total));
+    }
     cart = {}; el('catatanOrder').value = ''; payMethod = 'Cash';
     el('payTabs').querySelectorAll('button').forEach(x=>x.classList.toggle('active', x.dataset.pay==='Cash'));
     tutupOverlaySmooth(el('cartOverlay')); renderMenu(); updateFab();
@@ -2722,9 +3157,10 @@ function renderAdminList(){
     cat.items.forEach((item, ii)=>{
       const semuaHabis = item.varian.every(v=>v.habis);
       const varStr = item.varian.map(v=>`${normalisasiUkuran(v.nama, item.nama)}${v.tambahan?' +'+v.tambahan:''}: ${rupiah(v.harga)}${v.habis?' (Habis)':''}`).join(' \u00b7 ');
+      const labelSaset = item.pakaiSaset === false ? '<span style="color:var(--muted-soft); font-weight:600;"> \u00b7 Bukan Saset</span>' : '';
       html += `<div class="adminItem" data-ci="${ci}" data-ii="${ii}">
         <div class="aiTop">
-          <div class="ain">${item.nama}</div>
+          <div class="ain">${item.nama}${labelSaset}</div>
           <div class="aiBtns">
             <button class="habisB ${semuaHabis?'active':''}" data-act="habis" title="Tandai habis/tersedia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg></button>
             <button class="editB" data-act="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg></button>
@@ -2770,12 +3206,22 @@ function openAdminForm(target, dariLuar){
   const item = target ? cat.items[target.ii] : null;
   const kategoriVal = item ? cat.kategori : '';
   const namaVal = item ? item.nama : '';
+  // Default: Es Teh Manis diseduh langsung (bukan saset), kategori lain default saset.
+  const pakaiSasetVal = item ? (item.pakaiSaset !== false && kategoriVal !== 'Es Teh Manis') : true;
   // varianList sekarang: { nama, harga, tambahan }. nama bisa dari UKURAN_OZ ATAU hasil ketik bebas.
   const varianList = item ? item.varian.map(v=>({nama:normalisasiUkuran(v.nama, item.nama), harga:v.harga, tambahan:v.tambahan||''})) : [{nama:'', harga:0, tambahan:''}];
 
   let html = `<button class="backLink" id="backToList"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>${dariLuar ? 'Tutup' : 'Kembali'}</button>
     <div class="formField"><label>Kategori</label><input id="fKategori" type="text" value="${kategoriVal}" placeholder="Ketik kategori sendiri, contoh: Es Teh Manis"><div class="hint">Ketik bebas \u2014 boleh kategori baru atau yang sudah ada.</div></div>
     <div class="formField"><label>Nama Menu</label><input id="fNama" type="text" value="${namaVal}" placeholder="Ketik nama menu sendiri, contoh: Es Teh Lemon"><div class="hint">Ketik bebas sesuai nama menu yang kamu mau.</div></div>
+    <div class="formField">
+      <label>Jenis Stok</label>
+      <select id="fPakaiSaset">
+        <option value="ya" ${pakaiSasetVal ? 'selected' : ''}>Saset (dikelola di Kelola Stok Barang)</option>
+        <option value="tidak" ${!pakaiSasetVal ? 'selected' : ''}>Bukan Saset (tidak dilacak stoknya)</option>
+      </select>
+      <div class="hint">Berlaku untuk semua ukuran menu ini. Pilih "Bukan Saset" kalau menu ini tidak perlu stok saset dilacak sistem (misal diseduh langsung atau stoknya dikelola manual di luar sistem).</div>
+    </div>
     <div class="formField"><label>Ukuran, Harga & Tambahan</label><div id="varList"></div><button class="addVarBtn" id="addVarBtn">+ Tambah ukuran</button></div>
     <button class="saveFormBtn" id="saveFormBtn">${target ? 'Simpan Perubahan' : 'Tambah Menu'}</button>`;
 
@@ -2842,9 +3288,10 @@ function openAdminForm(target, dariLuar){
 
     const btn = el('saveFormBtn'); btn.disabled = true; btn.textContent = "Menyimpan...";
     try{
-      const payload = { kategori, nama, varian: validVarian.map(v=>({ ukuran: v.nama, harga: v.harga||0, tambahan: (v.tambahan||'').trim(), habis: false })) };
+      const pakaiSaset = el('fPakaiSaset').value === 'ya';
+      const payload = { kategori, nama, pakaiSaset, varian: validVarian.map(v=>({ ukuran: v.nama, harga: v.harga||0, tambahan: (v.tambahan||'').trim(), habis: false })) };
       if(target){
-        const payloadLama = { kategori: cat.kategori, nama: item.nama, varian: item.varian };
+        const payloadLama = { kategori: cat.kategori, nama: item.nama, pakaiSaset: item.pakaiSaset !== false, varian: item.varian };
         const ref = doc(db, "menu", item.id);
         await updateDoc(ref, payload);
         showToast("Menu diperbarui");
@@ -3198,8 +3645,9 @@ function susunLaporanDariTransaksi(transaksiArr, tanggal, outlet){
   const ringkasan = { total:0, jumlahTrx:transaksiArr.length, jumlahItem:0, cash:0, qris:0, transfer:0, cashTrx:0, qrisTrx:0, transferTrx:0 };
   const perKaryawan = {};
   const SHIFT_URUTAN = ["Pagi","Siang","Sore","Malam","Luar Jam Operasional"];
-  const perShift = {}; SHIFT_URUTAN.forEach(s=> perShift[s] = { shift:s, total:0, jumlahTrx:0, jumlahItem:0 });
+  const perShift = {}; SHIFT_URUTAN.forEach(s=> perShift[s] = { shift:s, total:0, jumlahTrx:0, jumlahItem:0, mlTeh:0 });
   const perItem = {}; const perUkuran = {};
+  let mlTehTerpakaiTotal = 0;
 
   transaksiArr.forEach(t=>{
     ringkasan.total += t.total || 0;
@@ -3222,7 +3670,12 @@ function susunLaporanDariTransaksi(transaksiArr, tanggal, outlet){
       if(!perShift[shift].ukuran[ukr]) perShift[shift].ukuran[ukr] = { ukuran:ukr, qty:0, subtotal:0 };
       perShift[shift].ukuran[ukr].qty += it.qty||0;
       perShift[shift].ukuran[ukr].subtotal += it.subtotal||0;
+      // Ml teh terpakai -- HANYA menu kategori "Es Teh Manis" yang menghitung (lihat mlTehUntukItem).
+      const mlItem = mlTehUntukItem(it.kategori, it.nama) * (it.qty||0);
+      perShift[shift].mlTeh += mlItem;
+      mlTehTerpakaiTotal += mlItem;
     });
+
 
     (t.items||[]).forEach(it=>{
       const key = namaTampilItem(it);
@@ -3250,6 +3703,7 @@ function susunLaporanDariTransaksi(transaksiArr, tanggal, outlet){
     })).filter(s=>s.jumlahTrx>0 || s.shift!=='Luar Jam Operasional'),
     itemTerlaris: Object.values(perItem).sort((a,b)=>b.qty-a.qty),
     perUkuranCup: Object.values(perUkuran).sort((a,b)=>b.qty-a.qty),
+    mlTehTerpakaiTotal,
     transaksi: daftarTrx
   };
 }
@@ -3281,6 +3735,15 @@ async function muatLaporanTanggal(tanggal, diam){
     } else {
       const arr = await ambilTransaksiUntukLaporan(tanggal, lapOutletAktif);
       data = Object.assign({ status:'ok' }, susunLaporanDariTransaksi(arr, tanggal, lapOutletAktif));
+      // Sisa stok teh SAAT INI hanya relevan kalau laporan yang dibuka adalah hari ini
+      // (angka "sisa" berubah tiap saat, jadi untuk tanggal lampau tidak ditampilkan).
+      if(lapOutletAktif && tanggal === tanggalHariIniStr()){
+        try{
+          const ref = doc(db, "stok_teh", stokTehDocId(lapOutletAktif));
+          const snap = await getDoc(ref);
+          data.stokTehSisaSaatIni = snap.exists() ? (Number(snap.data().ml)||0) : 0;
+        }catch(e){ console.error('Gagal ambil sisa stok teh untuk laporan:', e); }
+      }
     }
     const dataBaru = JSON.stringify(data);
     if(!diam || dataBaru !== JSON.stringify(lapDataTerakhir)){ lapDataTerakhir = data; renderLaporan(data); }
@@ -3381,6 +3844,18 @@ function renderLaporanSatuOutlet(data){
     html += `<div class="lapSection"><h4>Penjualan per Shift</h4><div class="shiftGrid">`;
     data.perShift.forEach((s, idx)=>{ html += `<div class="shiftCard" data-shiftidx="${idx}"><div class="scLbl">${SHIFT_ICON[s.shift]||''} ${s.shift}</div>${SHIFT_JAM[s.shift] ? `<div class="scJam">${SHIFT_JAM[s.shift]}</div>` : ''}<div class="scVal">${rupiah(s.total)}</div><div class="scSub">${s.jumlahTrx} transaksi \u00b7 ${s.jumlahItem} item</div></div>`; });
     html += `</div></div>`;
+  }
+  if(typeof data.mlTehTerpakaiTotal === 'number'){
+    html += `<div class="lapSection"><h4>Stok Teh</h4>`;
+    data.perShift.forEach(s=>{
+      if(s.shift === 'Luar Jam Operasional' && !s.mlTeh) return;
+      html += `<div class="lapRow"><div class="lrn">${SHIFT_ICON[s.shift]||''} ${s.shift}</div><div class="lrv">${(s.mlTeh||0).toLocaleString('id-ID')} ml</div></div>`;
+    });
+    html += `<div class="lapRow" style="font-weight:700;"><div class="lrn">Total Terpakai</div><div class="lrv">${data.mlTehTerpakaiTotal.toLocaleString('id-ID')} ml</div></div>`;
+    if(typeof data.stokTehSisaSaatIni === 'number'){
+      html += `<div class="lapRow" style="font-weight:700;"><div class="lrn">Sisa Saat Ini</div><div class="lrv">${data.stokTehSisaSaatIni.toLocaleString('id-ID')} ml</div></div>`;
+    }
+    html += `</div>`;
   }
   if(data.perUkuranCup){
     html += `<div class="lapSection"><h4>Terjual per Ukuran</h4>`;
@@ -3542,19 +4017,19 @@ async function voidTransaksi(trxId, dariDetail){
     // Kembalikan stok tiap item (kalau outlet-nya kelola stok utk varian itu) SEBELUM
     // dokumen transaksinya dihapus, supaya kalau gagal di tengah jalan datanya masih ada
     // untuk dicoba ulang -- lebih aman daripada hapus dulu baru kembalikan stok.
+    // Semua item diproses PARALEL (bukan satu-satu) supaya cepat & tidak retry
+    // berkali-kali kalau Firestore lagi bermasalah (kuota habis/koneksi jelek).
     if(t && t.outlet && t.items && t.items.length){
-      for(const it of t.items){
-        const stokDocId = (t.outlet+'_'+it.kategori+'_'+it.nama+'_'+it.varian).replace(/[^a-zA-Z0-9]/g,'_');
-        const stokRef = doc(db, "stok", stokDocId);
+      await Promise.allSettled(t.items.map(async (it)=>{
+        const stokDocIdLokal = stokDocId(t.outlet, it.kategori, it.nama);
+        const stokRef = doc(db, "stok", stokDocIdLokal);
         try{
-          await runTransaction(db, async (tx)=>{
-            const snap = await tx.get(stokRef);
-            if(!snap.exists()) return; // outlet ini belum kelola stok utk varian ini, lewati
-            const skrg = Number(snap.data().jumlah)||0;
-            tx.update(stokRef, { jumlah: skrg + (it.qty||0) });
-          });
+          const snap = await getDoc(stokRef);
+          if(!snap.exists()) return; // outlet ini belum kelola stok utk menu ini, lewati
+          const skrg = Number(snap.data().jumlah)||0;
+          await setDoc(stokRef, { jumlah: skrg + (it.qty||0) }, { merge: true });
         }catch(e){ /* gagal kembalikan stok utk 1 item, tetap lanjut hapus transaksi */ }
-      }
+      }));
     }
     await deleteDoc(trxRef);
 
@@ -3570,35 +4045,31 @@ async function voidTransaksi(trxId, dariDetail){
           // yang tadi sempat dikembalikan (supaya konsisten dgn keadaan sebelum void).
           await setDoc(trxRef, trxDataAsli);
           if(t && t.outlet && t.items && t.items.length){
-            for(const it of t.items){
-              const stokDocId = (t.outlet+'_'+it.kategori+'_'+it.nama+'_'+it.varian).replace(/[^a-zA-Z0-9]/g,'_');
-              const stokRef = doc(db, "stok", stokDocId);
+            await Promise.allSettled(t.items.map(async (it)=>{
+              const stokDocIdLokal = stokDocId(t.outlet, it.kategori, it.nama);
+              const stokRef = doc(db, "stok", stokDocIdLokal);
               try{
-                await runTransaction(db, async (tx)=>{
-                  const snap = await tx.get(stokRef);
-                  if(!snap.exists()) return;
-                  const skrg = Number(snap.data().jumlah)||0;
-                  tx.update(stokRef, { jumlah: Math.max(0, skrg - (it.qty||0)) });
-                });
+                const snap = await getDoc(stokRef);
+                if(!snap.exists()) return;
+                const skrg = Number(snap.data().jumlah)||0;
+                await setDoc(stokRef, { jumlah: Math.max(0, skrg - (it.qty||0)) }, { merge: true });
               }catch(e){}
-            }
+            }));
           }
           await muatLaporanTanggal(lapTanggalAktif);
         },
         async ()=>{
           if(t && t.outlet && t.items && t.items.length){
-            for(const it of t.items){
-              const stokDocId = (t.outlet+'_'+it.kategori+'_'+it.nama+'_'+it.varian).replace(/[^a-zA-Z0-9]/g,'_');
-              const stokRef = doc(db, "stok", stokDocId);
+            await Promise.allSettled(t.items.map(async (it)=>{
+              const stokDocIdLokal = stokDocId(t.outlet, it.kategori, it.nama);
+              const stokRef = doc(db, "stok", stokDocIdLokal);
               try{
-                await runTransaction(db, async (tx)=>{
-                  const snap = await tx.get(stokRef);
-                  if(!snap.exists()) return;
-                  const skrg = Number(snap.data().jumlah)||0;
-                  tx.update(stokRef, { jumlah: skrg + (it.qty||0) });
-                });
+                const snap = await getDoc(stokRef);
+                if(!snap.exists()) return;
+                const skrg = Number(snap.data().jumlah)||0;
+                await setDoc(stokRef, { jumlah: skrg + (it.qty||0) }, { merge: true });
               }catch(e){}
-            }
+            }));
           }
           await deleteDoc(trxRef);
           await muatLaporanTanggal(lapTanggalAktif);
@@ -3606,7 +4077,7 @@ async function voidTransaksi(trxId, dariDetail){
       );
     }
   }catch(e){
-    showToast("Gagal membatalkan. Cek koneksi.", false);
+    showToast("Gagal membatalkan. Cek koneksi/kuota Firestore.", false);
     console.error('Gagal void transaksi:', e);
   }
 }
@@ -3860,6 +4331,16 @@ function susunTeksLaporan(data){
   t += `Total Penjualan: ${rupiah(r.total)}\nJumlah Transaksi: ${r.jumlahTrx}\nItem Terjual: ${r.jumlahItem}\n\n`;
   t += `*Metode Bayar*\nCash: ${rupiah(r.cash)} (${r.cashTrx||0} trx)\nQRIS: ${rupiah(r.qris)} (${r.qrisTrx||0} trx)\nTransfer: ${rupiah(r.transfer)} (${r.transferTrx||0} trx)\n\n`;
   if(data.perShift && data.perShift.length){ t += `*Per Shift*\n`; data.perShift.forEach(s=>{ t += `${s.shift}: ${rupiah(s.total)} (${s.jumlahTrx} trx)\n`; }); t += `\n`; }
+  if(typeof data.mlTehTerpakaiTotal === 'number'){
+    t += `*Stok Teh*\n`;
+    data.perShift.forEach(s=>{
+      if(s.shift === 'Luar Jam Operasional' && !s.mlTeh) return;
+      t += `${s.shift}: ${(s.mlTeh||0).toLocaleString('id-ID')} ml\n`;
+    });
+    t += `Total Terpakai: ${data.mlTehTerpakaiTotal.toLocaleString('id-ID')} ml\n`;
+    if(typeof data.stokTehSisaSaatIni === 'number'){ t += `Sisa Saat Ini: ${data.stokTehSisaSaatIni.toLocaleString('id-ID')} ml\n`; }
+    t += `\n`;
+  }
   if(data.perUkuranCup && data.perUkuranCup.length){ t += `*Terjual per Ukuran*\n`; data.perUkuranCup.forEach(u=>{ t += `${u.ukuran}: ${u.qty} cup\n`; }); t += `\n`; }
   if(data.perKaryawan && data.perKaryawan.length){ t += `*Per Karyawan*\n`; data.perKaryawan.forEach(k=>{ t += `${k.karyawan}: ${rupiah(k.total)}\n`; }); t += `\n`; }
   if(data.itemTerlaris && data.itemTerlaris.length){ t += `*Menu Terlaris*\n`; data.itemTerlaris.slice(0,10).forEach((it,idx)=>{ t += `${idx+1}. ${it.nama} \u2014 ${it.qty}x (${rupiah(it.subtotal)})\n`; }); t += `\n`; }
@@ -3945,7 +4426,7 @@ async function renderAkunList(){
       html += `<div class="akunItem" data-id="${a.id}">
         <div class="akAvatar">${inisial}</div>
         <div class="akInfo">
-          <div class="aun">${nama}</div>
+          <div class="aun">${nama}${a.diawasi ? ' <span style="color:var(--gold-dark); font-size:11px; font-weight:700;">\u25cf Diawasi</span>' : ''}</div>
           <div class="auu">@${a.username}${a.outlet ? ' \u00b7 '+a.outlet : ''}${a.mulaiJam && a.sampaiJam ? ' \u00b7 '+a.mulaiJam+'\u2013'+a.sampaiJam : ''}</div>
         </div>
         <div class="akRight">
@@ -3959,10 +4440,45 @@ async function renderAkunList(){
     el('akunBody').querySelectorAll('.akunItem').forEach(rowEl=>{
       const id = rowEl.dataset.id;
       const akun = daftar.find(a=>a.id===id);
-      rowEl.onclick = ()=> openAkunForm(akun);
+      rowEl.onclick = ()=> bukaAkAksiDropdown(rowEl, akun);
     });
   }catch(e){ el('akunBody').innerHTML = `<div class="empty">Gagal memuat akun.<br><span style="font-size:11px; color:var(--muted-soft);">${e && e.message ? e.message : e}</span></div>`; console.error('Gagal memuat akun:', e); }
 }
+
+// Dropdown aksi kecil per baris akun di Kelola Akun -- muncul dekat baris yang
+// diklik (bukan modal penuh), isinya "Edit Akun" dan toggle "Awasi Akun Ini".
+function bukaAkAksiDropdown(rowEl, akun){
+  const overlay = el('akAksiOverlay');
+  const sheet = el('akAksiSheet');
+  const rect = rowEl.getBoundingClientRect();
+  const lebarSheet = 210;
+  let left = rect.left;
+  if(left + lebarSheet > window.innerWidth - 12) left = window.innerWidth - lebarSheet - 12;
+  if(left < 12) left = 12;
+  sheet.style.left = left + 'px';
+  sheet.style.top = (rect.bottom + 6 + window.scrollY) + 'px';
+
+  const awasiBtn = el('akAksiAwasiBtn');
+  awasiBtn.classList.toggle('akAksiItem-berhenti', !!akun.diawasi);
+  awasiBtn.classList.toggle('akAksiItem-awasi', !akun.diawasi);
+  awasiBtn.querySelector('span').textContent = akun.diawasi ? 'Berhenti Awasi' : 'Awasi Akun Ini';
+
+  overlay.classList.add('show');
+
+  el('akAksiEditBtn').onclick = ()=>{
+    overlay.classList.remove('show');
+    openAkunForm(akun);
+  };
+  awasiBtn.onclick = async ()=>{
+    overlay.classList.remove('show');
+    try{
+      await updateDoc(doc(db, "akun", akun.id), { diawasi: !akun.diawasi });
+      showToast(!akun.diawasi ? `${akun.namaTampilan || akun.username} sekarang diawasi` : `${akun.namaTampilan || akun.username} berhenti diawasi`);
+      renderAkunList();
+    }catch(e){ showToast("Gagal mengubah status pengawasan. Cek koneksi.", false); }
+  };
+}
+el('akAksiOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'akAksiOverlay') el('akAksiOverlay').classList.remove('show'); });
 
 function openAkunForm(akun){
   el('akunFormTitle').textContent = akun ? 'Edit Akun' : 'Tambah Akun';
@@ -4071,6 +4587,134 @@ async function pastikanOutletTercatat(namaOutlet){
   await muatDaftarOutlet();
   if(OUTLET_LIST.includes(namaOutlet)) return;
   try{ await addDoc(collection(db, "outlet"), { nama: namaOutlet }); OUTLET_LIST.push(namaOutlet); }catch(e){}
+}
+
+/* =====================================================================
+   KELOLA OUTLET (khusus Owner) — lihat semua outlet & hapus outlet.
+   Hapus outlet = hapus TOTAL semua data yang terkait outlet itu di semua
+   koleksi (stok, stok cup, stok teh, transaksi, riwayat restock, semua
+   permintaan izin/reject, sinyal keputusan), lalu hapus dokumen outlet-nya
+   sendiri. TIDAK menghapus akun karyawan -- kalau masih ada akun aktif
+   (Owner/Karyawan, bukan Pecat) yang "Kerja di" outlet ini, penghapusan
+   DIBLOKIR dulu supaya Owner tidak sengaja bikin akun karyawan
+   menggantung tanpa outlet.
+   ===================================================================== */
+el('outletBtn').onclick = async ()=>{ if(!SESI || SESI.jabatan !== 'Owner') return; await renderKelolaOutlet(); el('outletOverlay').classList.add('show'); };
+el('outletClose').onclick = ()=> tutupOverlaySmooth(el('outletOverlay'));
+el('outletHapusClose').onclick = ()=> tutupOverlaySmooth(el('outletHapusOverlay'));
+
+async function renderKelolaOutlet(){
+  el('outletBody').innerHTML = '<div class="lapLoading"><div class="spinner"></div>Memuat daftar outlet...</div>';
+  try{
+    await muatDaftarOutlet();
+    if(OUTLET_LIST.length === 0){
+      el('outletBody').innerHTML = '<div class="empty">Belum ada outlet tercatat. Outlet otomatis tercatat begitu diisi di Kelola Akun.</div>';
+      return;
+    }
+    el('outletBody').innerHTML = `
+      <div class="empty" style="padding:0 0 14px; text-align:left; font-size:12px;">Daftar semua outlet. Menghapus outlet akan menghapus TOTAL semua data terkait outlet itu (stok, transaksi, riwayat) secara permanen.</div>
+      ${OUTLET_LIST.map(o=>`<div class="trxRow" data-outlet="${o}">
+        <div><div class="trn">${o}</div></div>
+        <button class="outletHapusBtn" data-outlet="${o}" style="flex:0 0 auto; padding:8px 12px; border-radius:9px; border:1.4px solid var(--merah); background:var(--merah-light); color:var(--merah); font-size:12px; font-weight:650; cursor:pointer;">Hapus</button>
+      </div>`).join('')}
+    `;
+    el('outletBody').querySelectorAll('.outletHapusBtn').forEach(btn=>{
+      btn.onclick = (e)=>{ e.stopPropagation(); bukaKonfirmasiHapusOutlet(btn.dataset.outlet); };
+    });
+  }catch(e){
+    el('outletBody').innerHTML = '<div class="empty">Gagal memuat daftar outlet. Cek koneksi.</div>';
+    console.error('Gagal memuat daftar outlet:', e);
+  }
+}
+
+async function bukaKonfirmasiHapusOutlet(namaOutlet){
+  el('outletHapusBody').innerHTML = '<div class="lapLoading"><div class="spinner"></div>Memeriksa outlet...</div>';
+  el('outletHapusOverlay').classList.add('show');
+  try{
+    // Cek dulu ada akun aktif (bukan Pecat) yang kerja di outlet ini -- kalau
+    // ada, hapus dibatalkan supaya tidak ada akun menggantung tanpa outlet.
+    const snapAkun = await getDocs(collection(db, "akun"));
+    const akunAktifDiOutlet = snapAkun.docs
+      .map(d=>({id:d.id, ...d.data()}))
+      .filter(a => a.outlet === namaOutlet && a.jabatan !== 'Pecat');
+
+    if(akunAktifDiOutlet.length > 0){
+      el('outletHapusBody').innerHTML = `
+        <div class="empty" style="padding:12px; text-align:left; font-size:12.5px; background:var(--gold-light); color:var(--gold-dark); border-radius:12px;">
+          Outlet <b>${namaOutlet}</b> tidak bisa dihapus dulu karena masih ada <b>${akunAktifDiOutlet.length} akun aktif</b> yang bekerja di sini:
+          <ul style="margin:8px 0 0; padding-left:18px;">
+            ${akunAktifDiOutlet.map(a=>`<li>${a.namaTampilan || a.username} (${a.jabatan})</li>`).join('')}
+          </ul>
+          <div style="margin-top:8px;">Pindahkan outlet akun-akun ini atau pecat dulu lewat Kelola Akun, baru outlet bisa dihapus.</div>
+        </div>
+      `;
+      return;
+    }
+
+    el('outletHapusBody').innerHTML = `
+      <div class="empty" style="padding:12px; text-align:left; font-size:12.5px; background:var(--merah-light); color:var(--merah); border-radius:12px; margin-bottom:14px;">
+        <b>PERINGATAN:</b> Menghapus outlet <b>${namaOutlet}</b> akan menghapus PERMANEN semua data outlet ini: stok barang, stok cup, stok teh, seluruh riwayat transaksi, riwayat restock, dan semua permintaan izin/reject. Tindakan ini <b>TIDAK BISA DIBATALKAN</b>.
+      </div>
+      <div class="formField">
+        <label>Ketik ulang nama outlet untuk konfirmasi</label>
+        <input id="outletHapusKonfirmasiInput" type="text" placeholder="${namaOutlet}">
+      </div>
+      <button class="saveFormBtn" id="outletHapusConfirmBtn" style="background:var(--merah);">Hapus Outlet Ini Permanen</button>
+    `;
+
+    el('outletHapusConfirmBtn').onclick = async ()=>{
+      const ketikan = el('outletHapusKonfirmasiInput').value.trim();
+      if(ketikan !== namaOutlet){ showToast("Nama yang diketik tidak sama persis dengan nama outlet", false); return; }
+      if(!confirm(`Yakin hapus outlet "${namaOutlet}" beserta SEMUA datanya? Tindakan ini permanen dan tidak bisa dibatalkan.`)) return;
+      await eksekusiHapusOutlet(namaOutlet);
+    };
+  }catch(e){
+    el('outletHapusBody').innerHTML = '<div class="empty">Gagal memeriksa outlet. Cek koneksi.</div>';
+    console.error('Gagal memeriksa outlet sebelum hapus:', e);
+  }
+}
+
+async function eksekusiHapusOutlet(namaOutlet){
+  const btn = el('outletHapusConfirmBtn');
+  if(btn){ btn.disabled = true; btn.textContent = "Menghapus..."; }
+  try{
+    // Semua koleksi yang punya field "outlet" -- dihapus SEMUA dokumen yang
+    // outlet-nya cocok. Dijalankan berurutan per koleksi (bukan sekaligus)
+    // supaya kalau satu koleksi gagal, tetap jelas koleksi mana yang gagal
+    // di log, dan koleksi lain tetap lanjut dibersihkan.
+    const KOLEKSI_TERKAIT_OUTLET = [
+      "stok", "stok_cup_ukuran", "stok_teh", "transaksi",
+      "permintaan_reject_trx", "permintaan_stok_cup", "permintaan_stok_teh",
+      "riwayat_restock", "riwayat_restock_cup", "riwayat_restock_teh",
+      "sinyal_keputusan_izin"
+    ];
+    let totalTerhapus = 0;
+    for(const namaKoleksi of KOLEKSI_TERKAIT_OUTLET){
+      try{
+        const qy = query(collection(db, namaKoleksi), where("outlet","==", namaOutlet));
+        const snap = await getDocs(qy);
+        for(const d of snap.docs){
+          await deleteDoc(doc(db, namaKoleksi, d.id));
+          totalTerhapus++;
+        }
+      }catch(errKoleksi){ console.error(`Gagal membersihkan koleksi ${namaKoleksi} utk outlet ${namaOutlet}:`, errKoleksi); }
+    }
+
+    // Hapus dokumen outlet itu sendiri dari koleksi "outlet".
+    try{
+      const snapOutlet = await getDocs(collection(db, "outlet"));
+      const docOutlet = snapOutlet.docs.find(d => d.data().nama === namaOutlet);
+      if(docOutlet) await deleteDoc(doc(db, "outlet", docOutlet.id));
+    }catch(errOutlet){ console.error('Gagal menghapus dokumen outlet:', errOutlet); }
+
+    showToast(`Outlet "${namaOutlet}" dan semua datanya (${totalTerhapus} data) sudah dihapus`);
+    tutupOverlaySmooth(el('outletHapusOverlay'));
+    await renderKelolaOutlet();
+  }catch(e){
+    showToast("Gagal menghapus outlet. Cek koneksi.", false);
+    console.error('Gagal menghapus outlet:', e);
+    if(btn){ btn.disabled = false; btn.textContent = "Hapus Outlet Ini Permanen"; }
+  }
 }
 
 /* =====================================================================
@@ -4212,6 +4856,16 @@ function renderHalamanPengaturan(){
       </div>
       <label class="prefToggle">
         <input type="checkbox" id="pgToggleMataNyaman" ${ambilPrefMataNyaman() ? 'checked' : ''}>
+        <span class="prefToggleSlider"></span>
+      </label>
+    </div>
+    <div class="formField" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <div>
+        <div style="font-size:13.5px; font-weight:650; color:var(--ink);">Animasi Notifikasi Sukses</div>
+        <div class="hint" style="margin-top:2px;">Popup animasi singkat tiap kali aksi berhasil (main sampai selesai), misalnya simpan, hapus, atau restock.</div>
+      </div>
+      <label class="prefToggle">
+        <input type="checkbox" id="pgToggleAnimasiSukses" ${prefNotif.animasiSuksesAktif ? 'checked' : ''}>
         <span class="prefToggleSlider"></span>
       </label>
     </div>
@@ -4376,6 +5030,12 @@ function renderHalamanPengaturan(){
     simpanPrefMataNyaman(aktif);
     terapkanModeMataNyaman(aktif);
     showToast(aktif ? "Mode Perlindungan Mata diaktifkan" : "Mode Perlindungan Mata dimatikan");
+  });
+  el('pgToggleAnimasiSukses').addEventListener('change', ()=>{
+    const pref = ambilPrefNotifikasi();
+    pref.animasiSuksesAktif = el('pgToggleAnimasiSukses').checked;
+    simpanPrefNotifikasi(pref);
+    showToast(pref.animasiSuksesAktif ? "Animasi notifikasi sukses diaktifkan" : "Animasi notifikasi sukses dimatikan");
   });
 
   // --- Bagian Santai Sebentar (game) ---
@@ -4751,7 +5411,6 @@ let stokCupPermintaanMenunggu = null; // dokumen permintaan (permintaan_stok_cup
 let STOKTEH_OUTLET_AKTIF = '';
 let STOKTEH_ML_AKTIF = 0; // angka ml teh outlet yang sedang dibuka
 let PERMINTAAN_TEH_OWNER_LIST = []; // daftar permintaan izin teh "menunggu" utk outlet aktif -- khusus Owner
-let stokTehPermintaanMenunggu = null; // permintaan_stok_teh berstatus "menunggu" milik karyawan yang login, kalau ada
 
 el('stokCupBtn').onclick = async ()=>{
   if(!SESI) return;
@@ -5077,13 +5736,10 @@ function bukaFormRestockCup(ukuran){
     try{
       const id = stokCupUkuranDocId(STOKCUP_OUTLET_AKTIF, ukuran);
       const ref = doc(db, "stok_cup_ukuran", id);
-      let stokSesudah = totalCupDitambah;
-      await runTransaction(db, async (tx)=>{
-        const snap = await tx.get(ref);
-        const skrg = snap.exists() ? (Number(snap.data().jumlah)||0) : 0;
-        stokSesudah = skrg + totalCupDitambah;
-        tx.set(ref, { outlet: STOKCUP_OUTLET_AKTIF, ukuran, jumlah: stokSesudah }, { merge: true });
-      });
+      const snap = await getDoc(ref);
+      const skrg = snap.exists() ? (Number(snap.data().jumlah)||0) : 0;
+      const stokSesudah = skrg + totalCupDitambah;
+      await setDoc(ref, { outlet: STOKCUP_OUTLET_AKTIF, ukuran, jumlah: stokSesudah }, { merge: true });
       await addDoc(collection(db, "riwayat_restock_cup"), {
         waktu: Timestamp.fromDate(new Date()), outlet: STOKCUP_OUTLET_AKTIF, ukuran,
         satuan: restockCupSatuanAktif, jumlahInput, isiRoll: restockCupSatuanAktif==='roll' ? (Number(el('restockCupIsiRoll').value)||DEFAULT_ISI_ROLL) : null,
@@ -5092,7 +5748,7 @@ function bukaFormRestockCup(ukuran){
       showToast(`Restock cup berhasil \u2014 +${catatanSatuan}, stok sekarang ${stokSesudah} cup`);
       tutupOverlaySmooth(el('restockOverlay'));
       await muatKelolaStokCup();
-    }catch(e){ showToast("Gagal restock. Cek koneksi.", false); btn.disabled=false; btn.textContent="Simpan Restock"; }
+    }catch(e){ showToast("Gagal restock. Cek koneksi/kuota Firestore.", false); btn.disabled=false; btn.textContent="Simpan Restock"; }
   };
   el('restockOverlay').classList.add('show');
 }
@@ -5178,29 +5834,11 @@ function renderStokTehOutletPicker(){
   });
 }
 
-async function cekIzinStokTehKaryawan(){
-  stokTehPermintaanMenunggu = null;
-  if(!SESI || SESI.jabatan === 'Owner' || !SESI.outlet) return;
-  try{
-    const qy = query(collection(db, "permintaan_stok_teh"),
-      where("outlet","==", SESI.outlet),
-      where("pemohonUsername","==", SESI.username),
-      where("status","==","menunggu"));
-    const snap = await getDocs(qy);
-    if(!snap.empty){
-      const docs = snap.docs.map(d=>({id:d.id, ...d.data()}))
-        .sort((a,b)=>{ const ta=a.waktu&&a.waktu.toDate?a.waktu.toDate().getTime():0; const tb=b.waktu&&b.waktu.toDate?b.waktu.toDate().getTime():0; return tb-ta; });
-      stokTehPermintaanMenunggu = docs[0];
-    }
-  }catch(e){ console.error('Gagal cek permintaan stok teh:', e); }
-}
-
 async function muatKelolaStokTeh(){
   el('stokTehBody').innerHTML = '<div class="lapLoading"><div class="spinner"></div>Memuat data stok teh...</div>';
   try{
     const isOwner = SESI && SESI.jabatan === 'Owner';
-    if(!isOwner) await cekIzinStokTehKaryawan();
-    else await muatPermintaanTehOwner();
+    if(isOwner) await muatPermintaanTehOwner();
     const ref = doc(db, "stok_teh", stokTehDocId(STOKTEH_OUTLET_AKTIF));
     const snap = await getDoc(ref);
     STOKTEH_ML_AKTIF = snap.exists() ? (Number(snap.data().ml)||0) : 0;
@@ -5221,17 +5859,13 @@ async function muatPermintaanTehOwner(){
 
 function renderKelolaStokTeh(){
   const isOwner = SESI && SESI.jabatan === 'Owner';
-  const punyaMenunggu = !isOwner && !!stokTehPermintaanMenunggu;
 
   let keteranganAkses = '';
   if(isOwner){
     keteranganAkses = `Stok teh di bawah adalah TOTAL ml teh cair untuk outlet <b>${STOKTEH_OUTLET_AKTIF}</b> (satu angka, bukan per menu). Setiap menu kategori "Es Teh Manis" yang terjual otomatis mengurangi angka ini (Cup Medium -150ml, Cup Jumbo -190ml, teh rasa buah/susu lainnya -150ml). Ketik ulang angka untuk menimpa langsung, atau gunakan tombol Restock untuk menambah dengan tercatat di histori.`;
-  } else if(punyaMenunggu){
-    keteranganAkses = `Permintaan restock stok teh untuk outlet <b>${STOKTEH_OUTLET_AKTIF}</b> sudah dikirim dan sedang <b>menunggu persetujuan Owner</b>. Begitu disetujui, stok akan bertambah otomatis sesuai jumlah ml yang kamu isi.`;
   } else {
-    keteranganAkses = `Kamu bisa melihat stok teh outlet <b>${STOKTEH_OUTLET_AKTIF}</b>. Untuk menambah stok, isi dulu jumlah ml teh yang mau ditambah lewat tombol di bawah, lalu kirim ke Owner untuk disetujui. Kamu tidak bisa mengubah/reset angka stok secara manual.`;
+    keteranganAkses = `Kamu bisa melihat sisa stok teh outlet <b>${STOKTEH_OUTLET_AKTIF}</b> di bawah ini. Perubahan stok teh hanya bisa dilakukan oleh Owner.`;
   }
-
   let html = `<div class="empty" style="padding:6px 4px 16px; text-align:left; font-size:12px;">${keteranganAkses}</div>`;
 
   if(isOwner && PERMINTAAN_TEH_OWNER_LIST.length){
@@ -5247,7 +5881,7 @@ function renderKelolaStokTeh(){
           </div>
           <div class="nriWaktu">${waktuStr}</div>
         </div>
-        <div style="font-size:11.5px; color:var(--muted); margin:4px 0 2px;">Minta tambah <b>+${r.jumlahMl} ml</b></div>
+        <div style="font-size:11.5px; color:var(--muted); margin:4px 0 2px;">Minta tambah <b>+${r.jumlahMl} ml</b>${keteranganTakaranTeh(r)}</div>
         <div class="nriBtns">
           <button class="permTehApprove">Setujui</button>
           <button class="permTehTolak">Tolak</button>
@@ -5258,8 +5892,6 @@ function renderKelolaStokTeh(){
 
   if(isOwner){
     html += `<button class="addBtn" id="riwayatRestockTehBtn" style="border-style:solid; background:var(--pine-50);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 106 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>Lihat Riwayat Restock Teh</button>`;
-  } else {
-    html += `<button class="addBtn" id="mintaIzinStokTehBtn" ${punyaMenunggu ? 'disabled' : ''} style="border-style:solid; background:${punyaMenunggu ? 'var(--line-soft)' : 'var(--gold-light)'}; color:${punyaMenunggu ? 'var(--muted-soft)' : 'var(--gold-dark)'}; cursor:${punyaMenunggu ? 'not-allowed' : 'pointer'};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>${punyaMenunggu ? 'Menunggu Persetujuan Owner\u2026' : 'Isi Jumlah & Kirim Izin'}</button>`;
   }
 
   const habis = STOKTEH_ML_AKTIF <= 0;
@@ -5287,8 +5919,6 @@ function renderKelolaStokTeh(){
   el('stokTehBody').appendChild(bodyDiv);
 
   if(isOwner) el('riwayatRestockTehBtn').onclick = ()=> bukaRiwayatRestockTeh();
-  const mintaIzinBtn = document.getElementById('mintaIzinStokTehBtn');
-  if(mintaIzinBtn && !mintaIzinBtn.disabled) mintaIzinBtn.onclick = ()=> bukaFormKirimIzinStokTeh();
 
   if(isOwner){
     el('stokTehBody').querySelectorAll('.notifReqItem').forEach(itemEl=>{
@@ -5318,76 +5948,48 @@ async function simpanStokTehManual(mlBaru){
 }
 
 /* ---------- PERMINTAAN IZIN RESTOCK STOK TEH (karyawan -> Owner) ---------- */
-function bukaFormKirimIzinStokTeh(){
-  if(!SESI || SESI.jabatan === 'Owner' || !SESI.outlet) return;
-
-  el('restockTehBody').innerHTML = `
-    <div class="empty" style="padding:0 0 12px; text-align:left; font-size:12px;">Isi jumlah ml teh yang mau ditambah untuk outlet <b>${SESI.outlet}</b>. Stok sekarang: <b>${STOKTEH_ML_AKTIF.toLocaleString('id-ID')} ml</b>.</div>
-    <div class="formField">
-      <label>Jumlah ml Ditambah</label>
-      <input id="izinTehJumlah" type="number" min="1" placeholder="Contoh: 3000">
-    </div>
-    <button class="saveFormBtn" id="izinTehSaveBtn">Kirim Izin</button>
-  `;
-
-  el('izinTehSaveBtn').onclick = async ()=>{
-    const jumlahMl = Number(el('izinTehJumlah').value) || 0;
-    if(jumlahMl <= 0){ showToast("Isi jumlah ml yang valid", false); return; }
-
-    const btn = el('izinTehSaveBtn'); btn.disabled = true; btn.textContent = "Mengirim...";
-    try{
-      const qyCek = query(collection(db, "permintaan_stok_teh"),
-        where("outlet","==", SESI.outlet), where("pemohonUsername","==", SESI.username), where("status","==","menunggu"));
-      const snapCek = await getDocs(qyCek);
-      if(!snapCek.empty){ showToast("Kamu sudah punya permintaan yang masih menunggu Owner.", false); tutupOverlaySmooth(el('restockTehOverlay')); return; }
-
-      await addDoc(collection(db, "permintaan_stok_teh"), {
-        outlet: SESI.outlet, pemohonUsername: SESI.username, pemohonNama: SESI.namaTampilan,
-        status: 'menunggu', dibacaOwner: false, jumlahMl, waktu: Timestamp.fromDate(new Date())
-      });
-      showToast("Permintaan izin dikirim ke Owner. Tunggu persetujuan ya.");
-      tutupOverlaySmooth(el('restockTehOverlay'));
-      await muatKelolaStokTeh();
-    }catch(e){ showToast("Gagal mengirim permintaan. Cek koneksi.", false); btn.disabled=false; btn.textContent="Kirim Izin"; console.error('Gagal kirim permintaan stok teh:', e); }
-  };
-
-  el('restockTehOverlay').classList.add('show');
-}
 el('restockTehClose').onclick = ()=> tutupOverlaySmooth(el('restockTehOverlay'));
 
 function bukaFormRestockTeh(){
   el('restockTehBody').innerHTML = `
     <div class="empty" style="padding:0 0 12px; text-align:left; font-size:12px;">Restock teh outlet <b>${STOKTEH_OUTLET_AKTIF}</b>. Stok sekarang: <b>${STOKTEH_ML_AKTIF.toLocaleString('id-ID')} ml</b>.</div>
     <div class="formField">
-      <label>Jumlah ml Ditambah</label>
-      <input id="restockTehJumlah" type="number" min="1" placeholder="Contoh: 5000">
+      <label>Takaran Air/Teh (ml)</label>
+      <input id="restockTehTakaran" type="number" min="1" placeholder="Contoh: 1000">
     </div>
+    <div id="restockTehPreview" style="padding:10px 12px; border-radius:10px; background:var(--card); border:1.4px dashed var(--line); font-size:12px; color:var(--muted); margin-bottom:4px;">Isi takaran dulu untuk lihat total.</div>
     <button class="saveFormBtn" id="restockTehSaveBtn">Simpan Restock</button>
   `;
 
+  const updateRestockTehPreview = ()=>{
+    const x = Number(el('restockTehTakaran').value) || 0;
+    if(x <= 0){ el('restockTehPreview').innerHTML = 'Isi takaran dulu untuk lihat total.'; return; }
+    const h = hitungTotalMlTehDariTakaran(x);
+    el('restockTehPreview').innerHTML = `<b style="color:var(--pine-700);">Total ${h.total.toLocaleString('id-ID')}ml</b> yang akan ditambahkan ke stok.`;
+  };
+  el('restockTehTakaran').addEventListener('input', updateRestockTehPreview);
+
   el('restockTehSaveBtn').onclick = async ()=>{
     if(!SESI || SESI.jabatan !== 'Owner'){ showToast("Hanya Owner yang bisa restock langsung di sini.", false); return; }
-    const jumlahMl = Number(el('restockTehJumlah').value) || 0;
-    if(jumlahMl <= 0){ showToast("Isi jumlah restock yang valid", false); return; }
+    const takaran = Number(el('restockTehTakaran').value) || 0;
+    if(takaran <= 0){ showToast("Isi takaran air/teh yang valid", false); return; }
+    const jumlahMl = hitungTotalMlTehDariTakaran(takaran).total;
 
     const btn = el('restockTehSaveBtn'); btn.disabled = true; btn.textContent = "Menyimpan...";
     try{
       const ref = doc(db, "stok_teh", stokTehDocId(STOKTEH_OUTLET_AKTIF));
-      let mlSesudah = jumlahMl;
-      await runTransaction(db, async (tx)=>{
-        const snap = await tx.get(ref);
-        const skrg = snap.exists() ? (Number(snap.data().ml)||0) : 0;
-        mlSesudah = skrg + jumlahMl;
-        tx.set(ref, { outlet: STOKTEH_OUTLET_AKTIF, ml: mlSesudah }, { merge: true });
-      });
+      const snap = await getDoc(ref);
+      const skrg = snap.exists() ? (Number(snap.data().ml)||0) : 0;
+      const mlSesudah = skrg + jumlahMl;
+      await setDoc(ref, { outlet: STOKTEH_OUTLET_AKTIF, ml: mlSesudah }, { merge: true });
       await addDoc(collection(db, "riwayat_restock_teh"), {
         waktu: Timestamp.fromDate(new Date()), outlet: STOKTEH_OUTLET_AKTIF,
-        jumlahMlDitambah: jumlahMl, mlSesudah, oleh: SESI.namaTampilan
+        jumlahMlDitambah: jumlahMl, mlSesudah, oleh: SESI.namaTampilan, takaranAirTeh: takaran
       });
       showToast(`Restock teh berhasil \u2014 +${jumlahMl} ml, stok sekarang ${mlSesudah.toLocaleString('id-ID')} ml`);
       tutupOverlaySmooth(el('restockTehOverlay'));
       await muatKelolaStokTeh();
-    }catch(e){ showToast("Gagal restock. Cek koneksi.", false); btn.disabled=false; btn.textContent="Simpan Restock"; }
+    }catch(e){ showToast("Gagal restock. Cek koneksi/kuota Firestore.", false); btn.disabled=false; btn.textContent="Simpan Restock"; }
   };
   el('restockTehOverlay').classList.add('show');
 }
@@ -5407,7 +6009,7 @@ async function bukaRiwayatRestockTeh(){
       ${riwayat.map(r=>{
         const w = r.waktu && r.waktu.toDate ? r.waktu.toDate() : new Date();
         const waktuStr = String(w.getDate()).padStart(2,'0')+'/'+String(w.getMonth()+1).padStart(2,'0')+'/'+w.getFullYear()+' '+String(w.getHours()).padStart(2,'0')+':'+String(w.getMinutes()).padStart(2,'0');
-        return `<div class="lapRow"><div><div class="lrn">Teh</div><div class="lrq">${waktuStr} \u00b7 oleh ${r.oleh}</div></div><div style="text-align:right;"><div class="lrv">+${r.jumlahMlDitambah} ml</div><div class="lrq">jadi ${r.mlSesudah.toLocaleString('id-ID')} ml</div></div></div>`;
+        return `<div class="lapRow"><div><div class="lrn">Teh${keteranganTakaranTeh(r)}</div><div class="lrq">${waktuStr} \u00b7 oleh ${r.oleh}</div></div><div style="text-align:right;"><div class="lrv">+${r.jumlahMlDitambah} ml</div><div class="lrq">jadi ${r.mlSesudah.toLocaleString('id-ID')} ml</div></div></div>`;
       }).join('')}
     `;
   }catch(e){ el('restockTehBody').innerHTML = '<div class="empty">Gagal memuat riwayat. Cek koneksi.</div>'; }
@@ -5433,6 +6035,7 @@ async function putuskanPermintaanStokTeh(id, statusBaru){
           waktu: Timestamp.fromDate(new Date()), outlet: r.outlet,
           jumlahMlDitambah: r.jumlahMl, mlSesudah,
           oleh: r.pemohonNama || r.pemohonUsername,
+          takaranAirTeh: r.takaranAirTeh || null,
           keterangan: `Via izin restock \u2014 disetujui oleh ${SESI ? SESI.namaTampilan : 'Owner'}`
         });
       }catch(errItem){ console.error('Gagal eksekusi restock teh:', errItem); }
@@ -5524,7 +6127,7 @@ function renderPanelNotifStokTeh(){
           </button>` : ''}
         </div>
       </div>
-      <div style="font-size:11.5px; color:var(--muted); margin:4px 0 2px;">Minta tambah <b>+${r.jumlahMl} ml</b></div>
+      <div style="font-size:11.5px; color:var(--muted); margin:4px 0 2px;">Minta tambah <b>+${r.jumlahMl} ml</b>${keteranganTakaranTeh(r)}</div>
       <div class="nriStatus ${r.status}">${statusLabel}</div>
       ${r.status === 'menunggu' ? `<div class="nriBtns">
         <button class="nriApprove">Setujui</button>
@@ -5631,7 +6234,7 @@ function renderPanelNotifKaryawanStokTeh(){
         </div>
         <div class="nriWaktu">${waktuStr}</div>
       </div>
-      <div style="font-size:11.5px; color:var(--muted); margin:4px 0 2px;">Minta tambah <b>+${r.jumlahMl} ml</b></div>
+      <div style="font-size:11.5px; color:var(--muted); margin:4px 0 2px;">Minta tambah <b>+${r.jumlahMl} ml</b>${keteranganTakaranTeh(r)}</div>
       <div class="nriStatus ${r.status}">${statusLabel}</div>
     </div>`;
   }).join('');
@@ -6004,8 +6607,8 @@ async function putuskanPermintaanRejectTrx(id, statusBaru){
           const t = trxSnap.data();
           if(t.outlet && t.items && t.items.length){
             for(const it of t.items){
-              const stokDocId = (t.outlet+'_'+it.kategori+'_'+it.nama+'_'+it.varian).replace(/[^a-zA-Z0-9]/g,'_');
-              const stokRef = doc(db, "stok", stokDocId);
+              const stokDocIdLokal = stokDocId(t.outlet, it.kategori, it.nama);
+              const stokRef = doc(db, "stok", stokDocIdLokal);
               try{
                 await runTransaction(db, async (tx)=>{
                   const snap = await tx.get(stokRef);
@@ -6146,8 +6749,10 @@ function renderPanelNotifKaryawanStokCup(){
   }).join('');
 }
 
-function stokDocId(outlet, kategori, nama, ukuran){
-  return (outlet+'_'+kategori+'_'+nama+'_'+ukuran).replace(/[^a-zA-Z0-9]/g,'_');
+// Stok barang saset sekarang PER NAMA MENU saja (gabungan semua ukuran), bukan
+// per ukuran -- karena 1 saset yang sama dipakai apapun ukuran cup nya nanti.
+function stokDocId(outlet, kategori, nama){
+  return (outlet+'_'+kategori+'_'+nama).replace(/[^a-zA-Z0-9]/g,'_');
 }
 
 function renderStokOutletPicker(){
@@ -6173,37 +6778,38 @@ async function muatKelolaStok(){
     renderKelolaStok();
   }catch(e){ el('stokBody').innerHTML = `<div class="empty">Gagal memuat stok.<br><span style="font-size:11px; color:var(--muted-soft);">${e && e.message ? e.message : e}</span></div>`; console.error('Gagal memuat stok:', e); }
 }
-function cariStok(kategori, nama, ukuran){
-  return STOK_LIST.find(s => s.kategori===kategori && s.nama===nama && s.ukuran===ukuran) || null;
+function cariStok(kategori, nama){
+  return STOK_LIST.find(s => s.kategori===kategori && s.nama===nama) || null;
 }
 
 function renderKelolaStok(){
   let html = `<div class="empty" style="padding:6px 4px 16px; text-align:left; font-size:12px;">
-      Stok di bawah khusus untuk outlet <b>${STOK_OUTLET_AKTIF}</b>. Ketik ulang angka untuk menimpa langsung, atau gunakan tombol Restock (bisa satuan saset atau renceng) untuk menambah stok dengan tercatat di histori.
+      Stok di bawah khusus untuk outlet <b>${STOK_OUTLET_AKTIF}</b>. Satu angka saset per menu (semua ukuran cup pakai stok saset yang sama). Ketik ulang angka untuk menimpa langsung, atau gunakan tombol Restock (bisa satuan saset atau renceng) untuk menambah stok dengan tercatat di histori.
     </div>
     <button class="addBtn" id="riwayatRestockBtn" style="border-style:solid; background:var(--pine-50);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 106 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>Lihat Riwayat Restock</button>`;
   MENU.forEach(cat=>{
-    if(cat.kategori === 'Es Teh Manis') return; // Es teh manis diseduh langsung, bukan barang saset/renceng yang perlu dikelola stoknya
+    // Skip menu yang ditandai "Bukan Saset" (lihat field pakaiSaset di Kelola Menu) --
+    // stoknya sengaja tidak dilacak sistem, apapun kategorinya.
+    const itemsSaset = cat.items.filter(item => item.pakaiSaset !== false);
+    if(itemsSaset.length === 0) return;
     html += `<div class="catLabelAdmin">${cat.kategori}</div>`;
-    cat.items.forEach(item=>{
-      item.varian.forEach(v=>{
-        const info = cariStok(cat.kategori, item.nama, v.nama);
-        const stokSekarang = info ? info.jumlah : 0;
-        const habis = stokSekarang <= 0;
-        const menipis = !habis && stokSekarang <= BATAS_STOK_MENIPIS;
-        const badgeTxt = habis ? 'Habis' : (menipis ? 'Menipis \u2014 ' + stokSekarang + ' saset' : stokSekarang + ' saset');
-        const badgeCls = habis ? 'habis' : (menipis ? 'menipis' : '');
-        html += `<div class="adminItem" data-kategori="${cat.kategori}" data-nama="${item.nama}" data-ukuran="${v.nama}">
-          <div class="aiTop">
-            <div><div class="ain">${item.nama}</div><div class="aiv" style="margin-top:3px;">${normalisasiUkuran(v.nama, item.nama)}</div></div>
-            <div class="aiBtns" style="align-items:center;"><div class="aiStokBadge ${badgeCls}">${badgeTxt}</div><button class="restockOpenB" title="Restock (tambah stok)" style="background:var(--pine-50); color:var(--pine-700);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button></div>
-          </div>
-          <div style="display:flex; align-items:center; gap:8px; margin-top:10px;">
-            <input type="number" class="stokInput" value="${stokSekarang}" min="0" style="flex:1; padding:10px 12px; border-radius:10px; border:1.4px solid var(--line); font-size:13.5px; font-family:inherit; background:var(--card); color:var(--ink);">
-            <button class="stokSaveB" style="flex:0 0 auto; padding:10px 14px; border-radius:10px; border:none; background:var(--pine-900); color:#f3ede0; font-size:12.5px; font-weight:650; cursor:pointer;">Simpan</button>
-          </div>
-        </div>`;
-      });
+    itemsSaset.forEach(item=>{
+      const info = cariStok(cat.kategori, item.nama);
+      const stokSekarang = info ? info.jumlah : 0;
+      const habis = stokSekarang <= 0;
+      const menipis = !habis && stokSekarang <= BATAS_STOK_MENIPIS;
+      const badgeTxt = habis ? 'Habis' : (menipis ? 'Menipis \u2014 ' + stokSekarang + ' saset' : stokSekarang + ' saset');
+      const badgeCls = habis ? 'habis' : (menipis ? 'menipis' : '');
+      html += `<div class="adminItem" data-kategori="${cat.kategori}" data-nama="${item.nama}">
+        <div class="aiTop">
+          <div><div class="ain">${item.nama}</div></div>
+          <div class="aiBtns" style="align-items:center;"><div class="aiStokBadge ${badgeCls}">${badgeTxt}</div><button class="restockOpenB" title="Restock (tambah stok)" style="background:var(--pine-50); color:var(--pine-700);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; margin-top:10px;">
+          <input type="number" class="stokInput" value="${stokSekarang}" min="0" style="flex:1; padding:10px 12px; border-radius:10px; border:1.4px solid var(--line); font-size:13.5px; font-family:inherit; background:var(--card); color:var(--ink);">
+          <button class="stokSaveB" style="flex:0 0 auto; padding:10px 14px; border-radius:10px; border:none; background:var(--pine-900); color:#f3ede0; font-size:12.5px; font-weight:650; cursor:pointer;">Simpan</button>
+        </div>
+      </div>`;
     });
   });
   el('stokBody').innerHTML = '';
@@ -6214,29 +6820,29 @@ function renderKelolaStok(){
 
   el('riwayatRestockBtn').onclick = ()=> bukaRiwayatRestock();
   el('stokBody').querySelectorAll('.adminItem').forEach(rowEl=>{
-    const kategori = rowEl.dataset.kategori, nama = rowEl.dataset.nama, ukuran = rowEl.dataset.ukuran;
+    const kategori = rowEl.dataset.kategori, nama = rowEl.dataset.nama;
     rowEl.querySelector('.stokSaveB').onclick = async ()=>{
       const val = Number(rowEl.querySelector('.stokInput').value) || 0;
-      await simpanStokManual(kategori, nama, ukuran, val);
+      await simpanStokManual(kategori, nama, val);
     };
-    rowEl.querySelector('.restockOpenB').onclick = ()=> bukaFormRestock(kategori, nama, ukuran);
+    rowEl.querySelector('.restockOpenB').onclick = ()=> bukaFormRestock(kategori, nama);
   });
 }
 
-async function simpanStokManual(kategori, nama, ukuran, stokBaru){
+async function simpanStokManual(kategori, nama, stokBaru){
   try{
-    const id = stokDocId(STOK_OUTLET_AKTIF, kategori, nama, ukuran);
+    const id = stokDocId(STOK_OUTLET_AKTIF, kategori, nama);
     const ref = doc(db, "stok", id);
     const snapLama = await getDoc(ref);
     const stokLama = snapLama.exists() ? (Number(snapLama.data().jumlah)||0) : 0;
     const nilaiBaru = Math.max(0, stokBaru);
-    await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, ukuran, jumlah: nilaiBaru }, { merge: true });
+    await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, jumlah: nilaiBaru }, { merge: true });
     showToast("Stok diperbarui");
     await muatKelolaStok();
     catatAksiUndo(
       `ubah stok \u2014 ${nama} jadi ${nilaiBaru}`,
-      async ()=>{ await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, ukuran, jumlah: stokLama }, { merge: true }); await muatKelolaStok(); },
-      async ()=>{ await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, ukuran, jumlah: nilaiBaru }, { merge: true }); await muatKelolaStok(); }
+      async ()=>{ await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, jumlah: stokLama }, { merge: true }); await muatKelolaStok(); },
+      async ()=>{ await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, jumlah: nilaiBaru }, { merge: true }); await muatKelolaStok(); }
     );
   }catch(e){ showToast("Gagal menyimpan stok. Cek koneksi.", false); }
 }
@@ -6248,14 +6854,14 @@ async function simpanStokManual(kategori, nama, ukuran, stokBaru){
 let restockSatuanAktif = 'cup';
 let restockIsiRollAktif = DEFAULT_ISI_ROLL;
 
-function bukaFormRestock(kategori, nama, ukuran){
-  const info = cariStok(kategori, nama, ukuran);
+function bukaFormRestock(kategori, nama){
+  const info = cariStok(kategori, nama);
   const stokSekarang = info ? info.jumlah : 0;
   restockSatuanAktif = 'cup';
   restockIsiRollAktif = DEFAULT_ISI_ROLL;
 
   el('restockBody').innerHTML = `
-    <div class="formField"><label>Menu</label><div class="karyawanTampil">${nama} \u00b7 ${normalisasiUkuran(ukuran, nama)}</div></div>
+    <div class="formField"><label>Menu</label><div class="karyawanTampil">${nama}</div></div>
     <div class="formField"><label>Stok Sekarang</label><div class="karyawanTampil">${stokSekarang} saset</div></div>
     <div class="formField">
       <label>Satuan Penambahan</label>
@@ -6317,19 +6923,14 @@ function bukaFormRestock(kategori, nama, ukuran){
 
     const btn = el('restockSaveBtn'); btn.disabled = true; btn.textContent = "Menyimpan...";
     try{
-      const id = stokDocId(STOK_OUTLET_AKTIF, kategori, nama, ukuran);
+      const id = stokDocId(STOK_OUTLET_AKTIF, kategori, nama);
       const ref = doc(db, "stok", id);
-      let stokSebelum = 0;
-      let stokSesudah = totalSasetDitambah;
-      await runTransaction(db, async (tx)=>{
-        const snap = await tx.get(ref);
-        const skrg = snap.exists() ? (Number(snap.data().jumlah)||0) : 0;
-        stokSebelum = skrg;
-        stokSesudah = skrg + totalSasetDitambah;
-        tx.set(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, ukuran, jumlah: stokSesudah }, { merge: true });
-      });
+      const snap = await getDoc(ref);
+      const stokSebelum = snap.exists() ? (Number(snap.data().jumlah)||0) : 0;
+      const stokSesudah = stokSebelum + totalSasetDitambah;
+      await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, jumlah: stokSesudah }, { merge: true });
       const riwayatRef = await addDoc(collection(db, "riwayat_restock"), {
-        waktu: Timestamp.fromDate(new Date()), outlet: STOK_OUTLET_AKTIF, kategori, nama, ukuran,
+        waktu: Timestamp.fromDate(new Date()), outlet: STOK_OUTLET_AKTIF, kategori, nama,
         satuan: restockSatuanAktif, jumlahInput, isiRoll: isiRollDipakai,
         jumlahDitambahCup: totalSasetDitambah, stokSesudah, oleh: SESI.namaTampilan
       });
@@ -6338,10 +6939,10 @@ function bukaFormRestock(kategori, nama, ukuran){
       await muatKelolaStok();
       catatAksiUndo(
         `restock \u2014 ${nama} (+${catatanSatuan})`,
-        async ()=>{ await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, ukuran, jumlah: stokSebelum }, { merge: true }); await deleteDoc(riwayatRef); await muatKelolaStok(); },
-        async ()=>{ await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, ukuran, jumlah: stokSesudah }, { merge: true }); await muatKelolaStok(); }
+        async ()=>{ await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, jumlah: stokSebelum }, { merge: true }); await deleteDoc(riwayatRef); await muatKelolaStok(); },
+        async ()=>{ await setDoc(ref, { outlet: STOK_OUTLET_AKTIF, kategori, nama, jumlah: stokSesudah }, { merge: true }); await muatKelolaStok(); }
       );
-    }catch(e){ showToast("Gagal restock. Cek koneksi.", false); btn.disabled=false; btn.textContent="Simpan Restock"; }
+    }catch(e){ showToast("Gagal restock. Cek koneksi/kuota Firestore.", false); btn.disabled=false; btn.textContent="Simpan Restock"; }
   };
   el('restockOverlay').classList.add('show');
 }
@@ -6380,6 +6981,7 @@ async function bukaRiwayatRestock(){
    ===================================================================== */
 const OVERLAY_IDS_BACK = [
   'restockOverlay', 'stokOverlay', 'stokCupOverlay', 'akunFormOverlay', 'akunOverlay',
+  'outletOverlay', 'outletHapusOverlay',
   'lapOverlay', 'grafikOverlay', 'adminOverlay2', 'calcOverlay', 'cartOverlay',
   'sheetOverlay', 'trxDetailOverlay', 'menuDropdownOverlay', 'logoutWarnOverlay',
   'pengaturanOverlay', 'notifPanelOverlay', 'notifKaryawanPanelOverlay',
@@ -6389,7 +6991,7 @@ let sedangProsesBack = false;
 
 function overlayTerbukaSaatIni(){
   // urutan terakhir di array = prioritas ditutup duluan (overlay yang biasanya "di atas")
-  const urutanPrioritas = ['notifRejectOwnerPanelOverlay','notifKaryawanPanelOverlay','notifPanelOverlay','pengaturanOverlay','rejectTrxFormOverlay','rejectTrxOverlay','restockOverlay','stokOverlay','stokCupOverlay','akunFormOverlay','akunOverlay','trxDetailOverlay','lapOverlay','grafikOverlay','adminOverlay2','calcOverlay','cartOverlay','sheetOverlay','menuDropdownOverlay'];
+  const urutanPrioritas = ['notifRejectOwnerPanelOverlay','notifKaryawanPanelOverlay','notifPanelOverlay','pengaturanOverlay','rejectTrxFormOverlay','rejectTrxOverlay','restockOverlay','stokOverlay','stokCupOverlay','akunFormOverlay','akunOverlay','outletHapusOverlay','outletOverlay','trxDetailOverlay','lapOverlay','grafikOverlay','adminOverlay2','calcOverlay','cartOverlay','sheetOverlay','menuDropdownOverlay'];
   for(const id of urutanPrioritas){
     const elm = document.getElementById(id);
     if(elm && elm.classList.contains('show')) return id;
